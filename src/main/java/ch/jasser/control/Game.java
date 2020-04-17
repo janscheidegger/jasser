@@ -7,7 +7,6 @@ import ch.jasser.entity.Player;
 import ch.jasser.entity.Suit;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
