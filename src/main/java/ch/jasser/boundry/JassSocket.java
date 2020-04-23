@@ -1,6 +1,8 @@
 package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.ActionHandler;
+import ch.jasser.control.Game;
+import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.bind.Jsonb;
@@ -11,7 +13,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint("/jass/{username}")
+@ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
 public class JassSocket {
 
@@ -24,39 +26,51 @@ public class JassSocket {
     private Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) {
+    public void onOpen(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         sessions.put(username, session);
+        System.out.println(String.format("%s connected to Game with Id %s", username, gameId));
         //broadcast("User " + username + " joined");
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("username") String username) {
+    public void onClose(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         sessions.remove(username);
         broadcast("User " + username + " left");
     }
 
     @OnError
-    public void onError(Session session, @PathParam("username") String username, Throwable throwable) {
+    public void onError(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId, Throwable throwable) {
         sessions.remove(username);
         broadcast("User " + username + " left on error: " + throwable);
     }
 
     @OnMessage
-    public void onMessage(String message, @PathParam("username") String username) {
+    public void onMessage(String message, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         Jsonb jsonb = JsonbBuilder.create();
-        System.out.println(message);
         JassMessage jassMessage = jsonb.fromJson(message, JassMessage.class);
         System.out.println(jassMessage);
-        actionHandler.handleAction(jassMessage.getEvent());
+        actionHandler.handleAction(jassMessage);
+
+        JassMessage joinMessage = new JassMessage();
+        joinMessage.setEvent("{\"gameId\":\"f2416a6b-b3bb-4e50-b5ab-ab3ab2bf667e\"}");
+        actionHandler.handleAction(joinMessage);
+
         var response = new JassMessage();
         response.setEvent("getCards");
         broadcast(jsonb.toJson(response));
     }
 
+    private void sendToUser(String user, String message) {
+        sessions.get(user).getAsyncRemote().sendObject(message, result -> {
+            if (result.getException() != null) {
+                System.out.println("Unable to send Message: " + result.getException());
+            }
+        });
+    }
+
     private void broadcast(String message) {
         sessions.values().forEach(s -> {
-            System.out.println("Send Something");
-            s.getAsyncRemote().sendObject(message, result ->  {
+            s.getAsyncRemote().sendObject(message, result -> {
                 if (result.getException() != null) {
                     System.out.println("Unable to send message: " + result.getException());
                 }

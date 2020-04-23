@@ -1,6 +1,9 @@
 package ch.jasser.boundry.action;
 
-public interface Action {
+import ch.jasser.boundry.payload.Payload;
 
-    void act();
+public interface Action<T extends Payload> {
+
+    void act(String payload);
+
 }
