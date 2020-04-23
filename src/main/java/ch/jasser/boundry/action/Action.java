@@ -1,9 +1,12 @@
 package ch.jasser.boundry.action;
 
+import ch.jasser.boundry.JassMessage;
 import ch.jasser.boundry.payload.Payload;
+
+import java.util.Optional;
 
 public interface Action<T extends Payload> {
 
-    void act(String payload);
+    Optional<JassMessage> act(String payload);
 
 }

@@ -16,6 +16,10 @@ export class BackendService {
     return this.http.get<Game>(`http://localhost:8080/jass/${username}`);
   }
 
+  initialLoad() {
+    this.currentGameConnection.next({event: "INITIAL_LOAD"});
+  }
+
   startGame(username: string, gameId: string): Observable<any> {
     this.currentGameConnection = webSocket(
       `ws://localhost:8080/jass/${username}/${gameId}`

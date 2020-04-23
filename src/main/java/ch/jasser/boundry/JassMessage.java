@@ -1,14 +1,16 @@
 package ch.jasser.boundry;
 
+import ch.jasser.boundry.action.EventType;
+
 public class JassMessage {
-    private String event;
+    private EventType event;
     private String payloadString;
 
-    public String getEvent() {
+    public EventType getEvent() {
         return event;
     }
 
-    public void setEvent(String event) {
+    public void setEvent(EventType event) {
         this.event = event;
     }
 

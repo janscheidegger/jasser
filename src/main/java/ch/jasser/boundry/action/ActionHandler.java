@@ -6,25 +6,28 @@ import ch.jasser.boundry.payload.Payload;
 
 import javax.enterprise.context.Dependent;
 import java.util.Map;
+import java.util.Optional;
 
 @Dependent
 public class ActionHandler {
 
-    private Map<String, Action<? extends Payload>> actionMap;
+    private Map<EventType, Action<? extends Payload>> actionMap;
 
     public ActionHandler(StartGameAction startGameAction,
-                         JoinGameAction joinGameAction) {
+                         JoinGameAction joinGameAction,
+                         InitialLoadAction initialLoadAction) {
         actionMap = Map.of(
-                "start", startGameAction,
-                "join", joinGameAction
+                EventType.START_GAME, startGameAction,
+                EventType.JOIN_GAME, joinGameAction,
+                EventType.INITIAL_LOAD, initialLoadAction
         );
     }
 
-    Action<EmptyPayload> defaultAct = payload -> System.out.println("default");
+    Action<EmptyPayload> defaultAct = payload -> Optional.empty();
 
 
-    public void handleAction(JassMessage message) {
+    public Optional<JassMessage> handleAction(JassMessage message) {
         var actionHandler = actionMap.getOrDefault(message.getEvent(), defaultAct);
-        actionHandler.act(message.getPayloadString());
+        return actionHandler.act(message.getPayloadString());
     }
 }

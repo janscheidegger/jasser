@@ -11,6 +11,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
@@ -48,16 +49,11 @@ public class JassSocket {
     public void onMessage(String message, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         Jsonb jsonb = JsonbBuilder.create();
         JassMessage jassMessage = jsonb.fromJson(message, JassMessage.class);
-        System.out.println(jassMessage);
-        actionHandler.handleAction(jassMessage);
-
-        JassMessage joinMessage = new JassMessage();
-        joinMessage.setEvent("{\"gameId\":\"f2416a6b-b3bb-4e50-b5ab-ab3ab2bf667e\"}");
-        actionHandler.handleAction(joinMessage);
-
-        var response = new JassMessage();
-        response.setEvent("getCards");
-        broadcast(jsonb.toJson(response));
+        Optional<JassMessage> response = actionHandler.handleAction(jassMessage);
+        if (response.isPresent()) {
+            System.out.println("broadcasting");
+            broadcast(jsonb.toJson(response));
+        }
     }
 
     private void sendToUser(String user, String message) {

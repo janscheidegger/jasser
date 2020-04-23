@@ -16,6 +16,10 @@ export class AppComponent {
 
   constructor(private service: BackendService) {}
 
+  initialLoad() {
+    this.service.initialLoad();
+  }
+
   startGame() {
     this.service.createNewGame('jan').subscribe((r) => {
       this.backendObservable = this.service.startGame('jan', r.gameId);
