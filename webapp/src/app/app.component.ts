@@ -1,26 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BackendService } from './backend/backend.service';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'webapp';
 
   private backendObservable: Observable<any>;
 
-constructor(private service: BackendService) {}
+  username: string;
 
-  ngOnInit(): void {
-    this.backendObservable = this.service.getObservable();
-    this.backendObservable.subscribe( v => console.log(v), e => console.error(e), () => console.log('complete') );
+  constructor(private service: BackendService) {}
+
+  startGame() {
+    this.service.createNewGame('jan').subscribe((r) => {
+      this.backendObservable = this.service.startGame('jan', r.gameId);
+      this.backendObservable.subscribe(
+        (v) => console.log(v),
+        (e) => console.error(e),
+        () => console.log('complete')
+      );
+    });
   }
-
-startGame() {
-    this.service.startGame();
-  }
-
 }

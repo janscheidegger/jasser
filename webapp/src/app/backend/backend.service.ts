@@ -1,27 +1,26 @@
 import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Game } from './game';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BackendService {
+  private currentGameConnection: WebSocketSubject<any>;
 
-  private myWebSocket: WebSocketSubject<any>;
+  constructor(private http: HttpClient) {}
 
-
-  constructor() {
-    console.log('init ws');
-    this.myWebSocket = webSocket('ws://localhost:8080/jass/jan');
-    this.myWebSocket.subscribe();
+  createNewGame(username: string): Observable<Game> {
+    return this.http.get<Game>(`http://localhost:8080/jass/${username}`);
   }
 
-  getObservable() {
-    return this.myWebSocket.asObservable();
+  startGame(username: string, gameId: string): Observable<any> {
+    this.currentGameConnection = webSocket(
+      `ws://localhost:8080/jass/${username}/${gameId}`
+    );
+    this.currentGameConnection.subscribe();
+    return this.currentGameConnection.asObservable();
   }
-
-  startGame() {
-    this.myWebSocket.next({event: 'start'});
-  }
-
-
 }
