@@ -5,7 +5,7 @@ import ch.jasser.entity.Player;
 import java.util.UUID;
 
 public class JoinGamePayload implements Payload {
-    private Player player;
+    private String player;
     private UUID gameId;
 
     public UUID getGameId() {
@@ -16,11 +16,11 @@ public class JoinGamePayload implements Payload {
         this.gameId = gameId;
     }
 
-    public Player getPlayer() {
+    public String getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(String player) {
         this.player = player;
     }
 }

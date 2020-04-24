@@ -10,8 +10,8 @@ public class Game {
         this.gameId = UUID.randomUUID();
     }
 
-    public void addPlayers(Player player) {
-        this.players.add(player);
+    public void addPlayers(String player) {
+        this.players.add(new Player(player));
     }
 
     public UUID getGameId() {

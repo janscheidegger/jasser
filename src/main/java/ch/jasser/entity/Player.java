@@ -3,10 +3,8 @@ package ch.jasser.entity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class Player {
-    private UUID id = UUID.randomUUID();
     private String name;
     private List<Card> hand = new ArrayList<>();
 
@@ -22,6 +20,10 @@ public class Player {
         return hand.remove(card);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public List<Card> getHand() {
         return Collections.unmodifiableList(hand);
     }
@@ -29,7 +31,6 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

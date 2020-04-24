@@ -3,8 +3,7 @@ package ch.jasser.control;
 import ch.jasser.entity.Game;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ApplicationScoped
@@ -18,6 +17,10 @@ public class OpenGames {
 
     public Game getGame(UUID uuid) {
         return games.get(uuid);
+    }
+
+    public Collection<Game> getOpenGames() {
+        return Collections.unmodifiableCollection(games.values());
     }
 
 }

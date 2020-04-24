@@ -1,4 +1,6 @@
+import { Player } from './player';
+
 export interface Game {
   gameId: string;
-  players: string[];
+  players: Player[];
 }

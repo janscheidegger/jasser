@@ -1,6 +1,8 @@
 package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.ActionHandler;
+import ch.jasser.boundry.action.EventType;
+import ch.jasser.boundry.payload.JoinGamePayload;
 import ch.jasser.control.Game;
 import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 
@@ -12,6 +14,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
@@ -28,8 +31,17 @@ public class JassSocket {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
+        Jsonb jsonb = JsonbBuilder.create();
+
         sessions.put(username, session);
         System.out.println(String.format("%s connected to Game with Id %s", username, gameId));
+        JoinGamePayload payload = new JoinGamePayload();
+        payload.setGameId(UUID.fromString(gameId));
+        payload.setPlayer(username);
+        JassMessage message = new JassMessage();
+        message.setEvent(EventType.JOIN_GAME);
+        message.setPayloadString(jsonb.toJson(payload));
+        actionHandler.handleAction(message);
         //broadcast("User " + username + " joined");
     }
 

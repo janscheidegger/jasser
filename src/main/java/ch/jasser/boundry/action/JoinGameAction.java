@@ -21,8 +21,8 @@ public class JoinGameAction implements Action<JoinGamePayload> {
     @Override
     public Optional<JassMessage> act(String payload) {
         Jsonb jsonb = JsonbBuilder.create();
-        JoinGamePayload joingGame = jsonb.fromJson(payload, JoinGamePayload.class);
-        openGames.getGame(joingGame.getGameId()).addPlayers(joingGame.getPlayer());
+        JoinGamePayload joinGame = jsonb.fromJson(payload, JoinGamePayload.class);
+        openGames.getGame(joinGame.getGameId()).addPlayers(joinGame.getPlayer());
         return Optional.empty();
     }
 
