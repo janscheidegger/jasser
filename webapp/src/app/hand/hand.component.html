@@ -1,0 +1,5 @@
+<p>hand works!</p>
+<ul>
+  <li *ngFor="let card of hand$ | async">{{card}} <button (click)="playCard(card)">Play Card</button></li>
+</ul>
+
