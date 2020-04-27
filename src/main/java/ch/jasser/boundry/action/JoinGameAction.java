@@ -1,8 +1,11 @@
 package ch.jasser.boundry.action;
 
 import ch.jasser.boundry.JassMessage;
+import ch.jasser.control.JassPlayer;
 import ch.jasser.control.OpenGames;
 import ch.jasser.boundry.payload.JoinGamePayload;
+import ch.jasser.entity.Game;
+import ch.jasser.entity.Player;
 
 import javax.enterprise.context.Dependent;
 import javax.json.bind.Jsonb;
@@ -22,7 +25,9 @@ public class JoinGameAction implements Action<JoinGamePayload> {
     public Optional<JassMessage> act(String payload) {
         Jsonb jsonb = JsonbBuilder.create();
         JoinGamePayload joinGame = jsonb.fromJson(payload, JoinGamePayload.class);
-        openGames.getGame(joinGame.getGameId()).addPlayers(joinGame.getPlayer());
+        Game openGame = openGames.getGame(joinGame.getGameId());
+        JassPlayer jassPlayer = new JassPlayer(new Player(joinGame.getPlayer()), openGame);
+        openGames.getGame(joinGame.getGameId()).joinGame(new Player(joinGame.getPlayer()));
         return Optional.empty();
     }
 

@@ -1,12 +1,12 @@
 package ch.jasser.boundry;
 
-import ch.jasser.control.Game;
+import ch.jasser.entity.Game;
 import ch.jasser.control.JassPlayer;
 import ch.jasser.entity.Player;
 
 public class TestBoundry {
     public static void main(String[] args) {
-
+/*
         Game game = new Game();
 
         JassPlayer p1 = game.joinGame(new Player("p1"));
@@ -23,7 +23,7 @@ public class TestBoundry {
         p4.playCard(p4.getHandCards().get(0));
 
         game.endCurrentTurn();
-
+*/
     }
 
 }

@@ -3,8 +3,6 @@ package ch.jasser.boundry;
 import ch.jasser.boundry.action.ActionHandler;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.boundry.payload.JoinGamePayload;
-import ch.jasser.control.Game;
-import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.bind.Jsonb;

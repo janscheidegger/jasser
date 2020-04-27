@@ -2,9 +2,7 @@ package ch.jasser.boundry;
 
 import ch.jasser.control.OpenGames;
 import ch.jasser.entity.Game;
-import org.eclipse.yasson.internal.JsonBindingBuilder;
 
-import javax.annotation.PostConstruct;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.*;

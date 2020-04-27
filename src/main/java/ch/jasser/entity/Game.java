@@ -1,37 +1,56 @@
 package ch.jasser.entity;
 
-import java.util.*;
+import ch.jasser.control.JassPlayer;
+import ch.jasser.control.gamerules.Rules;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.json.bind.annotation.JsonbTransient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.UUID;
 
 public class Game {
+
     private final UUID gameId;
-    private Set<Player> players = new HashSet<>();
+    private final GameType type;
+    private final List<JassPlayer> players;
+    private final Stack<Turn> turns;
 
     public Game() {
         this.gameId = UUID.randomUUID();
+        this.type = GameType.SCHIEBER;
+        this.players = new ArrayList<>();
+        turns = new Stack<>();
     }
 
-    public void addPlayers(String player) {
-        this.players.add(new Player(player));
+    public JassPlayer joinGame(Player newPlayer) {
+        JassPlayer jassPlayer = new JassPlayer(newPlayer, this);
+        players.add(jassPlayer);
+        return jassPlayer;
     }
+
+    public List<JassPlayer> getPlayers() {
+        return players;
+    }
+
+    public void nextTurn() {
+        Turn turn = new Turn();
+        this.turns.push(turn);
+    }
+
+    @JsonbTransient
+    public Turn getCurrentTurn() {
+        return this.turns.peek();
+    }
+
+    /*public void endCurrentTurn() {
+        System.out.println(this.turns.peek().getWinningPlayer());
+
+    }*/
+
 
     public UUID getGameId() {
         return gameId;
-    }
-
-    public Set<Player> getPlayers() {
-        return Collections.unmodifiableSet(players);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Game game = (Game) o;
-        return gameId.equals(game.gameId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gameId);
     }
 }
