@@ -1,0 +1,37 @@
+
+
+
+:host {
+  display: grid;
+
+  grid-template-columns: repeat(9, 1fr);
+    grid-auto-rows: minmax(100px, auto);
+    grid-template-areas:
+      "aa aa aa table table table pts pts pts"
+      "aa aa aa table table table info chat chat"
+      "aa aa aa hand hand hand info chat chat";
+}
+
+.hand {
+  grid-area: hand;
+}
+
+.table {
+  grid-area: table;
+}
+
+.chat {
+  grid-area: chat;
+}
+
+.info {
+  grid-area: info;
+}
+
+.aa {
+  grid-area: aa;
+}
+
+.pts {
+  grid-area: pts;
+}

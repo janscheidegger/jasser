@@ -1,0 +1,21 @@
+.container {
+  display: inline-grid;
+  height: 120px;;
+  width: 80px;
+  grid-template-columns: 10% auto 10%;
+  grid-template-rows: 10% auto 10%;
+  padding: 10px;
+  border: solid black 1px;
+  border-radius: 10%;
+}
+
+.suit {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.rank {
+  grid-column: 2;
+  grid-row: 2;
+  margin: auto auto;
+}

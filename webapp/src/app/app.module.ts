@@ -13,6 +13,7 @@ import { GameComponent } from './game/game.component';
 import { HandComponent } from './hand/hand.component';
 import { TableComponent } from './table/table.component';
 import { jassReducer } from './jass.reducer';
+import { CardComponent } from './card/card.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { jassReducer } from './jass.reducer';
     AppComponent,
     GameComponent,
     HandComponent,
-    TableComponent
+    TableComponent,
+    CardComponent
   ],
   imports: [
     BrowserModule,

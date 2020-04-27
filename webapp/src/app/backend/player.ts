@@ -1,4 +1,6 @@
+import { Card } from './card';
+
 export interface Player {
   name: string;
-  hand: any[];
+  hand: Card[];
 }
