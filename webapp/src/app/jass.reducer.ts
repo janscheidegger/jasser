@@ -4,7 +4,7 @@ import { playCard } from './jass.actions';
 
 export const initialState: JassState = {
   hand: [
-    { rank: 'ACE', suit: 'HEART' },
+    { rank: 'ACE', suit: 'HEARTS' },
     { rank: 'KING', suit: 'SPADES' },
   ],
   players: [

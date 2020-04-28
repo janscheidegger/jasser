@@ -22,7 +22,7 @@ public class JoinGameAction implements Action<JoinGamePayload> {
     }
 
     @Override
-    public Optional<JassMessage> act(String payload) {
+    public Optional<JassMessage> act(String username, String gameId, String payload) {
         Jsonb jsonb = JsonbBuilder.create();
         JoinGamePayload joinGame = jsonb.fromJson(payload, JoinGamePayload.class);
         Game openGame = openGames.getGame(joinGame.getGameId());

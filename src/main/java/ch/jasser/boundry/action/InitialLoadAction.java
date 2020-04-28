@@ -17,7 +17,7 @@ public class InitialLoadAction implements Action<EmptyPayload> {
 
 
     @Override
-    public Optional<JassMessage> act(String payload) {
+    public Optional<JassMessage> act(String username, String gameId, String payload) {
         Jsonb jsonb = JsonbBuilder.create();
         InitialLoadResponse initialLoadResponse = new InitialLoadResponse();
         initialLoadResponse.addCard(new Card(Rank.ACE, Suit.DIAMONDS));

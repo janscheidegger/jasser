@@ -39,7 +39,7 @@ public class JassSocket {
         JassMessage message = new JassMessage();
         message.setEvent(EventType.JOIN_GAME);
         message.setPayloadString(jsonb.toJson(payload));
-        actionHandler.handleAction(message);
+        actionHandler.handleAction(username, gameId, message);
         //broadcast("User " + username + " joined");
     }
 
@@ -59,7 +59,7 @@ public class JassSocket {
     public void onMessage(String message, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         Jsonb jsonb = JsonbBuilder.create();
         JassMessage jassMessage = jsonb.fromJson(message, JassMessage.class);
-        Optional<JassMessage> response = actionHandler.handleAction(jassMessage);
+        Optional<JassMessage> response = actionHandler.handleAction(username, gameId, jassMessage);
         if (response.isPresent()) {
             System.out.println("broadcasting");
             broadcast(jsonb.toJson(response));

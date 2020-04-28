@@ -19,7 +19,7 @@ public class StartGameAction implements Action<EmptyPayload> {
     }
 
     @Override
-    public Optional<JassMessage> act(String payload) {
+    public Optional<JassMessage> act(String username, String gameId, String payload) {
         Game game = new Game();
         this.openGames.addOpenGame(game);
         System.out.println("created game" + game.getGameId());

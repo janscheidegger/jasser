@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { HttpClientModule } from '@angular/common/http';
 import { GameComponent } from './game/game.component';
@@ -14,7 +15,7 @@ import { HandComponent } from './hand/hand.component';
 import { TableComponent } from './table/table.component';
 import { jassReducer } from './jass.reducer';
 import { CardComponent } from './card/card.component';
-
+import { JassEffects } from './jass.effects';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { CardComponent } from './card/card.component';
     GameComponent,
     HandComponent,
     TableComponent,
-    CardComponent
+    CardComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,12 +32,13 @@ import { CardComponent } from './card/card.component';
     BrowserAnimationsModule,
     MatInputModule,
     MatCardModule,
-    StoreModule.forRoot({jass: jassReducer}),
+    StoreModule.forRoot({ jass: jassReducer }),
+    EffectsModule.forRoot([JassEffects]),
     StoreDevtoolsModule.instrument({
-      maxAge: 10
-    })
+      maxAge: 10,
+    }),
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,7 +1,8 @@
 import { Player } from './backend/player';
+import { Card } from './backend/card';
 
 export interface JassState {
   players: Player[];
-  hand: any[];
-  table: any[];
+  hand: Card[];
+  table: Card[];
 }

@@ -7,6 +7,7 @@ import ch.jasser.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class JassPlayer {
 
@@ -39,6 +40,19 @@ public class JassPlayer {
         } else {
             throw new RuntimeException(String.format("Cannot play this card [%s]", card));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JassPlayer that = (JassPlayer) o;
+        return player.equals(that.player);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(player);
     }
 
     @Override

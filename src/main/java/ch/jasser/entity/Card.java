@@ -1,13 +1,16 @@
 package ch.jasser.entity;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 public class Card {
 
-    private final Rank rank;
-    private final Suit suit;
+    private Rank rank;
+    private Suit suit;
 
-    public Card(Rank rank, Suit suit) {
+    @JsonbCreator
+    public Card(@JsonbProperty("rank") Rank rank, @JsonbProperty("suit") Suit suit) {
         this.rank = rank;
         this.suit = suit;
     }

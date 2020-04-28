@@ -9,11 +9,19 @@ import ch.jasser.entity.Suit;
 
 import javax.enterprise.context.Dependent;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Dependent
 public class GameCoordinator {
+
+    private OpenGames openGames;
+
+    public GameCoordinator(OpenGames openGames) {
+        this.openGames = openGames;
+    }
+
     public void handOutCard(JassPlayer player, Card card) {
         player.receiveCard(card);
     }
@@ -34,9 +42,14 @@ public class GameCoordinator {
         }
     }
 
-    public void playCard(Game game, Card card, JassPlayer player) {
-        if (player.playCard(card)) {
-            game.getCurrentTurn().addCard(player, card);
+    public void playCard(String username, String gameId, Card card) {
+        Game game = openGames.getGame(UUID.fromString(gameId));
+        Optional<JassPlayer> player = game.getPlayers().stream()
+                .filter(p -> p.getName().equals(username))
+                .findFirst();
+        JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
+        if (jassPlayer.playCard(card)) {
+            game.getCurrentTurn().addCard(jassPlayer, card);
         }
         System.out.println(String.format("%s played %s", player, card));
         /*if(firstCardOnTable()) {
