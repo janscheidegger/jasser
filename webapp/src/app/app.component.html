@@ -1,7 +1,7 @@
 <form class="">
   <mat-form-field class="">
     <mat-label>Name</mat-label>
-    <input matInput placeholder="Jass Player" value="" />
+    <input matInput placeholder="Jass Player" value="" #user />
   </mat-form-field>
 </form>
 <mat-card *ngFor="let openGame of openGames$ | async">
@@ -9,7 +9,7 @@
 
   <span *ngFor="let player of openGame.players"> {{ player.name }}</span>
 
-  <button (click)="startGame(openGame.gameId)">Send Message to Backend</button>
+  <button (click)="startGame(openGame.gameId, user.value)">Send Message to Backend</button>
 </mat-card>
 
 <button (click)="createGame()">Create Game</button>

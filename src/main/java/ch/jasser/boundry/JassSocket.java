@@ -40,7 +40,6 @@ public class JassSocket {
         message.setEvent(EventType.JOIN_GAME);
         message.setPayloadString(jsonb.toJson(payload));
         actionHandler.handleAction(username, gameId, message);
-        //broadcast("User " + username + " joined");
     }
 
     @OnClose

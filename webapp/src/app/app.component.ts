@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BackendService } from './backend/backend.service';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Game } from './backend/game';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -11,14 +12,16 @@ import { Game } from './backend/game';
 export class AppComponent implements OnInit {
   title = 'webapp';
 
-  private backendObservable: Observable<any>;
+  private readonly refreshToken$ = new BehaviorSubject(undefined);
 
   username: string;
   openGames$: Observable<Game[]>;
 
   constructor(private service: BackendService) {}
   ngOnInit(): void {
-    this.openGames$ = this.service.listOpenGames('jan');
+    this.openGames$ = this.refreshToken$.pipe(
+      switchMap(() => this.service.listOpenGames())
+    );
   }
 
   initialLoad() {
@@ -26,15 +29,12 @@ export class AppComponent implements OnInit {
   }
 
   createGame() {
-    this.service.createGame('jan').subscribe();
+    this.service
+      .createGame()
+      .subscribe(() => this.refreshToken$.next(undefined));
   }
 
-  startGame(gameId: string) {
-    this.backendObservable = this.service.joinGame('jan', gameId);
-    this.backendObservable.subscribe(
-      (v) => console.log(v),
-      (e) => console.error(e),
-      () => console.log('complete')
-    );
+  startGame(gameId: string, username: string) {
+    this.service.joinGame(username, gameId);
   }
 }

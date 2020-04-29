@@ -9,7 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/jass/{username}/games")
+@Path("/jass/games")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class JassRessource {
@@ -30,7 +30,7 @@ public class JassRessource {
     }
 
     @GET
-    public Response listGames(@PathParam("username") String username) {
+    public Response listGames() {
         return Response.ok(jsonb.toJson(openGames.getOpenGames()))
                 .build();
     }

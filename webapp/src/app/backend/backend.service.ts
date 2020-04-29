@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { Game } from './game';
 import { Card } from './card';
 import { JsonPipe } from '@angular/common';
+import { EventHandlerService } from './event-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,17 +19,17 @@ export class BackendService {
     }),
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private eventHandler: EventHandlerService) {}
 
-  listOpenGames(username: string): Observable<Game[]> {
+  listOpenGames(): Observable<Game[]> {
     return this.http.get<Game[]>(
-      `http://localhost:8080/jass/${username}/games`
+      `http://localhost:8080/jass/games`
     );
   }
 
-  createGame(username: string) {
+  createGame() {
     return this.http.post<Game>(
-      `http://localhost:8080/jass/${username}/games`,
+      `http://localhost:8080/jass/games`,
       '{}',
       this.httpOptions
     );
@@ -45,11 +46,14 @@ export class BackendService {
     this.currentGameConnection.next({ event: 'INITIAL_LOAD' });
   }
 
-  joinGame(username: string, gameId: string): Observable<any> {
+  joinGame(username: string, gameId: string): void {
     this.currentGameConnection = webSocket(
       `ws://localhost:8080/jass/${username}/${gameId}`
     );
-    this.currentGameConnection.subscribe();
-    return this.currentGameConnection.asObservable();
+    this.currentGameConnection.subscribe(
+      ev => this.eventHandler.handleEvent(ev),
+      err => this.eventHandler.onError(err),
+      () => this.eventHandler.onComplete
+    );
   }
 }
