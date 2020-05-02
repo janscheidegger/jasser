@@ -1,25 +1,17 @@
 package ch.jasser.control.gamerules.schieber;
 
-import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.JassPlayer;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Rank;
 import ch.jasser.entity.Suit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Schieber implements Rules {
 
-    private final GameCoordinator coordinator;
     private final SchieberCardRater cardRater = new SchieberCardRater();
 
-    public Schieber(GameCoordinator coordinator) {
-        this.coordinator = coordinator;
-    }
 
     @Override
     public List<Card> getInitialDeck() {
@@ -34,10 +26,12 @@ public class Schieber implements Rules {
     }
 
     @Override
-    public void handOutCards(List<Card> initialDeck, List<JassPlayer> players) {
+    public Map<JassPlayer, List<Card>> handOutCards(List<Card> initialDeck, List<JassPlayer> players) {
+        Map<JassPlayer, List<Card>> cardsPerPlayer = new HashMap<>();
         for (int i = 0; i < initialDeck.size(); i++) {
-            coordinator.handOutCard(players.get(i % players.size()), initialDeck.get(i));
+            cardsPerPlayer.computeIfAbsent(players.get(i % players.size()), k -> new ArrayList<>()).add(initialDeck.get(i));
         }
+        return cardsPerPlayer;
     }
 
     @Override
