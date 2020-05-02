@@ -6,6 +6,7 @@ import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.GameType;
 import ch.jasser.entity.Suit;
+import com.mongodb.client.MongoClient;
 
 import javax.enterprise.context.Dependent;
 import java.util.ArrayList;

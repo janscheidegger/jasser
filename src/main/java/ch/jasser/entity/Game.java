@@ -21,7 +21,14 @@ public class Game {
         this.gameId = UUID.randomUUID();
         this.type = GameType.SCHIEBER;
         this.players = new ArrayList<>();
-        turns = new Stack<>();
+        this.turns = new Stack<>();
+    }
+
+    public Game(UUID uuid, GameType type) {
+        this.gameId = uuid;
+        this.type = type;
+        this.players = new ArrayList<>();
+        this.turns = new Stack<>();
     }
 
     public JassPlayer joinGame(Player newPlayer) {
@@ -44,13 +51,13 @@ public class Game {
         return this.turns.peek();
     }
 
-    /*public void endCurrentTurn() {
-        System.out.println(this.turns.peek().getWinningPlayer());
-
-    }*/
-
+    public GameType getType() {
+        return this.type;
+    }
 
     public UUID getGameId() {
         return gameId;
     }
+
+
 }
