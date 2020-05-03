@@ -37,4 +37,8 @@ export class AppComponent implements OnInit {
   startGame(gameId: string, username: string) {
     this.service.joinGame(username, gameId);
   }
+
+  handOutCards() {
+    this.service.handOutCards();
+  }
 }

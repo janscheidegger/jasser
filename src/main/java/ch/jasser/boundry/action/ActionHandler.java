@@ -16,11 +16,13 @@ public class ActionHandler {
     public ActionHandler(StartGameAction startGameAction,
                          JoinGameAction joinGameAction,
                          InitialLoadAction initialLoadAction,
-                         PlayCardAction playCardAction) {
+                         PlayCardAction playCardAction,
+                         HandOutCardsAction handOutCardsAction) {
         actionMap = Map.of(
                 EventType.START_GAME, startGameAction,
                 EventType.JOIN_GAME, joinGameAction,
                 EventType.INITIAL_LOAD, initialLoadAction,
+                EventType.HAND_OUT_CARDS, handOutCardsAction,
                 EventType.PLAY_CARD, playCardAction
         );
     }
@@ -30,7 +32,7 @@ public class ActionHandler {
 
     public Optional<JassMessage> handleAction(String username, String gameId, JassMessage message) {
         System.out.println(String.format("[%s]", message.getEvent()));
-        System.out.println(message.getPayloadString());
+        System.out.println("PAYLOAD: "+message.getPayloadString());
         var actionHandler = actionMap.getOrDefault(message.getEvent(), defaultAct);
         return actionHandler.act(username, gameId, message.getPayloadString());
     }

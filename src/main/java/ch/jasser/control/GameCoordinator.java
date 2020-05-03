@@ -1,5 +1,8 @@
 package ch.jasser.control;
 
+import ch.jasser.boundry.JassMessage;
+import ch.jasser.boundry.JassSocket;
+import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.gamerules.schieber.Schieber;
 import ch.jasser.entity.Card;
@@ -9,19 +12,33 @@ import ch.jasser.entity.Suit;
 import com.mongodb.client.MongoClient;
 
 import javax.enterprise.context.Dependent;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.*;
 
 @Dependent
 public class GameCoordinator {
 
     private OpenGames openGames;
+    private JassSocket jassSocket;
 
-    public GameCoordinator(OpenGames openGames) {
+    public GameCoordinator(OpenGames openGames,
+                           JassSocket jassSocket) {
         this.openGames = openGames;
+        this.jassSocket = jassSocket;
     }
 
     public void handOutCard(JassPlayer player, Card card) {
         player.receiveCard(card);
+
+        Jsonb json = JsonbBuilder.create();
+
+        JassMessage message = new JassMessage();
+        message.setEvent(EventType.RECEIVE_CARD);
+        message.setPayloadString(json.toJson(card));
+
+
+        jassSocket.sendToUser(player.getName(), message);
     }
 
     public JassPlayer getWinningPlayer(Rules rules, Map<Card, JassPlayer> cardsOnTable, Suit currentSuit, Suit trump) {
@@ -35,7 +52,7 @@ public class GameCoordinator {
 
     private void handOutCards(GameType type, Game game) {
         if (type.equals(GameType.SCHIEBER)) {
-            Rules gameRules = new Schieber(this);
+            Rules gameRules = new Schieber();
             Map<JassPlayer, List<Card>> jassPlayerListMap = gameRules.handOutCards(gameRules.getInitialDeck(), game.getPlayers());
             for (Map.Entry<JassPlayer, List<Card>> list : jassPlayerListMap.entrySet()) {
                 for(Card card : list.getValue()) {

@@ -15,7 +15,6 @@ import java.util.Optional;
 @Dependent
 public class InitialLoadAction implements Action<EmptyPayload> {
 
-
     @Override
     public Optional<JassMessage> act(String username, String gameId, String payload) {
         Jsonb jsonb = JsonbBuilder.create();
@@ -26,7 +25,7 @@ public class InitialLoadAction implements Action<EmptyPayload> {
         JassMessage response = new JassMessage();
         response.setEvent(EventType.INITIAL_LOAD);
         response.setPayloadString(jsonb.toJson(initialLoadResponse));
-        System.out.println(response);
+        System.out.println("INITIALLOAD: "+response);
         return Optional.of(response);
     }
 }

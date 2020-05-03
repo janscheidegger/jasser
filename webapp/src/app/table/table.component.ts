@@ -13,6 +13,7 @@ export class TableComponent {
   cardsOnTable$: Observable<any[]>;
 
   constructor(private store: Store<{jass: JassState}>) {
+
     this.cardsOnTable$ = store.pipe(select(state => state.jass.table));
   }
 }

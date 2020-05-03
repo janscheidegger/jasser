@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JassSocket {
 
     private ActionHandler actionHandler;
+    private Jsonb jsonb = JsonbBuilder.create();
+
 
     public JassSocket(ActionHandler actionHandler) {
         this.actionHandler = actionHandler;
@@ -45,12 +47,14 @@ public class JassSocket {
     @OnClose
     public void onClose(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         sessions.remove(username);
+        System.out.println("Session closed");
         broadcast("User " + username + " left");
     }
 
     @OnError
     public void onError(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId, Throwable throwable) {
         sessions.remove(username);
+        System.err.println( throwable);
         broadcast("User " + username + " left on error: " + throwable);
     }
 
@@ -65,8 +69,13 @@ public class JassSocket {
         }
     }
 
-    private void sendToUser(String user, String message) {
-        sessions.get(user).getAsyncRemote().sendObject(message, result -> {
+    public void sendToUser(String user, JassMessage message) {
+        String messageString = this.jsonb.toJson(message);
+
+        System.out.println("SEND TO USER");
+        System.out.println(sessions.keySet());
+        System.out.println(sessions.get(user));
+        sessions.get(user).getAsyncRemote().sendObject(messageString, result -> {
             if (result.getException() != null) {
                 System.out.println("Unable to send Message: " + result.getException());
             }
@@ -74,8 +83,9 @@ public class JassSocket {
     }
 
     private void broadcast(String message) {
+        String messageString = this.jsonb.toJson(message);
         sessions.values().forEach(s -> {
-            s.getAsyncRemote().sendObject(message, result -> {
+            s.getAsyncRemote().sendObject(messageString, result -> {
                 if (result.getException() != null) {
                     System.out.println("Unable to send message: " + result.getException());
                 }

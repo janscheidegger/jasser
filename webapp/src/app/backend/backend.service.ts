@@ -46,6 +46,10 @@ export class BackendService {
     this.currentGameConnection.next({ event: 'INITIAL_LOAD' });
   }
 
+  handOutCards() {
+    this.currentGameConnection.next({event: 'HAND_OUT_CARDS'});
+  }
+
   joinGame(username: string, gameId: string): void {
     this.currentGameConnection = webSocket(
       `ws://localhost:8080/jass/${username}/${gameId}`

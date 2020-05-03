@@ -1,6 +1,6 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import { JassState } from './jass.state';
-import { playCard, initialLoad } from './jass.actions';
+import { playCard, initialLoad, receiveCard } from './jass.actions';
 
 export const initialState: JassState = {
   hand: [
@@ -23,6 +23,11 @@ const reducer = createReducer(
     ...state,
     hand: state.hand.filter((c) => c !== card),
     table: [...state.table, card],
+  })),
+  on(receiveCard, (state, {card}) => (
+    {
+    ...state,
+    hand: [...state.hand, card]
   }))
 );
 
