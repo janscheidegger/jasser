@@ -14,10 +14,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
 public class JassSocket {
+
+    private static final Logger LOG = Logger.getLogger(JassSocket.class.getSimpleName());
 
     private ActionHandler actionHandler;
     private Jsonb jsonb = JsonbBuilder.create();
@@ -54,7 +57,7 @@ public class JassSocket {
     @OnError
     public void onError(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId, Throwable throwable) {
         sessions.remove(username);
-        System.err.println( throwable);
+        System.err.println(throwable);
         broadcast("User " + username + " left on error: " + throwable);
     }
 
@@ -71,15 +74,15 @@ public class JassSocket {
 
     public void sendToUser(String user, JassMessage message) {
         String messageString = this.jsonb.toJson(message);
-
-        System.out.println("SEND TO USER");
-        System.out.println(sessions.keySet());
-        System.out.println(sessions.get(user));
-        sessions.get(user).getAsyncRemote().sendObject(messageString, result -> {
-            if (result.getException() != null) {
-                System.out.println("Unable to send Message: " + result.getException());
-            }
-        });
+        if (sessions.containsKey(user)) {
+            sessions.get(user).getAsyncRemote().sendObject(messageString, result -> {
+                if (result.getException() != null) {
+                    System.out.println("Unable to send Message: " + result.getException());
+                }
+            });
+        } else {
+            System.out.println("User " + user + " has no active session");
+        }
     }
 
     private void broadcast(String message) {

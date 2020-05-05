@@ -11,6 +11,8 @@ You can run your application in dev mode that enables live coding using:
 ./mvnw quarkus:dev
 ```
 
+`ocker run -ti --rm -p 27017:27017 mongo:4.0`
+
 ## Packaging and running the application
 
 The application can be packaged using `./mvnw package`.

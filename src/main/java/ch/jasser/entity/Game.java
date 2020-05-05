@@ -31,14 +31,12 @@ public class Game {
         this.turns = new Stack<>();
     }
 
-    public JassPlayer joinGame(Player newPlayer) {
-        JassPlayer jassPlayer = new JassPlayer(newPlayer, this);
-        players.add(jassPlayer);
-        return jassPlayer;
-    }
-
     public List<JassPlayer> getPlayers() {
         return players;
+    }
+
+    public void addPlayer(String name) {
+        this.players.add(new JassPlayer(new Player(name), this));
     }
 
     public void nextTurn() {

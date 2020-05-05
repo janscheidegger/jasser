@@ -1,3 +1,10 @@
+# Backend
+
+## Mongo 
+
+Start db `ocker run -ti --rm -p 27017:27017 mongo:4.0`
+
+
 # Webapp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.1.

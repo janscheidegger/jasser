@@ -5,10 +5,7 @@ import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.gamerules.schieber.Schieber;
-import ch.jasser.entity.Card;
-import ch.jasser.entity.Game;
-import ch.jasser.entity.GameType;
-import ch.jasser.entity.Suit;
+import ch.jasser.entity.*;
 import com.mongodb.client.MongoClient;
 
 import javax.enterprise.context.Dependent;
@@ -21,11 +18,14 @@ public class GameCoordinator {
 
     private OpenGames openGames;
     private JassSocket jassSocket;
+    private GamesRepository gamesRepository;
 
     public GameCoordinator(OpenGames openGames,
-                           JassSocket jassSocket) {
+                           JassSocket jassSocket,
+                           GamesRepository gamesRepository) {
         this.openGames = openGames;
         this.jassSocket = jassSocket;
+        this.gamesRepository = gamesRepository;
     }
 
     public void handOutCard(JassPlayer player, Card card) {
@@ -50,12 +50,16 @@ public class GameCoordinator {
         handOutCards(type, game);
     }
 
+    public void joinGame(String game, String player) {
+        gamesRepository.addPlayer(UUID.fromString(game), new Player(player));
+    }
+
     private void handOutCards(GameType type, Game game) {
         if (type.equals(GameType.SCHIEBER)) {
             Rules gameRules = new Schieber();
             Map<JassPlayer, List<Card>> jassPlayerListMap = gameRules.handOutCards(gameRules.getInitialDeck(), game.getPlayers());
             for (Map.Entry<JassPlayer, List<Card>> list : jassPlayerListMap.entrySet()) {
-                for(Card card : list.getValue()) {
+                for (Card card : list.getValue()) {
                     handOutCard(list.getKey(), card);
                 }
             }

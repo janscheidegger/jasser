@@ -1,6 +1,7 @@
 package ch.jasser.boundry.action;
 
 import ch.jasser.boundry.JassMessage;
+import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.JassPlayer;
 import ch.jasser.control.OpenGames;
 import ch.jasser.boundry.payload.JoinGamePayload;
@@ -15,19 +16,17 @@ import java.util.Optional;
 @Dependent
 public class JoinGameAction implements Action<JoinGamePayload> {
 
-    private OpenGames openGames;
+    private GameCoordinator coordinator;
 
-    public JoinGameAction(OpenGames openGames) {
-        this.openGames = openGames;
+    public JoinGameAction(GameCoordinator coordinator) {
+        this.coordinator = coordinator;
     }
 
     @Override
     public Optional<JassMessage> act(String username, String gameId, String payload) {
         Jsonb jsonb = JsonbBuilder.create();
         JoinGamePayload joinGame = jsonb.fromJson(payload, JoinGamePayload.class);
-        Game openGame = openGames.getGame(joinGame.getGameId());
-        JassPlayer jassPlayer = new JassPlayer(new Player(joinGame.getPlayer()), openGame);
-        openGames.getGame(joinGame.getGameId()).joinGame(new Player(joinGame.getPlayer()));
+        coordinator.joinGame(gameId, username);
         return Optional.empty();
     }
 
