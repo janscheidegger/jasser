@@ -1,6 +1,6 @@
 package ch.jasser.control.gamerules;
 
-import ch.jasser.control.JassPlayer;
+import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Suit;
 

@@ -6,7 +6,6 @@ import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.gamerules.schieber.Schieber;
 import ch.jasser.entity.*;
-import com.mongodb.client.MongoClient;
 
 import javax.enterprise.context.Dependent;
 import javax.json.bind.Jsonb;
@@ -28,7 +27,7 @@ public class GameCoordinator {
         this.gamesRepository = gamesRepository;
     }
 
-    public void handOutCard(JassPlayer player, Card card) {
+    public void handOutCard(String gameId, JassPlayer player, Card card) {
         player.receiveCard(card);
 
         Jsonb json = JsonbBuilder.create();
@@ -37,6 +36,7 @@ public class GameCoordinator {
         message.setEvent(EventType.RECEIVE_CARD);
         message.setPayloadString(json.toJson(card));
 
+        gamesRepository.handOutCard(gameId, player.getName(), card);
 
         jassSocket.sendToUser(player.getName(), message);
     }
@@ -50,8 +50,8 @@ public class GameCoordinator {
         handOutCards(type, game);
     }
 
-    public void joinGame(String game, String player) {
-        gamesRepository.addPlayer(UUID.fromString(game), new Player(player));
+    public void joinGame(String gameId, String player) {
+        gamesRepository.addPlayer(gameId, new JassPlayer(player));
     }
 
     private void handOutCards(GameType type, Game game) {
@@ -60,7 +60,7 @@ public class GameCoordinator {
             Map<JassPlayer, List<Card>> jassPlayerListMap = gameRules.handOutCards(gameRules.getInitialDeck(), game.getPlayers());
             for (Map.Entry<JassPlayer, List<Card>> list : jassPlayerListMap.entrySet()) {
                 for (Card card : list.getValue()) {
-                    handOutCard(list.getKey(), card);
+                    handOutCard(game.getGameId(), list.getKey(), card);
                 }
             }
         }

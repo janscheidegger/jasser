@@ -1,6 +1,6 @@
 package ch.jasser.control.gamerules.schieber;
 
-import ch.jasser.control.JassPlayer;
+import ch.jasser.entity.JassPlayer;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Rank;

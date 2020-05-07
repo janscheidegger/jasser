@@ -1,7 +1,5 @@
 package ch.jasser.boundry.payload;
 
-import ch.jasser.entity.Player;
-
 import java.util.UUID;
 
 public class JoinGamePayload implements Payload {

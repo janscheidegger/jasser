@@ -1,9 +1,5 @@
 package ch.jasser.entity;
 
-import ch.jasser.control.JassPlayer;
-import ch.jasser.entity.Card;
-import ch.jasser.entity.Suit;
-
 import java.util.HashMap;
 import java.util.Map;
 

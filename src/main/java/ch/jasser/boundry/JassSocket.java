@@ -10,6 +10,7 @@ import javax.json.bind.JsonbBuilder;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,14 +52,13 @@ public class JassSocket {
     public void onClose(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         sessions.remove(username);
         System.out.println("Session closed");
-        broadcast("User " + username + " left");
     }
 
     @OnError
-    public void onError(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId, Throwable throwable) {
+    public void onError(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId, Throwable throwable) throws Throwable {
         sessions.remove(username);
         System.err.println(throwable);
-        broadcast("User " + username + " left on error: " + throwable);
+        throw throwable;
     }
 
     @OnMessage
@@ -68,7 +68,7 @@ public class JassSocket {
         Optional<JassMessage> response = actionHandler.handleAction(username, gameId, jassMessage);
         if (response.isPresent()) {
             System.out.println("broadcasting");
-            broadcast(jsonb.toJson(response));
+            sendToUser(username, response.get());
         }
     }
 
@@ -85,7 +85,7 @@ public class JassSocket {
         }
     }
 
-    private void broadcast(String message) {
+    private void broadcast(List<String> users, JassMessage message) {
         String messageString = this.jsonb.toJson(message);
         sessions.values().forEach(s -> {
             s.getAsyncRemote().sendObject(messageString, result -> {

@@ -2,11 +2,7 @@ package ch.jasser.boundry.action;
 
 import ch.jasser.boundry.JassMessage;
 import ch.jasser.control.GameCoordinator;
-import ch.jasser.control.JassPlayer;
-import ch.jasser.control.OpenGames;
 import ch.jasser.boundry.payload.JoinGamePayload;
-import ch.jasser.entity.Game;
-import ch.jasser.entity.Player;
 
 import javax.enterprise.context.Dependent;
 import javax.json.bind.Jsonb;
