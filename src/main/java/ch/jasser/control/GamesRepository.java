@@ -3,6 +3,7 @@ package ch.jasser.control;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
+import ch.jasser.entity.Turn;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -44,13 +45,16 @@ public class GamesRepository {
         getCollection().updateOne(eq("gameId", gameId), Updates.addToSet("players", player));
     }
 
-
+    void addTurn(String gameId, Turn turn) {
+        getCollection().updateOne(eq("gameId", gameId), Updates.addToSet("turns", turn));
+    }
 
     private Document toDocument(Game game) {
         return new Document()
                 .append("gameId", game.getGameId())
                 .append("type", game.getType())
-                .append("players", Collections.emptyList());
+                .append("players", Collections.emptyList())
+                .append("turns", Collections.emptyList());
     }
 
     private MongoCollection<Document> getCollection() {
@@ -63,5 +67,13 @@ public class GamesRepository {
 
     public void handOutCard(String gameId, String name, Card card) {
         getCollection().updateOne(and(eq("gameId", gameId), eq("players.name", name)), Updates.addToSet("players.$.hand", card));
+    }
+
+    public void removeCardFromPlayer(String gameId, JassPlayer jassPlayer, Card card) {
+        getCollection().updateOne(
+                and(
+                        eq("gameId", gameId),
+                        eq("players.name", jassPlayer.getName())),
+                Updates.pull("players.$.hand", card));
     }
 }

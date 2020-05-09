@@ -2,13 +2,11 @@ package ch.jasser.entity;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import javax.json.bind.annotation.JsonbTransient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.UUID;
+import java.util.*;
 
 @BsonDiscriminator
 public class Game {
@@ -16,20 +14,25 @@ public class Game {
     private final String gameId;
     private final GameType type;
     private final List<JassPlayer> players;
-    private final Stack<Turn> turns = new Stack<>();
+    private final List<Turn> turns;
 
     public Game() {
         this.gameId = UUID.randomUUID().toString();
         this.type = GameType.SCHIEBER;
-        this.players =  new ArrayList<>();
+        this.players = new ArrayList<>();
+        this.turns = new LinkedList<>();
 
     }
 
     @BsonCreator
-    public Game(@BsonProperty("gameId") String uuid, @BsonProperty("type") GameType type, @BsonProperty("players") List<JassPlayer> players) {
+    public Game(@BsonProperty("gameId") String uuid,
+                @BsonProperty("type") GameType type,
+                @BsonProperty("players") List<JassPlayer> players,
+                @BsonProperty("turns") List<Turn> turns) {
         this.gameId = uuid;
         this.type = type;
         this.players = players;
+        this.turns = turns;
     }
 
     public List<JassPlayer> getPlayers() {
@@ -40,14 +43,19 @@ public class Game {
         this.players.add(new JassPlayer(player));
     }
 
-    public void nextTurn() {
+    public Turn nextTurn() {
         Turn turn = new Turn();
-        this.turns.push(turn);
+        this.turns.add(turn);
+        return turn;
     }
 
     @JsonbTransient
+    @BsonIgnore
     public Turn getCurrentTurn() {
-        return this.turns.peek();
+        if (!turns.isEmpty()) {
+            return this.turns.get(turns.size() - 1);
+        }
+        return null;
     }
 
     public GameType getType() {
@@ -58,5 +66,7 @@ public class Game {
         return gameId;
     }
 
-
+    public List<Turn> getTurns() {
+        return turns;
+    }
 }

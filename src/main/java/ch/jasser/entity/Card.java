@@ -1,16 +1,23 @@
 package ch.jasser.entity;
 
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
+@BsonDiscriminator
 public class Card {
 
     private Rank rank;
     private Suit suit;
 
     @JsonbCreator
-    public Card(@JsonbProperty("rank") Rank rank, @JsonbProperty("suit") Suit suit) {
+    @BsonCreator
+    public Card(@BsonProperty("rank") @JsonbProperty("rank") Rank rank,
+                @BsonProperty("suit") @JsonbProperty("suit") Suit suit) {
         this.rank = rank;
         this.suit = suit;
     }

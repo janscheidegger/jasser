@@ -57,6 +57,7 @@ public class GameCoordinator {
     private void handOutCards(GameType type, Game game) {
         if (type.equals(GameType.SCHIEBER)) {
             Rules gameRules = new Schieber();
+            gamesRepository.addTurn(game.getGameId(), game.nextTurn());
             Map<JassPlayer, List<Card>> jassPlayerListMap = gameRules.handOutCards(gameRules.getInitialDeck(), game.getPlayers());
             for (Map.Entry<JassPlayer, List<Card>> list : jassPlayerListMap.entrySet()) {
                 for (Card card : list.getValue()) {
@@ -75,6 +76,7 @@ public class GameCoordinator {
         if (jassPlayer.playCard(card)) {
             game.getCurrentTurn().addCard(jassPlayer, card);
         }
+        gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
         System.out.println(String.format("%s played %s", player, card));
         /*if(firstCardOnTable()) {
             currentSuit = card.getSuit();

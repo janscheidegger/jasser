@@ -43,7 +43,7 @@ public class JassPlayer {
         if (hand.remove(card)) {
             return true;
         } else {
-            throw new RuntimeException(String.format("Cannot play this card [%s]", card));
+            throw new RuntimeException(String.format("Cannot play this card [%s], [%s]", card, hand));
         }
     }
 
