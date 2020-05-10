@@ -16,13 +16,11 @@ import javax.ws.rs.core.Response;
 public class JassRessource {
 
     private OpenGames openGames;
-    private MongoClient mongoClient;
     private Jsonb jsonb = JsonbBuilder.create();
 
-    public JassRessource(OpenGames openGames, MongoClient mongoClient) {
+    public JassRessource(OpenGames openGames) {
 
         this.openGames = openGames;
-        this.mongoClient = mongoClient;
     }
 
     @POST

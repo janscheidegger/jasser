@@ -13,7 +13,7 @@ public class InitialLoadResponse {
         return Collections.unmodifiableList(cards);
     }
 
-    public void addCard(Card card) {
-        this.cards.add(card);
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }

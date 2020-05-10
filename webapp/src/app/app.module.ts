@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -32,6 +33,7 @@ import { JassEffects } from './jass.effects';
     BrowserAnimationsModule,
     MatInputModule,
     MatCardModule,
+    MatButtonModule,
     StoreModule.forRoot({ jass: jassReducer }),
     EffectsModule.forRoot([JassEffects]),
     StoreDevtoolsModule.instrument({

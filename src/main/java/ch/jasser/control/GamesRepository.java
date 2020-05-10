@@ -1,9 +1,6 @@
 package ch.jasser.control;
 
-import ch.jasser.entity.Card;
-import ch.jasser.entity.Game;
-import ch.jasser.entity.JassPlayer;
-import ch.jasser.entity.Turn;
+import ch.jasser.entity.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -61,8 +58,8 @@ public class GamesRepository {
         return this.mongoClient.getDatabase("jasser").getCollection("games");
     }
 
-    public Game findById(UUID uuid) {
-        return getCollection().find(eq("gameId", uuid.toString()), Game.class).first();
+    public Game findById(String uuid) {
+        return getCollection().find(eq("gameId", uuid), Game.class).first();
     }
 
     public void handOutCard(String gameId, String name, Card card) {
@@ -75,5 +72,13 @@ public class GamesRepository {
                         eq("gameId", gameId),
                         eq("players.name", jassPlayer.getName())),
                 Updates.pull("players.$.hand", card));
+    }
+
+    public void addCardToTurn(String gameId, JassPlayer jassPlayer, Card card, int turn) {
+        PlayedCard playedCard = new PlayedCard(card, jassPlayer.getName());
+        getCollection().updateOne(
+                eq("gameId", gameId),
+                Updates.addToSet("turns." + (turn - 1) + ".cardsOnTable", playedCard)
+        );
     }
 }

@@ -51,7 +51,10 @@ public class GameCoordinator {
     }
 
     public void joinGame(String gameId, String player) {
-        gamesRepository.addPlayer(gameId, new JassPlayer(player));
+        Game gameState = getGameState(gameId);
+        if(!gameState.getPlayers().contains(new JassPlayer(player))) {
+            gamesRepository.addPlayer(gameId, new JassPlayer(player));
+        }
     }
 
     private void handOutCards(GameType type, Game game) {
@@ -68,20 +71,23 @@ public class GameCoordinator {
     }
 
     public void playCard(String username, String gameId, Card card) {
-        Game game = openGames.getGame(UUID.fromString(gameId));
+        Game game = openGames.getGame(gameId);
         Optional<JassPlayer> player = game.getPlayers().stream()
                 .filter(p -> p.getName().equals(username))
                 .findFirst();
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
         if (jassPlayer.playCard(card)) {
-            game.getCurrentTurn().addCard(jassPlayer, card);
+            gamesRepository.addCardToTurn(gameId, jassPlayer, card, game.getTurns().size());
+            gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
+            System.out.println(String.format("%s played %s", player, card));
         }
-        gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
-        System.out.println(String.format("%s played %s", player, card));
         /*if(firstCardOnTable()) {
             currentSuit = card.getSuit();
         }
         cardsOnTable.put(card, player);*/
     }
 
+    public Game getGameState(String gameId) {
+        return gamesRepository.findById(gameId);
+    }
 }

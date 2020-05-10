@@ -1,19 +1,30 @@
 package ch.jasser.entity;
 
+import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @BsonDiscriminator
 public class Turn {
 
-    private Map<Card, JassPlayer> cardsOnTable = new HashMap<>();
+    private List<PlayedCard> cardsOnTable;
 
     public Turn() {
+        this.cardsOnTable = new ArrayList<>();
     }
 
-    public void addCard(JassPlayer player, Card card) {
-        this.cardsOnTable.put(card, player);
+    @BsonCreator
+    public Turn(@BsonProperty("cardsOnTable") List<PlayedCard> cardsOnTable) {
+        this.cardsOnTable = cardsOnTable;
+    }
+
+
+    public List<PlayedCard> getCardsOnTable() {
+        return cardsOnTable;
     }
 }

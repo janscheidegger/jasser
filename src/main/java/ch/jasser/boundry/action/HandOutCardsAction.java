@@ -24,7 +24,7 @@ public class HandOutCardsAction implements Action<EmptyPayload> {
 
     @Override
     public Optional<JassMessage> act(String username, String gameId, String payload) {
-        Game game = openGames.getGame(UUID.fromString(gameId));
+        Game game = openGames.getGame(gameId);
         if (game != null) {
             coordinator.startGame(GameType.SCHIEBER, game);
         } else {

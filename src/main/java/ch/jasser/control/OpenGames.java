@@ -20,7 +20,7 @@ public class OpenGames {
         gamesRepository.createGame(game);
     }
 
-    public Game getGame(UUID uuid) {
+    public Game getGame(String uuid) {
         return gamesRepository.findById(uuid);
     }
 
