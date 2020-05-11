@@ -1,10 +1,7 @@
 package ch.jasser.control.gamerules.schieber;
 
-import ch.jasser.entity.JassPlayer;
+import ch.jasser.entity.*;
 import ch.jasser.control.gamerules.Rules;
-import ch.jasser.entity.Card;
-import ch.jasser.entity.Rank;
-import ch.jasser.entity.Suit;
 
 import java.util.*;
 
@@ -35,8 +32,8 @@ public class Schieber implements Rules {
     }
 
     @Override
-    public Card getWinningCard(List<Card> cards, Suit currentSuit, Suit trump) {
-        cards.sort(Comparator.comparingInt(o -> cardRater.getValue(currentSuit, trump, o)));
+    public PlayedCard getWinningCard(List<PlayedCard> cards, Suit currentSuit, Suit trump) {
+        cards.sort(Comparator.comparingInt(o -> cardRater.getValue(currentSuit, trump, o.getCard())));
         return cards.get(cards.size()-1);
     }
 }

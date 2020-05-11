@@ -9,6 +9,7 @@ import org.bson.Document;
 
 import javax.enterprise.context.Dependent;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -43,7 +44,7 @@ public class GamesRepository {
     }
 
     void addTurn(String gameId, Turn turn) {
-        getCollection().updateOne(eq("gameId", gameId), Updates.addToSet("turns", turn));
+        getCollection().updateOne(eq("gameId", gameId), Updates.push("turns", turn));
     }
 
     private Document toDocument(Game game) {
@@ -80,5 +81,13 @@ public class GamesRepository {
                 eq("gameId", gameId),
                 Updates.addToSet("turns." + (turn - 1) + ".cardsOnTable", playedCard)
         );
+    }
+
+    public void turnToWinningPlayer(String gameId, String winningPlayer) {
+        List<PlayedCard> cardsOnTable = findById(gameId).getCurrentTurn().getCardsOnTable();
+        List<Card> cards = cardsOnTable.stream().map(PlayedCard::getCard).collect(Collectors.toList());
+        getCollection().updateOne(and(eq("gameId", gameId),
+                eq("players.name", winningPlayer)),
+                Updates.addEachToSet("players.$.cardsWon", cards));
     }
 }

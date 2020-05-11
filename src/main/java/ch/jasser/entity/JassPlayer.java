@@ -12,16 +12,19 @@ public class JassPlayer {
 
     private final String name;
     private List<Card> hand;
+    private List<Card> cardsWon;
 
     public JassPlayer(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
+        this.cardsWon = new ArrayList<>();
     }
 
     @BsonCreator
-    public JassPlayer(@BsonProperty("name") String name, @BsonProperty("hand") List<Card> hand) {
+    public JassPlayer(@BsonProperty("name") String name, @BsonProperty("hand") List<Card> hand, @BsonProperty("cardsWon") List<Card> cardsWon) {
         this.name = name;
         this.hand = hand;
+        this.cardsWon = cardsWon;
     }
 
 
@@ -30,13 +33,16 @@ public class JassPlayer {
     }
 
 
-
     public void receiveCard(Card card) {
         hand.add(card);
     }
 
     public List<Card> getHand() {
         return Collections.unmodifiableList(hand);
+    }
+
+    public List<Card> getCardsWon() {
+        return cardsWon;
     }
 
     public boolean playCard(Card card) {

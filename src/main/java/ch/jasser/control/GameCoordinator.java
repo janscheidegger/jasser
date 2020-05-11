@@ -41,9 +41,10 @@ public class GameCoordinator {
         jassSocket.sendToUser(player.getName(), message);
     }
 
-    public JassPlayer getWinningPlayer(Rules rules, Map<Card, JassPlayer> cardsOnTable, Suit currentSuit, Suit trump) {
-        Card winningCard = rules.getWinningCard(new ArrayList<>(cardsOnTable.keySet()), currentSuit, trump);
-        return cardsOnTable.get(winningCard);
+    public String getWinningPlayer(Rules rules, List<PlayedCard> cardsOnTable, Suit currentSuit, Suit trump) {
+        PlayedCard winningCard = rules.getWinningCard(cardsOnTable, currentSuit, trump);
+        System.out.println(String.format("Card [%s] won round", winningCard.getCard()));
+        return winningCard.getPlayer();
     }
 
     public void startGame(GameType type, Game game) {
@@ -52,7 +53,7 @@ public class GameCoordinator {
 
     public void joinGame(String gameId, String player) {
         Game gameState = getGameState(gameId);
-        if(!gameState.getPlayers().contains(new JassPlayer(player))) {
+        if (!gameState.getPlayers().contains(new JassPlayer(player))) {
             gamesRepository.addPlayer(gameId, new JassPlayer(player));
         }
     }
@@ -80,6 +81,15 @@ public class GameCoordinator {
             gamesRepository.addCardToTurn(gameId, jassPlayer, card, game.getTurns().size());
             gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
             System.out.println(String.format("%s played %s", player, card));
+        }
+
+        game = openGames.getGame(gameId);
+        if (game.getCurrentTurn().getCardsOnTable().size() == game.getPlayers().size()) {
+            System.out.println("Turn is over, winner is");
+            String winningPlayer = getWinningPlayer(new Schieber(), game.getCurrentTurn().getCardsOnTable(), Suit.HEARTS, Suit.HEARTS);
+
+            gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
+            gamesRepository.addTurn(game.getGameId(), game.nextTurn());
         }
         /*if(firstCardOnTable()) {
             currentSuit = card.getSuit();

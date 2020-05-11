@@ -4,7 +4,7 @@
     <input matInput placeholder="Jass Player" value="" #user />
   </mat-form-field>
 </form>
-<mat-card class="open-game" *ngFor="let openGame of openGames$ | async">
+<mat-card  [style.max-width]="'420px'" class="open-game" *ngFor="let openGame of openGames$ | async">
   <mat-card-header>
     {{ openGame.gameId }} ({{openGame.type}})
   </mat-card-header>

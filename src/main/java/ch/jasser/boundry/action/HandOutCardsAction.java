@@ -9,7 +9,6 @@ import ch.jasser.entity.GameType;
 
 import javax.enterprise.context.Dependent;
 import java.util.Optional;
-import java.util.UUID;
 
 @Dependent
 public class HandOutCardsAction implements Action<EmptyPayload> {

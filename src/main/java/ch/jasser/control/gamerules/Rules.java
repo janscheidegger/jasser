@@ -2,6 +2,7 @@ package ch.jasser.control.gamerules;
 
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.Card;
+import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Suit;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface Rules {
 
     Map<JassPlayer, List<Card>> handOutCards(List<Card> initialDeck, List<JassPlayer> players);
 
-    Card getWinningCard(List<Card> cards, Suit currentSuit, Suit trump);
+    PlayedCard getWinningCard(List<PlayedCard> cards, Suit currentSuit, Suit trump);
 }
