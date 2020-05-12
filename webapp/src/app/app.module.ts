@@ -17,6 +17,7 @@ import { TableComponent } from './table/table.component';
 import { jassReducer } from './jass.reducer';
 import { CardComponent } from './card/card.component';
 import { JassEffects } from './jass.effects';
+import { OverviewComponent } from './overview/overview.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { JassEffects } from './jass.effects';
     HandComponent,
     TableComponent,
     CardComponent,
+    OverviewComponent,
   ],
   imports: [
     BrowserModule,

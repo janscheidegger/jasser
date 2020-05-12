@@ -4,8 +4,8 @@ import { playCard, initialLoad, receiveCard } from './jass.actions';
 
 export const initialState: JassState = {
   hand: [
-    { rank: 'ACE', suit: 'HEARTS' },
-    { rank: 'KING', suit: 'SPADES' },
+    { rank: 'NINE', suit: 'HEARTS' },
+    { rank: 'SIX', suit: 'SPADES' },
   ],
   players: [
     {
@@ -25,7 +25,7 @@ const reducer = createReducer(
     table: [...state.table, card],
   })),
   on(receiveCard, (state, {card}) => (
-    {
+     {
     ...state,
     hand: [...state.hand, card]
   }))

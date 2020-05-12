@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BackendService } from '../backend/backend.service';
 
 @Component({
   selector: 'app-game',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameComponent implements OnInit {
 
-  constructor() { }
+  constructor(private service: BackendService) { }
 
   ngOnInit(): void {
+  }
+
+  initialLoad() {
+    this.service.initialLoad();
+  }
+
+  handOutCards() {
+    this.service.handOutCards();
   }
 
 }
