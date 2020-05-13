@@ -1,9 +1,7 @@
 <section class="card card--{{card.suit | lowercase}}" >
   <span class="num">{{numValue(card)}} {{suitImage(card)}}</span>
   <div class="card__inner card__inner--centered">
-    <div class="card__column">
-      <div *ngFor="let i of [].constructor(numValue(card))" class="card__symbol"></div>
-    </div>
+    <div *ngFor="let i of [].constructor(numValue(card))" class="card__symbol">{{suitImage(card)}}</div>
   </div>
   <span class="num-end">{{numValue(card)}} {{suitImage(card)}}</span>
 </section>

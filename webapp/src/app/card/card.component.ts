@@ -15,6 +15,14 @@ export class CardComponent implements OnInit {
 
   numValue(card: Card): number {
     switch (card.rank) {
+      case 'ACE':
+        return 1;
+      case 'KING':
+        return 2;
+      case 'QUEEN':
+        return 3;
+      case 'JACK':
+        return 4;
       case 'SIX':
         return 6;
       case 'SEVEN':
@@ -30,8 +38,14 @@ export class CardComponent implements OnInit {
 
   suitImage(card: Card): string {
     switch (card.suit) {
-      case 'HEARTS': return '♥';
-      case 'SPADES': return '♠';
+      case 'HEARTS':
+        return '♥';
+      case 'SPADES':
+        return '♠';
+      case 'DIAMONDS':
+        return '♦︎';
+      case 'CLUBS':
+        return '♣︎';
     }
   }
 }

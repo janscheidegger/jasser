@@ -25,7 +25,8 @@ body {
 
 .card {
 	position: relative;
-	display: inline-block;
+  display: inline-flex;
+  flex-wrap: wrap;
 	width: $card-width;
 	height: $card-height;
 	font: $font-size 'Trebuchet MS';
@@ -65,11 +66,11 @@ body {
 		transform: rotate(180deg)
 	}
 
-	&--hearts {
+	&--hearts, &--diamonds {
 		color: $card-color-red;
 	}
 
-	&--spades {
+	&--spades, &--clubs {
 		color: $card-color-black;
 	}
 }
@@ -77,7 +78,8 @@ body {
 .card__inner {
 	box-sizing: border-box;
 	position: absolute;
-	display: flex;
+  display: flex;
+  flex-wrap: wrap;
 	justify-content: space-between;
 	top: 6 * $card-padding;
 	left: 6 * $card-padding;
@@ -100,39 +102,13 @@ body {
 }
 
 .card__symbol {
-	display: inline-block;
+  display: flex;
+  flex: 1 0 21%;
 	height: $card-symbol-size;
 	text-align: center;
+  font-size: $card-symbol-size;
+  line-height: $card-symbol-size;
 
-	&:before {
-		font-size: $card-symbol-size;
-		line-height: $card-symbol-size;
-	}
-
-	.card--hearts &:before {
-		content: '♥';
-	}
-
-	.card--spades &:before {
-		content: '♠';
-	}
-
-	&--rotated,
-	&:last-of-type {
-		transform: rotate(180deg);
-	}
-
-	&:first-of-type {
-		transform: rotate(0);
-	}
-
-	&--big {
-		flex-basis: 0.25 * $card-height;
-	}
-
-	&--huge {
-		flex-basis: 0.45 * $card-height;
-	}
 }
 
 .title {
