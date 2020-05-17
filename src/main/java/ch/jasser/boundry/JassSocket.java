@@ -23,8 +23,8 @@ public class JassSocket {
 
     private static final Logger LOG = Logger.getLogger(JassSocket.class.getSimpleName());
 
-    private ActionHandler actionHandler;
-    private Jsonb jsonb = JsonbBuilder.create();
+    private final ActionHandler actionHandler;
+    private final Jsonb jsonb = JsonbBuilder.create();
 
 
     public JassSocket(ActionHandler actionHandler) {
@@ -82,6 +82,21 @@ public class JassSocket {
             });
         } else {
             System.out.println("User " + user + " has no active session");
+        }
+    }
+
+    public void sendToUsers(List<String> players, JassMessage message) {
+        String messageString = this.jsonb.toJson(message);
+        for (String player : players) {
+            if (sessions.containsKey(player)) {
+                sessions.get(player).getAsyncRemote().sendObject(messageString, result -> {
+                    if (result.getException() != null) {
+                        System.out.println("Unable to send message: " + result.getException());
+                    }
+                });
+            } else {
+                System.out.println(String.format("Player %s has no active session", player));
+            }
         }
     }
 

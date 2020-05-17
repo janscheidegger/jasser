@@ -18,8 +18,11 @@ export class EventHandlerService {
         break;
       case 'RECEIVE_CARD':
         console.log(response);
-        this.store.dispatch(receiveCard({card: response}));
+        this.store.dispatch(receiveCard({ card: response }));
         break;
+      default:
+        console.log('Unhandled Action');
+        console.log(response);
     }
   }
 

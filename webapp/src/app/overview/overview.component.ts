@@ -33,7 +33,6 @@ export class OverviewComponent implements OnInit {
   }
 
   startGame(gameId: string, username: string) {
-    this.service.joinGame(username, gameId);
-    this.router.navigate(['games', gameId]);
+    this.router.navigate(['games', gameId, username]);
   }
 }

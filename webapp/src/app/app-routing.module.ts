@@ -4,7 +4,7 @@ import { GameComponent } from './game/game.component';
 import { OverviewComponent } from './overview/overview.component';
 
 const routes: Routes = [
-  { path: 'games/:gameId', component: GameComponent },
+  { path: 'games/:gameId/:username', component: GameComponent },
   { path: '', component: OverviewComponent, pathMatch: 'full' },
 ];
 

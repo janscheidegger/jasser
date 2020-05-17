@@ -3,6 +3,7 @@ package ch.jasser.control;
 import ch.jasser.boundry.JassMessage;
 import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
+import ch.jasser.boundry.payload.CardPlayedPayload;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.gamerules.schieber.Schieber;
 import ch.jasser.entity.*;
@@ -11,13 +12,15 @@ import javax.enterprise.context.Dependent;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Dependent
 public class GameCoordinator {
 
-    private OpenGames openGames;
-    private JassSocket jassSocket;
-    private GamesRepository gamesRepository;
+    private final OpenGames openGames;
+    private final JassSocket jassSocket;
+    private final GamesRepository gamesRepository;
+    private final Jsonb json = JsonbBuilder.create();
 
     public GameCoordinator(OpenGames openGames,
                            JassSocket jassSocket,
@@ -29,8 +32,6 @@ public class GameCoordinator {
 
     public void handOutCard(String gameId, JassPlayer player, Card card) {
         player.receiveCard(card);
-
-        Jsonb json = JsonbBuilder.create();
 
         JassMessage message = new JassMessage();
         message.setEvent(EventType.RECEIVE_CARD);
@@ -91,6 +92,12 @@ public class GameCoordinator {
             gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
             gamesRepository.addTurn(game.getGameId(), game.nextTurn());
         }
+
+        JassMessage message = new JassMessage();
+        message.setEvent(EventType.CARD_PLAYED);
+        CardPlayedPayload payload = new CardPlayedPayload(card, jassPlayer.getName());
+        message.setPayloadString(json.toJson(payload));
+        jassSocket.sendToUsers(game.getPlayers().stream().map(JassPlayer::getName).collect(Collectors.toList()), message);
         /*if(firstCardOnTable()) {
             currentSuit = card.getSuit();
         }

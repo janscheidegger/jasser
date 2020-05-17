@@ -17,7 +17,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Dependent
 public class GamesRepository {
 
-    private MongoClient mongoClient;
+    private final MongoClient mongoClient;
 
     public GamesRepository(final MongoClient mongoClient) {
         this.mongoClient = mongoClient;
