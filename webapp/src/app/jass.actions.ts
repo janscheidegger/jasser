@@ -5,4 +5,5 @@ export const playCard = createAction('[Hand Component] Play Card', props<{card: 
 export const receiveCard = createAction('[Hand Component] Received Card', props<{card: Card}>());
 export const initialLoad = createAction('[Hand Component] Initial load', props<{cards: Card[]}>());
 export const cardPlayed = createAction('[Hand Component] Card played');
+export const errorReceived = createAction('[Jass Game] Error', props<{errorMessage: string}>());
 

@@ -7,5 +7,6 @@ public enum EventType {
     PLAY_CARD,
     RECEIVE_CARD,
     CARD_PLAYED,
-    HAND_OUT_CARDS
+    HAND_OUT_CARDS,
+    ERROR
 }

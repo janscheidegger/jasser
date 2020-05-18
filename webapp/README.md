@@ -2,7 +2,7 @@
 
 ## Mongo 
 
-Start db `ocker run -ti --rm -p 27017:27017 mongo:4.0`
+Start db `docker run -ti --rm -p 27017:27017 mongo:4.0`
 
 
 # Webapp

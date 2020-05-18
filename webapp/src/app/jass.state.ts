@@ -5,4 +5,5 @@ export interface JassState {
   players: Player[];
   hand: Card[];
   table: Card[];
+  errors: string[];
 }

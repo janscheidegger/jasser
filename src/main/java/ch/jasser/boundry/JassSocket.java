@@ -72,31 +72,28 @@ public class JassSocket {
         }
     }
 
+
     public void sendToUser(String user, JassMessage message) {
         String messageString = this.jsonb.toJson(message);
-        if (sessions.containsKey(user)) {
-            sessions.get(user).getAsyncRemote().sendObject(messageString, result -> {
-                if (result.getException() != null) {
-                    System.out.println("Unable to send Message: " + result.getException());
-                }
-            });
-        } else {
-            System.out.println("User " + user + " has no active session");
-        }
+        sendToUser(messageString, user);
     }
 
     public void sendToUsers(List<String> players, JassMessage message) {
         String messageString = this.jsonb.toJson(message);
         for (String player : players) {
-            if (sessions.containsKey(player)) {
-                sessions.get(player).getAsyncRemote().sendObject(messageString, result -> {
-                    if (result.getException() != null) {
-                        System.out.println("Unable to send message: " + result.getException());
-                    }
-                });
-            } else {
-                System.out.println(String.format("Player %s has no active session", player));
-            }
+            sendToUser(messageString, player);
+        }
+    }
+
+    private void sendToUser(String messageString, String player) {
+        if (sessions.containsKey(player)) {
+            sessions.get(player).getAsyncRemote().sendObject(messageString, result -> {
+                if (result.getException() != null) {
+                    System.out.println("Unable to send message: " + result.getException());
+                }
+            });
+        } else {
+            System.out.println(String.format("Player %s has no active session", player));
         }
     }
 
