@@ -15,12 +15,10 @@ export class JassEffects {
     private snackBar: MatSnackBar
   ) {}
 
-  @Effect()
+  @Effect({ dispatch: false })
   playCard$ = this.actions$.pipe(
     ofType(playCard),
-    switchMap((action) =>
-      of(this.service.playCard(action.card)).pipe(map(() => cardPlayed()))
-    )
+    switchMap((action) => of(this.service.playCard(action.card)))
   );
 
   @Effect({ dispatch: false })

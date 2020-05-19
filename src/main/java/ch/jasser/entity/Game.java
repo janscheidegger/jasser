@@ -15,12 +15,14 @@ public class Game {
     private final GameType type;
     private final List<JassPlayer> players;
     private final List<Turn> turns;
+    private Suit trump;
 
     public Game() {
         this.gameId = UUID.randomUUID().toString();
         this.type = GameType.SCHIEBER;
         this.players = new ArrayList<>();
         this.turns = new LinkedList<>();
+        this.trump = null;
 
     }
 
@@ -28,19 +30,25 @@ public class Game {
     public Game(@BsonProperty("gameId") String uuid,
                 @BsonProperty("type") GameType type,
                 @BsonProperty("players") List<JassPlayer> players,
-                @BsonProperty("turns") List<Turn> turns) {
+                @BsonProperty("turns") List<Turn> turns,
+                @BsonProperty("trump") Suit trump) {
         this.gameId = uuid;
         this.type = type;
         this.players = players;
         this.turns = turns;
+        this.trump = trump;
     }
 
     public List<JassPlayer> getPlayers() {
         return players;
     }
 
-    public void addPlayer(String player) {
-        this.players.add(new JassPlayer(player));
+    public Suit getTrump() {
+        return trump;
+    }
+
+    public void setTrump(Suit trump) {
+        this.trump = trump;
     }
 
     public Turn nextTurn() {

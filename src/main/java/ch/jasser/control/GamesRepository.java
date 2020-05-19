@@ -79,7 +79,9 @@ public class GamesRepository {
         PlayedCard playedCard = new PlayedCard(card, jassPlayer.getName());
         getCollection().updateOne(
                 eq("gameId", gameId),
-                Updates.addToSet("turns." + (turn - 1) + ".cardsOnTable", playedCard)
+                and(
+                        Updates.push("turns." + (turn - 1) + ".cardsOnTable", playedCard)
+                )
         );
     }
 

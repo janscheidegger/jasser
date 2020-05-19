@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { JassMessage } from './jass-message';
 import { Store } from '@ngrx/store';
 import { JassState } from '../jass.state';
-import { initialLoad, receiveCard, errorReceived } from '../jass.actions';
+import {
+  initialLoad,
+  receiveCard,
+  errorReceived,
+  cardPlayed,
+} from '../jass.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +28,15 @@ export class EventHandlerService {
       case 'ERROR':
         this.store.dispatch(errorReceived({ errorMessage: response }));
         break;
+      case 'CARD_PLAYED':
+        console.log(response);
+        console.log(response.card);
+        this.store.dispatch(
+          cardPlayed({ player: response.player, card: response.card })
+        );
+        break;
       default:
-        console.log('Unhandled Action');
+        console.log(`Unhandled Action ${ev.event}`);
         console.log(response);
     }
   }

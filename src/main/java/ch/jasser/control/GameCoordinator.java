@@ -42,7 +42,7 @@ public class GameCoordinator {
         jassSocket.sendToUser(player.getName(), message);
     }
 
-    public String getWinningPlayer(Rules rules, List<PlayedCard> cardsOnTable, Suit currentSuit, Suit trump) {
+    private String getWinningPlayer(Rules rules, List<PlayedCard> cardsOnTable, Suit currentSuit, Suit trump) {
         PlayedCard winningCard = rules.getWinningCard(cardsOnTable, currentSuit, trump);
         System.out.println(String.format("Card [%s] won round", winningCard.getCard()));
         return winningCard.getPlayer();
@@ -79,15 +79,18 @@ public class GameCoordinator {
                 .findFirst();
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
         if (jassPlayer.playCard(card)) {
+
+
             gamesRepository.addCardToTurn(gameId, jassPlayer, card, game.getTurns().size());
             gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
             System.out.println(String.format("%s played %s", player, card));
         }
 
         game = openGames.getGame(gameId);
-        if (game.getCurrentTurn().getCardsOnTable().size() == game.getPlayers().size()) {
+        if (isLastCardInTurn(game)) {
             System.out.println("Turn is over, winner is");
-            String winningPlayer = getWinningPlayer(new Schieber(), game.getCurrentTurn().getCardsOnTable(), Suit.HEARTS, Suit.HEARTS);
+            PlayedCard firstCard = game.getCurrentTurn().getCardsOnTable().get(0);
+            String winningPlayer = getWinningPlayer(new Schieber(), game.getCurrentTurn().getCardsOnTable(), firstCard.getCard().getSuit(), game.getTrump());
 
             gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
             gamesRepository.addTurn(game.getGameId(), game.nextTurn());
@@ -98,10 +101,11 @@ public class GameCoordinator {
         CardPlayedPayload payload = new CardPlayedPayload(card, jassPlayer.getName());
         message.setPayloadString(json.toJson(payload));
         jassSocket.sendToUsers(game.getPlayers().stream().map(JassPlayer::getName).collect(Collectors.toList()), message);
-        /*if(firstCardOnTable()) {
-            currentSuit = card.getSuit();
-        }
-        cardsOnTable.put(card, player);*/
+    }
+
+    private boolean isLastCardInTurn(Game game) {
+        return !game.getCurrentTurn().getCardsOnTable().isEmpty() &&
+                game.getCurrentTurn().getCardsOnTable().size() == game.getPlayers().size();
     }
 
     public Game getGameState(String gameId) {

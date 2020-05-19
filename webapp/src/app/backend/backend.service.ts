@@ -12,19 +12,20 @@ import { EventHandlerService } from './event-handler.service';
 })
 export class BackendService {
   private currentGameConnection: WebSocketSubject<any>;
-
+  private username: string;
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
     }),
   };
 
-  constructor(private http: HttpClient, private eventHandler: EventHandlerService) {}
+  constructor(
+    private http: HttpClient,
+    private eventHandler: EventHandlerService
+  ) {}
 
   listOpenGames(): Observable<Game[]> {
-    return this.http.get<Game[]>(
-      `http://localhost:8080/jass/games`
-    );
+    return this.http.get<Game[]>(`http://localhost:8080/jass/games`);
   }
 
   createGame() {
@@ -47,17 +48,22 @@ export class BackendService {
   }
 
   handOutCards() {
-    this.currentGameConnection.next({event: 'HAND_OUT_CARDS'});
+    this.currentGameConnection.next({ event: 'HAND_OUT_CARDS' });
   }
 
   joinGame(username: string, gameId: string): void {
     this.currentGameConnection = webSocket(
       `ws://localhost:8080/jass/${username}/${gameId}`
     );
+    this.username = username;
     this.currentGameConnection.subscribe(
-      ev => this.eventHandler.handleEvent(ev),
-      err => this.eventHandler.onError(err),
+      (ev) => this.eventHandler.handleEvent(ev),
+      (err) => this.eventHandler.onError(err),
       () => this.eventHandler.onComplete
     );
+  }
+
+  getUsername(): string {
+    return this.username;
   }
 }
