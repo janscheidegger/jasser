@@ -13,26 +13,26 @@ export class CardComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  numValue(card: Card): number {
+  numValue(card: Card): {name: string, num: number} {
     switch (card.rank) {
       case 'ACE':
-        return 1;
+        return {name: 'A', num: 1};
       case 'KING':
-        return 2;
+        return {name: 'K', num: 2};
       case 'QUEEN':
-        return 3;
+        return {name: 'Q', num: 1};
       case 'JACK':
-        return 4;
+        return {name: 'J', num: 1};
       case 'SIX':
-        return 6;
+        return {name: '6', num: 6};
       case 'SEVEN':
-        return 7;
+        return {name: '7', num: 7};
       case 'EIGHT':
-        return 8;
+        return {name: '8', num: 8};
       case 'NINE':
-        return 9;
+        return {name: '9', num: 9};
       case 'TEN':
-        return 10;
+        return {name: '10', num: 10};
     }
   }
 
