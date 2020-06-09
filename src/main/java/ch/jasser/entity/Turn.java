@@ -11,17 +11,14 @@ import java.util.List;
 public class Turn {
 
     private List<PlayedCard> cardsOnTable;
-    private Suit playedSuit;
 
     public Turn() {
         this.cardsOnTable = new ArrayList<>();
-        this.playedSuit = null;
     }
 
     @BsonCreator
-    public Turn(@BsonProperty("cardsOnTable") List<PlayedCard> cardsOnTable, @BsonProperty("playedSuit") Suit playedSuit) {
+    public Turn(@BsonProperty("cardsOnTable") List<PlayedCard> cardsOnTable) {
         this.cardsOnTable = cardsOnTable;
-        this.playedSuit = playedSuit;
     }
 
 
@@ -30,6 +27,9 @@ public class Turn {
     }
 
     public Suit getPlayedSuit() {
-        return playedSuit;
+        if (cardsOnTable.size() > 0) {
+            return cardsOnTable.get(0).getCard().getSuit();
+        }
+        return null;
     }
 }

@@ -24,8 +24,8 @@ export class JassEffects {
   @Effect({ dispatch: false })
   showError$ = this.actions$.pipe(
     ofType(errorReceived),
-    map(() =>
-      this.snackBar.open('Error fetching products', 'Error', {
+    map((action) =>
+      this.snackBar.open(action.errorMessage, 'Error', {
         duration: 2500,
       })
     )

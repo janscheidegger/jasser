@@ -17,13 +17,10 @@ export const initialState: JassState = {
 const reducer = createReducer(
   initialState,
   on(initialLoad, (state, { cards }) => ({ ...state, hand: cards, table: [] })),
-  on(playCard, (state, { card }) => ({
-    ...state,
-    hand: state.hand.filter((c) => c !== card)
-  })),
   on(cardPlayed, (state, {player, card}) => ({
     ...state,
-    table: [...state.table, card]
+    table: [...state.table, card],
+    hand: state.hand.filter((c) => c.rank !== card.rank || c.suit !== card.suit)
   })),
   on(receiveCard, (state, {card}) => (
      {
@@ -33,7 +30,7 @@ const reducer = createReducer(
   on(errorReceived, (state, {errorMessage}) => (
     {
       ...state,
-      error: [...state.errors, errorMessage]
+      errors: [...state.errors, errorMessage]
     }
   ))
 );

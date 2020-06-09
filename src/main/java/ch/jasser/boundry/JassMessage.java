@@ -1,6 +1,7 @@
 package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.EventType;
+import ch.jasser.boundry.payload.ErrorPayload;
 
 public class JassMessage {
     private EventType event;
@@ -20,6 +21,13 @@ public class JassMessage {
 
     public void setPayloadString(String payloadString) {
         this.payloadString = payloadString;
+    }
+
+    public static JassMessage error(String error) {
+        JassMessage message = new JassMessage();
+        message.setPayloadString(error);
+        message.setEvent(EventType.ERROR);
+        return message;
     }
 
     @Override

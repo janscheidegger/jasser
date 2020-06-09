@@ -26,7 +26,7 @@ export class EventHandlerService {
         this.store.dispatch(receiveCard({ card: response }));
         break;
       case 'ERROR':
-        this.store.dispatch(errorReceived({ errorMessage: response }));
+        this.store.dispatch(errorReceived(response));
         break;
       case 'CARD_PLAYED':
         console.log(response);
