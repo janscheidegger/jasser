@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class SchieberTest {
 
     GameCoordinator gameCoordinatorMock = Mockito.mock(GameCoordinator.class);
-    Schieber cut = new Schieber();
+    Schieber cut = new Schieber(null);
 
     @Test
     void shouldReturnASetOf36Cards() {

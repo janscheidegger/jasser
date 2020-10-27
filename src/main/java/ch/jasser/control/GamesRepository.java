@@ -67,16 +67,16 @@ public class GamesRepository {
         getCollection().updateOne(and(eq("gameId", gameId), eq("players.name", name)), Updates.addToSet("players.$.hand", card));
     }
 
-    public void removeCardFromPlayer(String gameId, JassPlayer jassPlayer, Card card) {
+    public void removeCardFromPlayer(String gameId, String jassPlayer, Card card) {
         getCollection().updateOne(
                 and(
                         eq("gameId", gameId),
-                        eq("players.name", jassPlayer.getName())),
+                        eq("players.name", jassPlayer)),
                 Updates.pull("players.$.hand", card));
     }
 
-    public void addCardToTurn(String gameId, JassPlayer jassPlayer, Card card, int turn) {
-        PlayedCard playedCard = new PlayedCard(card, jassPlayer.getName());
+    public void addCardToTurn(String gameId, String jassPlayer, Card card, int turn) {
+        PlayedCard playedCard = new PlayedCard(card, jassPlayer);
         getCollection().updateOne(
                 eq("gameId", gameId),
                 and(

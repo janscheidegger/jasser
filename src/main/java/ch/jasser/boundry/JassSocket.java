@@ -1,21 +1,24 @@
 package ch.jasser.boundry;
 
-import ch.jasser.boundry.action.ActionHandler;
-import ch.jasser.boundry.action.EventType;
-import ch.jasser.boundry.payload.JoinGamePayload;
+import ch.jasser.control.GameCoordinator;
+import ch.jasser.control.actions.ActionResult;
+import ch.jasser.entity.JassPlayer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
-import javax.websocket.*;
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
@@ -23,29 +26,22 @@ public class JassSocket {
 
     private static final Logger LOG = Logger.getLogger(JassSocket.class.getSimpleName());
 
-    private final ActionHandler actionHandler;
     private final Jsonb jsonb = JsonbBuilder.create();
-
-
-    public JassSocket(ActionHandler actionHandler) {
-        this.actionHandler = actionHandler;
-    }
 
     private Map<String, Session> sessions = new ConcurrentHashMap<>();
 
+    private GameCoordinator coordinator;
+
+    public JassSocket(GameCoordinator coordinator) {
+        this.coordinator = coordinator;
+    }
+
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
-        Jsonb jsonb = JsonbBuilder.create();
 
         sessions.put(username, session);
+        coordinator.joinGame(gameId, username);
         System.out.println(String.format("%s connected to Game with Id %s", username, gameId));
-        JoinGamePayload payload = new JoinGamePayload();
-        payload.setGameId(UUID.fromString(gameId));
-        payload.setPlayer(username);
-        JassMessage message = new JassMessage();
-        message.setEvent(EventType.JOIN_GAME);
-        message.setPayloadString(jsonb.toJson(payload));
-        actionHandler.handleAction(username, gameId, message);
     }
 
     @OnClose
@@ -63,29 +59,39 @@ public class JassSocket {
 
     @OnMessage
     public void onMessage(String message, @PathParam("username") String username, @PathParam("gameId") String gameId) {
+
         Jsonb jsonb = JsonbBuilder.create();
         JassMessage jassMessage = jsonb.fromJson(message, JassMessage.class);
-        Optional<JassMessage> response = actionHandler.handleAction(username, gameId, jassMessage);
-        if (response.isPresent()) {
+
+        ActionResult act = coordinator.act(gameId, username, jassMessage);
+        JassResponse response = act.getResponse();
+        if (response.getBroadcast() != null) {
+            List<String> players = coordinator.getPlayers(gameId).stream()
+                    .map(JassPlayer::getName)
+                    .collect(Collectors.toList());
+            sendToUsers(players, response.getBroadcast());
+        }
+
+        if (response.getToUser() != null) {
             System.out.println("broadcasting");
-            sendToUser(username, response.get());
+            sendToUser(username, response.getToUser());
         }
     }
 
 
-    public void sendToUser(String user, JassMessage message) {
+    public void sendToUser(String user, Object message) {
         String messageString = this.jsonb.toJson(message);
         sendToUser(messageString, user);
     }
 
-    public void sendToUsers(List<String> players, JassMessage message) {
+    public void sendToUsers(List<String> players, Object message) {
         String messageString = this.jsonb.toJson(message);
         for (String player : players) {
-            sendToUser(messageString, player);
+            sendToUser(player, messageString);
         }
     }
 
-    private void sendToUser(String messageString, String player) {
+    private void sendToUser(String player, String messageString) {
         if (sessions.containsKey(player)) {
             sessions.get(player).getAsyncRemote().sendObject(messageString, result -> {
                 if (result.getException() != null) {
@@ -97,7 +103,7 @@ public class JassSocket {
         }
     }
 
-    private void broadcast(List<String> users, JassMessage message) {
+    private void broadcast(List<String> users, Object message) {
         String messageString = this.jsonb.toJson(message);
         sessions.values().forEach(s -> {
             s.getAsyncRemote().sendObject(messageString, result -> {

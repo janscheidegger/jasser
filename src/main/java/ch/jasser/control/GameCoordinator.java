@@ -3,16 +3,21 @@ package ch.jasser.control;
 import ch.jasser.boundry.JassMessage;
 import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
-import ch.jasser.boundry.payload.CardPlayedPayload;
-import ch.jasser.boundry.payload.ErrorPayload;
+import ch.jasser.control.actions.Action;
+import ch.jasser.control.actions.ActionResult;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.gamerules.schieber.Schieber;
-import ch.jasser.entity.*;
+import ch.jasser.entity.Card;
+import ch.jasser.entity.Game;
+import ch.jasser.entity.JassPlayer;
+import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Suit;
 
 import javax.enterprise.context.Dependent;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Dependent
@@ -21,14 +26,18 @@ public class GameCoordinator {
     private final OpenGames openGames;
     private final JassSocket jassSocket;
     private final GamesRepository gamesRepository;
+    private final Schieber schieber;
     private final Jsonb json = JsonbBuilder.create();
 
     public GameCoordinator(OpenGames openGames,
                            JassSocket jassSocket,
-                           GamesRepository gamesRepository) {
+                           GamesRepository gamesRepository,
+                           Schieber schieber) {
         this.openGames = openGames;
         this.jassSocket = jassSocket;
         this.gamesRepository = gamesRepository;
+
+        this.schieber = schieber;
     }
 
     public void handOutCard(String gameId, JassPlayer player, Card card) {
@@ -36,7 +45,7 @@ public class GameCoordinator {
 
         JassMessage message = new JassMessage();
         message.setEvent(EventType.RECEIVE_CARD);
-        message.setPayloadString(json.toJson(card));
+        message.setCards(List.of(card));
 
         gamesRepository.handOutCard(gameId, player.getName(), card);
 
@@ -44,13 +53,10 @@ public class GameCoordinator {
     }
 
     private String getWinningPlayer(Rules rules, List<PlayedCard> cardsOnTable, Suit currentSuit, Suit trump) {
-        PlayedCard winningCard = rules.getWinningCard(cardsOnTable, currentSuit, trump);
-        System.out.println(String.format("Card [%s] won round", winningCard.getCard()));
-        return winningCard.getPlayer();
-    }
-
-    public void startGame(GameType type, Game game) {
-        handOutCards(type, game);
+        //    PlayedCard winningCard = rules.getWinningCard(cardsOnTable, currentSuit, trump);
+        //    System.out.println(String.format("Card [%s] won round", winningCard.getCard()));
+        //    return winningCard.getPlayer();
+        return "";
     }
 
     public void joinGame(String gameId, String player) {
@@ -60,7 +66,7 @@ public class GameCoordinator {
         }
     }
 
-    private void handOutCards(GameType type, Game game) {
+   /* private void handOutCards(GameType type, Game game) {
         if (type.equals(GameType.SCHIEBER)) {
             Rules gameRules = new Schieber();
             gamesRepository.addTurn(game.getGameId(), game.nextTurn());
@@ -71,7 +77,7 @@ public class GameCoordinator {
                 }
             }
         }
-    }
+    } */
 
     public void playCard(String username, String gameId, Card card) {
         Game game = openGames.getGame(gameId);
@@ -79,44 +85,26 @@ public class GameCoordinator {
                 .filter(p -> p.getName().equals(username))
                 .findFirst();
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
-        if (!isAllowedToPlayCard(game, jassPlayer, card)) {
-            ErrorPayload errorPayload = new ErrorPayload(String.format("Player %s cannot Play card %s", jassPlayer.getName(), card));
-            JassMessage message = JassMessage.error(json.toJson(errorPayload));
-            jassSocket.sendToUser(jassPlayer.getName(), message);
-        } else {
-            gamesRepository.addCardToTurn(gameId, jassPlayer, card, game.getTurns().size());
-            gamesRepository.removeCardFromPlayer(gameId, jassPlayer, card);
-            System.out.println(String.format("%s played %s", player, card));
 
-            game = openGames.getGame(gameId);
-            if (isLastCardInTurn(game)) {
-                System.out.println("Turn is over, winner is");
-                PlayedCard firstCard = game.getCurrentTurn().getCardsOnTable().get(0);
-                String winningPlayer = getWinningPlayer(new Schieber(), game.getCurrentTurn().getCardsOnTable(), firstCard.getCard().getSuit(), game.getTrump());
 
-                gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
-                gamesRepository.addTurn(game.getGameId(), game.nextTurn());
-            }
-            JassMessage message = createCardPlayPayload(card, jassPlayer);
-            jassSocket.sendToUsers(game.getPlayers().stream().map(JassPlayer::getName).collect(Collectors.toList()), message);
+        game = openGames.getGame(gameId);
+        if (isLastCardInTurn(game)) {
+            System.out.println("Turn is over, winner is");
+            PlayedCard firstCard = game.getCurrentTurn().getCardsOnTable().get(0);
+            String winningPlayer = getWinningPlayer(null, game.getCurrentTurn().getCardsOnTable(), firstCard.getCard().getSuit(), game.getTrump());
+
+            gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
+            gamesRepository.addTurn(game.getGameId(), game.nextTurn());
         }
+        JassMessage message = createCardPlayPayload(card, jassPlayer);
+        jassSocket.sendToUsers(game.getPlayers().stream().map(JassPlayer::getName).collect(Collectors.toList()), message);
     }
 
-    private boolean isAllowedToPlayCard(Game game, JassPlayer jassPlayer, Card card) {
-        if (!jassPlayer.getHand().contains(card)) {
-            return false;
-        }
-        Turn currentTurn = game.getCurrentTurn();
-        return currentTurn.getCardsOnTable().size() == 0
-                || currentTurn.getPlayedSuit().equals(card.getSuit())
-                || (card.getSuit().equals(game.getTrump()));
-    }
 
     private JassMessage createCardPlayPayload(Card card, JassPlayer jassPlayer) {
         JassMessage message = new JassMessage();
         message.setEvent(EventType.CARD_PLAYED);
-        CardPlayedPayload payload = new CardPlayedPayload(card, jassPlayer.getName());
-        message.setPayloadString(json.toJson(payload));
+        message.setCards(List.of(card));
         return message;
     }
 
@@ -127,5 +115,22 @@ public class GameCoordinator {
 
     public Game getGameState(String gameId) {
         return gamesRepository.findById(gameId);
+    }
+
+    public ActionResult act(String gameId, String username, JassMessage message) {
+        Game game = openGames.getGame(gameId);
+        Optional<JassPlayer> player = game.getPlayers().stream()
+                .filter(p -> p.getName().equals(username))
+                .findFirst();
+        JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
+
+        Action action = schieber.getActionsForGameStep(game.getStep());
+
+        return action.act(game, message);
+    }
+
+
+    public List<JassPlayer> getPlayers(String gameId) {
+        return gamesRepository.findById(gameId).getPlayers();
     }
 }
