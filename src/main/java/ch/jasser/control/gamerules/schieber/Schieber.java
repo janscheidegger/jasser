@@ -50,7 +50,7 @@ public class Schieber implements Rules {
     }
 
     @Override
-    public Action getActionsForGameStep(GameStep step) {
+    public Action getAllowedActionsForGameStep(GameStep step) {
         return actionMap.get(step);
     }
 }

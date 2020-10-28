@@ -1,12 +1,11 @@
 package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.EventType;
-import ch.jasser.boundry.payload.ErrorPayload;
 import ch.jasser.entity.Card;
 
 import java.util.List;
 
-public class JassMessage {
+public class JassRequest {
     private EventType event;
     private String username;
     private List<Card> cards;

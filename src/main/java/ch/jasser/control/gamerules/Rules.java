@@ -5,5 +5,5 @@ import ch.jasser.control.steps.GameStep;
 
 public interface Rules {
 
-    Action getActionsForGameStep(GameStep step);
+    Action getAllowedActionsForGameStep(GameStep step);
 }

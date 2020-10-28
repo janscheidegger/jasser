@@ -1,6 +1,6 @@
 package ch.jasser.control;
 
-import ch.jasser.boundry.JassMessage;
+import ch.jasser.boundry.JassRequest;
 import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.actions.Action;
@@ -43,7 +43,7 @@ public class GameCoordinator {
     public void handOutCard(String gameId, JassPlayer player, Card card) {
         player.receiveCard(card);
 
-        JassMessage message = new JassMessage();
+        JassRequest message = new JassRequest();
         message.setEvent(EventType.RECEIVE_CARD);
         message.setCards(List.of(card));
 
@@ -96,13 +96,13 @@ public class GameCoordinator {
             gamesRepository.turnToWinningPlayer(gameId, winningPlayer);
             gamesRepository.addTurn(game.getGameId(), game.nextTurn());
         }
-        JassMessage message = createCardPlayPayload(card, jassPlayer);
+        JassRequest message = createCardPlayPayload(card, jassPlayer);
         jassSocket.sendToUsers(game.getPlayers().stream().map(JassPlayer::getName).collect(Collectors.toList()), message);
     }
 
 
-    private JassMessage createCardPlayPayload(Card card, JassPlayer jassPlayer) {
-        JassMessage message = new JassMessage();
+    private JassRequest createCardPlayPayload(Card card, JassPlayer jassPlayer) {
+        JassRequest message = new JassRequest();
         message.setEvent(EventType.CARD_PLAYED);
         message.setCards(List.of(card));
         return message;
@@ -117,16 +117,19 @@ public class GameCoordinator {
         return gamesRepository.findById(gameId);
     }
 
-    public ActionResult act(String gameId, String username, JassMessage message) {
+    public ActionResult act(String gameId, String username, JassRequest message) {
         Game game = openGames.getGame(gameId);
         Optional<JassPlayer> player = game.getPlayers().stream()
                 .filter(p -> p.getName().equals(username))
                 .findFirst();
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
 
-        Action action = schieber.getActionsForGameStep(game.getStep());
+        Action action = schieber.getAllowedActionsForGameStep(game.getStep());
+        if (action.getEventType().equals(message.getEvent())) {
+            return action.act(game, message);
+        }
+        throw new RuntimeException("Can not execute action");
 
-        return action.act(game, message);
     }
 
 

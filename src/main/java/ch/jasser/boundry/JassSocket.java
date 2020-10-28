@@ -2,7 +2,6 @@ package ch.jasser.boundry;
 
 import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.actions.ActionResult;
-import ch.jasser.entity.JassPlayer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.bind.Jsonb;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
@@ -61,20 +59,13 @@ public class JassSocket {
     public void onMessage(String message, @PathParam("username") String username, @PathParam("gameId") String gameId) {
 
         Jsonb jsonb = JsonbBuilder.create();
-        JassMessage jassMessage = jsonb.fromJson(message, JassMessage.class);
+        JassRequest jassRequest = jsonb.fromJson(message, JassRequest.class);
 
-        ActionResult act = coordinator.act(gameId, username, jassMessage);
-        JassResponse response = act.getResponse();
-        if (response.getBroadcast() != null) {
-            List<String> players = coordinator.getPlayers(gameId).stream()
-                    .map(JassPlayer::getName)
-                    .collect(Collectors.toList());
-            sendToUsers(players, response.getBroadcast());
-        }
+        ActionResult act = coordinator.act(gameId, username, jassRequest);
+        JassResponses response = act.getResponse();
 
-        if (response.getToUser() != null) {
-            System.out.println("broadcasting");
-            sendToUser(username, response.getToUser());
+        for (Map.Entry<String, JassRequest> messageEntry : response.getResponsesPerUser().entrySet()) {
+            sendToUser(messageEntry.getKey(), messageEntry.getValue());
         }
     }
 

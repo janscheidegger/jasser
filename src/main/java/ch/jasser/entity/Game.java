@@ -10,6 +10,7 @@ import javax.json.bind.annotation.JsonbTransient;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @BsonDiscriminator
@@ -63,6 +64,11 @@ public class Game {
         Turn turn = new Turn();
         this.turns.add(turn);
         return turn;
+    }
+
+    public Optional<JassPlayer> getPlayerByName(String name) {
+        return players.stream().filter(p -> p.getName().equals(name))
+                .findFirst();
     }
 
     @JsonbTransient

@@ -1,6 +1,10 @@
 package ch.jasser.control;
 
-import ch.jasser.entity.*;
+import ch.jasser.entity.Card;
+import ch.jasser.entity.Game;
+import ch.jasser.entity.JassPlayer;
+import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Turn;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -8,7 +12,9 @@ import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import javax.enterprise.context.Dependent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.and;

@@ -1,15 +1,14 @@
 package ch.jasser.control.actions;
 
-import ch.jasser.boundry.JassMessage;
-import ch.jasser.boundry.JassResponse;
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.control.steps.GameStep;
 
 public class ActionResult {
 
     private GameStep nextStep;
-    private JassResponse response;
+    private JassResponses response;
 
-    public ActionResult(GameStep nextStep, JassResponse response) {
+    public ActionResult(GameStep nextStep, JassResponses response) {
         this.nextStep = nextStep;
         this.response = response;
     }
@@ -18,7 +17,7 @@ public class ActionResult {
         return nextStep;
     }
 
-    public JassResponse getResponse() {
+    public JassResponses getResponse() {
         return response;
     }
 }
