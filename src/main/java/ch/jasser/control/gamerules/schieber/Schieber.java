@@ -19,7 +19,7 @@ public class Schieber implements Rules {
         actionMap.put(GameStep.MOVE, playCardAction);
     }
 
-    public List<Card> getInitialDeck() {
+    public static List<Card> getInitialDeck() {
         List<Card> cards = new ArrayList<>();
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {

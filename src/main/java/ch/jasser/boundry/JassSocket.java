@@ -64,7 +64,7 @@ public class JassSocket {
         ActionResult act = coordinator.act(gameId, username, jassRequest);
         JassResponses response = act.getResponse();
 
-        for (Map.Entry<String, JassRequest> messageEntry : response.getResponsesPerUser().entrySet()) {
+        for (Map.Entry<String, JassResponse> messageEntry : response.getResponsesPerUser().entrySet()) {
             sendToUser(messageEntry.getKey(), messageEntry.getValue());
         }
     }
