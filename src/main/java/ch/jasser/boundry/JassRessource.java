@@ -19,7 +19,6 @@ public class JassRessource {
     private Jsonb jsonb = JsonbBuilder.create();
 
     public JassRessource(OpenGames openGames) {
-
         this.openGames = openGames;
     }
 

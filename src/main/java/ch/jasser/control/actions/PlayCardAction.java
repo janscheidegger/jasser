@@ -12,6 +12,7 @@ import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.Turn;
 
 import javax.enterprise.context.Dependent;
+import java.util.List;
 
 import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 
@@ -30,10 +31,17 @@ public class PlayCardAction implements Action {
         Card card = message.getCards().get(0);
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
+            GameStep nextStep = game.getCurrentTurn().getCardsOnTable().size() + 1 == game.getPlayers().size() ?
+                    GameStep.PRE_MOVE :
+                    GameStep.MOVE;
+
             JassResponse response = aJassResponse().withEvent(EventType.CARD_PLAYED)
                     .withHand(player.getHand())
                     .build();
-            return new ActionResult(GameStep.MOVE, new JassResponses().addResponse(message.getUsername(), response));
+            JassResponses jassResponses = new JassResponses()
+                    .addResponse(message.getUsername(), response)
+                    .nextPlayer(getNextPlayer(player, game.getPlayers()));
+            return new ActionResult(nextStep, jassResponses);
         } else {
             JassResponse response = aJassResponse().withEvent(EventType.ERROR)
                     .withUsername(message.getUsername())
@@ -42,11 +50,14 @@ public class PlayCardAction implements Action {
         }
     }
 
+    private JassPlayer getNextPlayer(JassPlayer currentPlayer, List<JassPlayer> players) {
+        return players.get(players.indexOf(currentPlayer) + 1 % players.size());
+    }
+
     private void playCard(Game game, JassPlayer player, Card card) {
         repository.addCardToTurn(game.getGameId(), player.getName(), card, game.getTurns().size());
         repository.removeCardFromPlayer(game.getGameId(), player.getName(), card);
-        player.getHand().remove(card);
-
+        player.playCard(card);
     }
 
     @Override

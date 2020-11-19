@@ -38,7 +38,7 @@ public class JassPlayer {
     }
 
     public List<Card> getHand() {
-        return Collections.unmodifiableList(hand);
+        return hand;
     }
 
     public List<Card> getCardsWon() {
