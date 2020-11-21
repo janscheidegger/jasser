@@ -8,6 +8,7 @@ import ch.jasser.entity.Turn;
 import com.mongodb.client.MongoClient;
 import io.quarkus.test.Mock;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class GamesRepositoryMock extends GamesRepository {
     }
 
     @Override
-    void createGame(Game game) {
+    public void createGame(Game game) {
         this.games.put(game.getGameId(), game);
     }
 
