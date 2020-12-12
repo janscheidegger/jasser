@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class JassRessource {
 
-    private OpenGames openGames;
+    private final OpenGames openGames;
     private Jsonb jsonb = JsonbBuilder.create();
 
     public JassRessource(OpenGames openGames) {

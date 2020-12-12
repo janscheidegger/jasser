@@ -37,13 +37,26 @@ public class PlayCardAction implements Action {
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
             GameStep nextStep = getNextStep(game);
-
             JassPlayer nextPlayer;
-            if(GameStep.PRE_TURN.equals(nextStep)) {
-                PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn().getCardsOnTable(), game.getCurrentTurn().getPlayedSuit(), game.getTrump());
-                nextPlayer = game.getPlayerByName(winningCard.getPlayer()).orElseThrow(RuntimeException::new);
-            } else {
-                nextPlayer = getNextPlayer(player, game.getPlayers());
+
+            switch(nextStep) {
+                case PRE_TURN: {
+                    PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn().getCardsOnTable(), game.getCurrentTurn().getPlayedSuit(), game.getTrump());
+                    nextPlayer = game.getPlayerByName(winningCard.getPlayer()).orElseThrow(RuntimeException::new);
+                    repository.turnToWinningPlayer(game.getGameId(), nextPlayer.getName());
+                    break;
+                }
+                case PRE_ROUND: {
+                    PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn().getCardsOnTable(), game.getCurrentTurn().getPlayedSuit(), game.getTrump());
+                    repository.turnToWinningPlayer(game.getGameId(), winningCard.getPlayer());
+                    nextPlayer = game.getPlayers().get(0);// TODO: next player to make trump and the first turn
+                    break;
+                }
+                case PRE_MOVE:
+                    nextPlayer = getNextPlayer(player, game.getPlayers());
+                    break;
+                default:
+                    throw new RuntimeException("Not yet implemented");
             }
 
             JassResponse response = aJassResponse().withEvent(EventType.CARD_PLAYED)

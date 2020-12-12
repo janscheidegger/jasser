@@ -8,5 +8,6 @@ public enum EventType {
     RECEIVE_CARD,
     CARD_PLAYED,
     HAND_OUT_CARDS,
-    ERROR
+    ERROR,
+    SCHIEBEN, TRUMP_CHOSEN, CHOOSE_TRUMP
 }

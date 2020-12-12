@@ -60,7 +60,8 @@ public class JassGameIT {
         ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
         assertAll(
-                () -> assertEquals(GameStep.PRE_ROUND, actionResult.getNextStep())
+                () -> assertEquals(GameStep.PRE_ROUND, actionResult.getNextStep()),
+                () -> assertEquals(4, repository.findById(gameId).getPlayerByName("4").orElseThrow().getCardsWon().size())
         );
     }
 
@@ -95,7 +96,8 @@ public class JassGameIT {
         assertAll(
                 () -> assertEquals(GameStep.PRE_TURN, actionResult.getNextStep()),
                 () -> assertEquals(1, actionResult.getResponse().getMoveAllowed().size()),
-                () -> assertEquals("4", actionResult.getResponse().getMoveAllowed().get(0).getName())
+                () -> assertEquals("4", actionResult.getResponse().getMoveAllowed().get(0).getName()),
+                () -> assertEquals(4, repository.findById(gameId).getPlayerByName("4").orElseThrow().getCardsWon().size())
         );
     }
 

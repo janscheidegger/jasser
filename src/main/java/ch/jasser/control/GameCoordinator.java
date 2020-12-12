@@ -36,19 +36,6 @@ public class GameCoordinator {
         this.schieber = schieber;
     }
 
-    public void handOutCard(String gameId, JassPlayer player, Card card) {
-        player.receiveCard(card);
-
-        JassRequest message = new JassRequest();
-        message.setEvent(EventType.RECEIVE_CARD);
-        message.setCards(List.of(card));
-
-        gamesRepository.handOutCard(gameId, player.getName(), card);
-
-        jassSocket.sendToUser(player.getName(), message);
-    }
-
-
     public void joinGame(String gameId, String player) {
         Game gameState = getGameState(gameId);
         if (!gameState.getPlayers().contains(new JassPlayer(player))) {

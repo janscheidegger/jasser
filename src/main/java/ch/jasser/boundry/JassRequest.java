@@ -2,6 +2,7 @@ package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.entity.Card;
+import ch.jasser.entity.Suit;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class JassRequest {
     private EventType event;
     private String username;
     private List<Card> cards;
+    private Suit chosenTrump;
 
     public EventType getEvent() {
         return event;
@@ -32,6 +34,14 @@ public class JassRequest {
 
     public void setCards(List<Card> cards) {
         this.cards = cards;
+    }
+
+    public Suit getChosenTrump() {
+        return chosenTrump;
+    }
+
+    public void setChosenTrump(Suit chosenTrump) {
+        this.chosenTrump = chosenTrump;
     }
 
     @Override
