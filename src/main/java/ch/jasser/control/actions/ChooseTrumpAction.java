@@ -6,8 +6,11 @@ import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Game;
 
+import javax.enterprise.context.Dependent;
+
 import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 
+@Dependent
 public class ChooseTrumpAction implements Action {
 
     @Override
