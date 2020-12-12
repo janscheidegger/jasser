@@ -29,4 +29,12 @@ public class JassResponses {
     public Map<String, JassResponse> getResponsesPerUser() {
         return responsesPerUser;
     }
+
+    @Override
+    public String toString() {
+        return "JassResponses{" +
+                "responsesPerUser=" + responsesPerUser +
+                ", moveAllowed=" + moveAllowed +
+                '}';
+    }
 }

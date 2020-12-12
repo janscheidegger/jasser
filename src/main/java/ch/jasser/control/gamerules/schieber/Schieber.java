@@ -9,14 +9,14 @@ import ch.jasser.control.gamerules.Rules;
 import javax.enterprise.context.Dependent;
 import java.util.*;
 
-@Dependent
 public class Schieber implements Rules {
 
     private final SchieberCardRater cardRater = new SchieberCardRater();
     private Map<GameStep, Action> actionMap = new HashMap<>();
 
-    public Schieber(PlayCardAction playCardAction) {
-        actionMap.put(GameStep.MOVE, playCardAction);
+    @Override
+    public void registerAction(GameStep gameStep, Action action) {
+        actionMap.put(gameStep, action);
     }
 
     public static List<Card> getInitialDeck() {
@@ -44,6 +44,7 @@ public class Schieber implements Rules {
         return cardsPerPlayer;
     }
 
+    @Override
     public PlayedCard getWinningCard(List<PlayedCard> cards, Suit currentSuit, Suit trump) {
         cards.sort(Comparator.comparingInt(o -> cardRater.getValue(currentSuit, trump, o.getCard())));
         return cards.get(cards.size()-1);

@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-@Dependent
+@ApplicationScoped
 public class GamesRepository {
 
     private final MongoClient mongoClient;
@@ -29,7 +30,7 @@ public class GamesRepository {
         this.mongoClient = mongoClient;
     }
 
-    void createGame(Game game) {
+    public void createGame(Game game) {
         getCollection().insertOne(toDocument(game));
     }
 

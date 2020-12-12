@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class JassPlayer {
 
@@ -46,7 +47,8 @@ public class JassPlayer {
     }
 
     public boolean playCard(Card card) {
-        if (hand.remove(card)) {
+        if (hand.contains(card)) {
+            this.hand = hand.stream().filter(c -> !c.equals(card)).collect(Collectors.toList());
             return true;
         } else {
             throw new RuntimeException(String.format("Cannot play this card [%s], [%s]", card, hand));

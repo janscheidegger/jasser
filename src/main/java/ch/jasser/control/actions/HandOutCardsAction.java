@@ -10,10 +10,12 @@ import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 
+import javax.enterprise.context.Dependent;
 import java.util.List;
 
 import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 
+@Dependent
 public class HandOutCardsAction implements Action {
 
     @Override

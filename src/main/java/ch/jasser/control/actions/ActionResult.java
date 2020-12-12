@@ -20,4 +20,12 @@ public class ActionResult {
     public JassResponses getResponse() {
         return response;
     }
+
+    @Override
+    public String toString() {
+        return "ActionResult{" +
+                "nextStep=" + nextStep +
+                ", response=" + response +
+                '}';
+    }
 }

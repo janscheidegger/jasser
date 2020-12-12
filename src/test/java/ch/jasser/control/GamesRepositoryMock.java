@@ -5,7 +5,6 @@ import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Turn;
-import com.mongodb.client.MongoClient;
 import io.quarkus.test.Mock;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,11 +15,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Mock
+@ApplicationScoped
 public class GamesRepositoryMock extends GamesRepository {
 
     private Map<String, Game> games = new HashMap<>();
 
-    public GamesRepositoryMock(MongoClient mongoClient) {
+    public GamesRepositoryMock() {
         super(null);
     }
 
@@ -46,7 +46,15 @@ public class GamesRepositoryMock extends GamesRepository {
 
     @Override
     public Game findById(String uuid) {
-        return games.get(uuid);
+        Game game = games.get(uuid);
+        return new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers().stream().map(p -> new JassPlayer(p.getName(), p.getHand(), p.getCardsWon())).collect(Collectors.toList()),
+                game.getTurns().stream().map(t -> new Turn(t.getCardsOnTable())).collect(Collectors.toList()),
+                game.getTrump(),
+                game.getStep()
+        );
     }
 
     @Override

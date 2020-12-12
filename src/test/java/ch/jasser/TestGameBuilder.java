@@ -1,2 +1,86 @@
-package ch.jasser;public class TestGameBuilder {
+package ch.jasser;
+
+import ch.jasser.boundry.JassResponse;
+import ch.jasser.control.steps.GameStep;
+import ch.jasser.entity.Card;
+import ch.jasser.entity.Game;
+import ch.jasser.entity.GameType;
+import ch.jasser.entity.JassPlayer;
+import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Suit;
+import ch.jasser.entity.Turn;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class TestGameBuilder {
+
+    private List<JassPlayer> players = new ArrayList<>();
+    private final List<Turn> turns = new ArrayList<>();
+    private GameStep step = GameStep.MOVE;
+
+    TestGameBuilder withPlayers(JassPlayer... jassPlayers) {
+        players = List.of(jassPlayers);
+        return this;
+    }
+
+    TestGameBuilder withNextStep(GameStep gameStep) {
+        this.step = gameStep;
+        return this;
+    }
+
+    TestGameBuilder withTurns(Turn... turns) {
+        this.turns.add(new TurnBuilder().build());
+        return this;
+    }
+
+
+    Game build(String uuid) {
+        return new Game(uuid,
+                GameType.SCHIEBER,
+                players,
+                turns,
+                Suit.CLUBS,
+                step
+                );
+    }
+
+    static class TurnBuilder {
+        Turn turn = new Turn();
+        TurnBuilder withCardsOnTable(PlayedCard... cards) {
+            turn = new Turn(List.of(cards));
+            return this;
+        }
+
+        Turn build() {
+            return turn;
+        }
+    }
+
+
+    static class JassPlayerBuilder {
+        private String name;
+        private List<Card> hand = new ArrayList<>();
+        private List<Card> cardsWon = new ArrayList<>();
+        JassPlayerBuilder(String name) {
+            this.name = name;
+        }
+
+        JassPlayerBuilder withCards(Card... cards) {
+            this.hand = List.of(cards);
+            return this;
+        }
+
+        JassPlayerBuilder withCardsWon(Card... cards) {
+            this.cardsWon = List.of(cards);
+            return this;
+        }
+
+        JassPlayer build() {
+            return new JassPlayer(name, hand, cardsWon);
+        }
+    }
 }

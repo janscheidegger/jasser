@@ -9,6 +9,7 @@ public class JassResponse {
     private EventType event;
     private String username;
     private List<Card> hand;
+    private String message;
 
     public EventType getEvent() {
         return event;
@@ -34,10 +35,21 @@ public class JassResponse {
         this.hand = hand;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
-        return "JassMessage{" +
-                "event='" + event + '\'' +
+        return "JassResponse{" +
+                "event=" + event +
+                ", username='" + username + '\'' +
+                ", hand=" + hand +
+                ", message='" + message + '\'' +
                 '}';
     }
 
@@ -55,6 +67,11 @@ public class JassResponse {
 
         public JassResponseBuilder withEvent(EventType event) {
             jassResponse.setEvent(event);
+            return this;
+        }
+
+        public JassResponseBuilder withMessage(String message) {
+            jassResponse.setMessage(message);
             return this;
         }
 

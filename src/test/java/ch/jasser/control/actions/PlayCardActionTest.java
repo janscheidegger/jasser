@@ -3,6 +3,8 @@ package ch.jasser.control.actions;
 import ch.jasser.boundry.JassRequest;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
+import ch.jasser.control.gamerules.CardRater;
+import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
@@ -12,25 +14,27 @@ import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Rank;
 import ch.jasser.entity.Suit;
 import ch.jasser.entity.Turn;
+import groovyjarjarantlr4.v4.tool.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class PlayCardActionTest {
 
 
-    private GamesRepository gamesRepository = Mockito.mock(GamesRepository.class);
+    private GamesRepository gamesRepository = mock(GamesRepository.class);
+    private Rules rules = mock(Rules.class);
 
     private PlayCardAction cut;
 
     @BeforeEach
     void beforeEach() {
-        cut = new PlayCardAction(gamesRepository);
+        cut = new PlayCardAction(gamesRepository, rules);
     }
 
     @Test
