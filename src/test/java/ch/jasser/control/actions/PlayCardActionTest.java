@@ -3,7 +3,6 @@ package ch.jasser.control.actions;
 import ch.jasser.boundry.JassRequest;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
-import ch.jasser.control.gamerules.CardRater;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
@@ -14,7 +13,6 @@ import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Rank;
 import ch.jasser.entity.Suit;
 import ch.jasser.entity.Turn;
-import groovyjarjarantlr4.v4.tool.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,17 +47,16 @@ class PlayCardActionTest {
                 ),
                 List.of(new Turn()),
                 Suit.CLUBS,
-                GameStep.MOVE
+                GameStep.PRE_MOVE
         );
         JassRequest message = new JassRequest();
-        message.setUsername("player1");
         message.setEvent(EventType.PLAY_CARD);
         message.setCards(List.of(new Card(Rank.ACE, Suit.CLUBS)));
-        ActionResult act = cut.act(game, message);
+        ActionResult act = cut.act(game, player1, message);
 
         assertEquals(1, act.getResponse().getMoveAllowed().size());
         assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());
-        assertEquals(GameStep.MOVE, act.getNextStep());
+        assertEquals(GameStep.PRE_MOVE, act.getNextStep());
     }
 
     @Test
@@ -86,10 +83,9 @@ class PlayCardActionTest {
                 GameStep.MOVE
         );
         JassRequest message = new JassRequest();
-        message.setUsername("player1");
         message.setEvent(EventType.PLAY_CARD);
         message.setCards(List.of(new Card(Rank.ACE, Suit.CLUBS)));
-        ActionResult act = cut.act(game, message);
+        ActionResult act = cut.act(game, player1, message);
 
         assertEquals(1, act.getResponse().getMoveAllowed().size());
         assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());

@@ -4,6 +4,7 @@ import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Suit;
 import ch.jasser.entity.Turn;
 import io.quarkus.test.Mock;
 
@@ -78,5 +79,19 @@ public class GamesRepositoryMock extends GamesRepository {
                 .getCardsOnTable().stream().map(PlayedCard::getCard).collect(Collectors.toList());
 
         games.get(gameId).getPlayerByName(winningPlayer).ifPresent(p -> p.getCardsWon().addAll(cardsOnTable));
+    }
+
+    @Override
+    public void setTrump(String gameId, Suit trump) {
+        Game game = games.get(gameId);
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers(),
+                game.getTurns(),
+                trump,
+                game.getStep()
+        ));
+
     }
 }

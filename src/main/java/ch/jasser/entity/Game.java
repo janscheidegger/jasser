@@ -56,9 +56,6 @@ public class Game {
         return trump;
     }
 
-    public void setTrump(Suit trump) {
-        this.trump = trump;
-    }
 
     public Turn nextTurn() {
         Turn turn = new Turn();

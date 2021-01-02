@@ -19,7 +19,7 @@ import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 public class HandOutCardsAction implements Action {
 
     @Override
-    public ActionResult act(Game game, JassRequest message) {
+    public ActionResult act(Game game, JassPlayer player, JassRequest message) {
         List<Card> initialDeck = Schieber.getInitialDeck();
         List<JassPlayer> players = game.getPlayers();
         for (int i = 0; i < initialDeck.size(); i++) {
@@ -27,12 +27,12 @@ public class HandOutCardsAction implements Action {
         }
 
         JassResponses responses = new JassResponses();
-        for (JassPlayer player : players) {
-            JassResponse response = aJassResponse().withUsername(player.getName())
+        for (JassPlayer currentPlayer : players) {
+            JassResponse response = aJassResponse().withUsername(currentPlayer.getName())
                     .withEvent(EventType.RECEIVE_CARD)
-                    .withHand(player.getHand())
+                    .withHand(currentPlayer.getHand())
                     .build();
-            responses.addResponse(player.getName(), response);
+            responses.addResponse(currentPlayer.getName(), response);
         }
         return new ActionResult(GameStep.PRE_MOVE, responses);
     }

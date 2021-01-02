@@ -5,7 +5,6 @@ import ch.jasser.boundry.JassResponse;
 import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
-import ch.jasser.control.gamerules.CardRater;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
@@ -31,8 +30,7 @@ public class PlayCardAction implements Action {
     }
 
     @Override
-    public ActionResult act(Game game, JassRequest message) {
-        JassPlayer player = game.getPlayerByName(message.getUsername()).orElseThrow(RuntimeException::new);
+    public ActionResult act(Game game, JassPlayer player, JassRequest message) {
         Card card = message.getCards().get(0);
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
@@ -46,7 +44,7 @@ public class PlayCardAction implements Action {
                     repository.turnToWinningPlayer(game.getGameId(), nextPlayer.getName());
                     break;
                 }
-                case PRE_ROUND: {
+                case HAND_OUT: {
                     PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn().getCardsOnTable(), game.getCurrentTurn().getPlayedSuit(), game.getTrump());
                     repository.turnToWinningPlayer(game.getGameId(), winningCard.getPlayer());
                     nextPlayer = game.getPlayers().get(0);// TODO: next player to make trump and the first turn
@@ -63,22 +61,22 @@ public class PlayCardAction implements Action {
                     .withHand(player.getHand())
                     .build();
             JassResponses jassResponses = new JassResponses()
-                    .addResponse(message.getUsername(), response)
+                    .addResponse(player.getName(), response)
                     .nextPlayer(nextPlayer);
             return new ActionResult(nextStep, jassResponses);
         } else {
             JassResponse response = aJassResponse().withEvent(EventType.ERROR)
                     .withMessage(String.format("Not allowed to play card: (%s)", card))
-                    .withUsername(message.getUsername())
+                    .withUsername(player.getName())
                     .build();
-            return new ActionResult(GameStep.MOVE, new JassResponses().addResponse(message.getUsername(), response));
+            return new ActionResult(GameStep.MOVE, new JassResponses().addResponse(player.getName(), response));
         }
     }
 
     private GameStep getNextStep(Game game) {
         if (game.getCurrentTurn().getCardsOnTable().size() == game.getPlayers().size() &&
                 noMoreCardsOnHands(game.getPlayers())) {
-            return GameStep.PRE_ROUND;
+            return GameStep.HAND_OUT;
         }
         if (game.getCurrentTurn().getCardsOnTable().size() == game.getPlayers().size()) {
             return GameStep.PRE_TURN;

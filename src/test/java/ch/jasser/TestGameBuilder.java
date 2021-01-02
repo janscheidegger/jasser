@@ -1,6 +1,5 @@
 package ch.jasser;
 
-import ch.jasser.boundry.JassResponse;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
@@ -11,19 +10,22 @@ import ch.jasser.entity.Suit;
 import ch.jasser.entity.Turn;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class TestGameBuilder {
 
     private List<JassPlayer> players = new ArrayList<>();
     private final List<Turn> turns = new ArrayList<>();
     private GameStep step = GameStep.MOVE;
+    private Suit trump = null;
 
     TestGameBuilder withPlayers(JassPlayer... jassPlayers) {
         players = List.of(jassPlayers);
+        return this;
+    }
+
+    TestGameBuilder withTrump(Suit trump) {
+        this.trump = trump;
         return this;
     }
 
@@ -43,7 +45,7 @@ public class TestGameBuilder {
                 GameType.SCHIEBER,
                 players,
                 turns,
-                Suit.CLUBS,
+                trump,
                 step
                 );
     }

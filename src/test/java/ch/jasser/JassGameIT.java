@@ -1,5 +1,6 @@
 package ch.jasser;
 
+import ch.jasser.boundry.JassRequest;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.GamesRepository;
@@ -32,10 +33,39 @@ public class JassGameIT {
 
 
     @Test
+    void firstPlayerShouldChooseTrump() {
+        String gameId = UUID.randomUUID().toString();
+        Game game = new TestGameBuilder().withPlayers(
+                new TestGameBuilder.JassPlayerBuilder("1").build(),
+                new TestGameBuilder.JassPlayerBuilder("2").build(),
+                new TestGameBuilder.JassPlayerBuilder("3").build(),
+                new TestGameBuilder.JassPlayerBuilder("4").build()
+        ).withNextStep(GameStep.CHOOSE_TRUMP).build(gameId);
+
+        repository.createGame(game);
+
+        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+                .withUsername("1")
+                .withEvent(EventType.CHOOSE_TRUMP)
+                .withChosenTrump(Suit.CLUBS)
+                .build()
+        );
+
+        Game gameFromRepository = repository.findById(gameId);
+
+        assertAll(
+                () -> assertEquals(Suit.CLUBS, gameFromRepository.getTrump()),
+                () -> assertEquals(GameStep.PRE_TURN, result.getNextStep())
+        );
+
+    }
+
+    @Test
     void everyPlayerShouldPlayLastCardAndRoundShouldEnd() {
         String gameId = UUID.randomUUID().toString();
 
         Game game = new TestGameBuilder()
+                .withTrump(Suit.CLUBS)
                 .withPlayers(
                         new TestGameBuilder.JassPlayerBuilder("1")
                                 .withCards(new Card(Rank.JACK, Suit.CLUBS))
@@ -54,13 +84,13 @@ public class JassGameIT {
                 .build(gameId);
 
         repository.createGame(game);
-        System.out.println(playCard(gameId, "1", new Card(Rank.JACK, Suit.CLUBS)));
-        System.out.println(playCard(gameId, "2", new Card(Rank.QUEEN, Suit.CLUBS)));
-        System.out.println(playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS)));
+        playCard(gameId, "1", new Card(Rank.JACK, Suit.CLUBS));
+        playCard(gameId, "2", new Card(Rank.QUEEN, Suit.CLUBS));
+        playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS));
         ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
         assertAll(
-                () -> assertEquals(GameStep.PRE_ROUND, actionResult.getNextStep()),
+                () -> assertEquals(GameStep.HAND_OUT, actionResult.getNextStep()),
                 () -> assertEquals(4, repository.findById(gameId).getPlayerByName("4").orElseThrow().getCardsWon().size())
         );
     }
@@ -70,6 +100,7 @@ public class JassGameIT {
         String gameId = UUID.randomUUID().toString();
 
         Game game = new TestGameBuilder()
+                .withTrump(Suit.CLUBS)
                 .withPlayers(
                         new TestGameBuilder.JassPlayerBuilder("1")
                                 .withCards(new Card(Rank.JACK, Suit.CLUBS), new Card(Rank.JACK, Suit.HEARTS))
@@ -117,7 +148,7 @@ public class JassGameIT {
                         new TestGameBuilder.JassPlayerBuilder("4")
                                 .build()
                 )
-                .withNextStep(GameStep.PRE_ROUND)
+                .withNextStep(GameStep.HAND_OUT)
                 .build(gameId);
 
         repository.createGame(game);
@@ -142,7 +173,7 @@ public class JassGameIT {
         return coordinator.act(gameId, username, aJassRequest()
                 .withCards(List.of(card))
                 .withEvent(EventType.PLAY_CARD)
-                .withUsername(username).build()
+                .withUsername(null).build()
         );
     }
 

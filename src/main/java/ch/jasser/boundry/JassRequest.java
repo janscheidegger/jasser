@@ -81,5 +81,10 @@ public class JassRequest {
         public JassRequest build() {
             return jassRequest;
         }
+
+        public JassRequestBuilder withChosenTrump(Suit suit) {
+            jassRequest.setChosenTrump(suit);
+            return this;
+        }
     }
 }

@@ -56,7 +56,7 @@ public class GameCoordinator {
 
         Action action = schieber.getAllowedActionsForGameStep(game.getStep());
         if (action.getEventType().equals(message.getEvent())) {
-            return action.act(game, message);
+            return action.act(game, jassPlayer, message);
         }
         throw new RuntimeException(String.format("Can not execute action [ActionEventType=%s, RequestEventType=%s, gameStep=%s]",
                 action.getEventType(), message.getEvent(), game.getStep()));
