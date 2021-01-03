@@ -3,7 +3,9 @@ package ch.jasser.boundry;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Suit;
+import ch.jasser.entity.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JassRequest {
@@ -11,6 +13,7 @@ public class JassRequest {
     private String username;
     private List<Card> cards;
     private Suit chosenTrump;
+    private List<Team> teams;
 
     public EventType getEvent() {
         return event;
@@ -44,6 +47,14 @@ public class JassRequest {
         this.chosenTrump = chosenTrump;
     }
 
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
     @Override
     public String toString() {
         return "JassMessage{" +
@@ -57,6 +68,7 @@ public class JassRequest {
 
         private JassRequestBuilder() {
             jassRequest = new JassRequest();
+            jassRequest.setTeams(new ArrayList<>());
         }
 
         public static JassRequestBuilder aJassRequest() {
@@ -75,6 +87,11 @@ public class JassRequest {
 
         public JassRequestBuilder withCards(List<Card> cards) {
             jassRequest.setCards(cards);
+            return this;
+        }
+
+        public JassRequestBuilder withTeam(Team team) {
+            jassRequest.getTeams().add(team);
             return this;
         }
 

@@ -1,6 +1,7 @@
 package ch.jasser.control.actions;
 
 import ch.jasser.boundry.JassRequest;
+import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Game;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
+import static ch.jasser.boundry.JassRequest.JassRequestBuilder.aJassRequest;
+import static ch.jasser.control.steps.GameStep.CHOOSE_TRUMP;
 import static ch.jasser.control.steps.GameStep.PRE_TURN;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,15 +48,37 @@ public class ChooseTrumpActionTest {
                 GameStep.CHOOSE_TRUMP
         );
 
-        ActionResult result = cut.act(game, new JassPlayer("player1"), JassRequest.JassRequestBuilder.aJassRequest()
+        ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
+                .withEvent(EventType.CHOOSE_TRUMP)
                 .withChosenTrump(Suit.HEARTS)
                 .build());
 
         assertAll(
                 () -> assertEquals(PRE_TURN, result.getNextStep())
         );
+    }
 
+    @Test
+    void shouldStayInChooseTrumpOnSchieben() {
+        Game game = new Game(
+                UUID.randomUUID().toString(),
+                GameType.SCHIEBER,
+                List.of(
+                        new JassPlayer("player1"),
+                        new JassPlayer("player2"),
+                        new JassPlayer("player3"),
+                        new JassPlayer("player4")
+                ),
+                List.of(),
+                null,
+                GameStep.CHOOSE_TRUMP
+        );
 
+        ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
+                .withEvent(EventType.SCHIEBEN)
+                .build());
+
+        assertEquals(CHOOSE_TRUMP, result.getNextStep());
     }
 
 }

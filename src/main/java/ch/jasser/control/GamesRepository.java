@@ -5,6 +5,7 @@ import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Suit;
+import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -104,4 +105,9 @@ public class GamesRepository {
     public void setTrump (String gameId, Suit trump) {
         throw new RuntimeException("Not implemented yet");
     }
+
+    public void setTeams(String gameId, List<Team> teams) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
 }

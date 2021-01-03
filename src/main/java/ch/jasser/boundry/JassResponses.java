@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JassResponses {
+public class  JassResponses {
 
     private final Map<String, JassResponse> responsesPerUser = new HashMap<>();
     private final List<JassPlayer> moveAllowed = new ArrayList<>();

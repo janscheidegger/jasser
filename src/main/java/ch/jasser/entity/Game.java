@@ -22,6 +22,7 @@ public class Game {
     private final List<Turn> turns;
     private Suit trump;
     private GameStep step;
+    private List<Team> teams;
 
     public Game() {
         this.gameId = UUID.randomUUID().toString();
@@ -30,6 +31,7 @@ public class Game {
         this.turns = new LinkedList<>();
         this.trump = null;
         this.step = null;
+        this.teams = new ArrayList<>();
 
     }
 
@@ -39,13 +41,15 @@ public class Game {
                 @BsonProperty("players") List<JassPlayer> players,
                 @BsonProperty("turns") List<Turn> turns,
                 @BsonProperty("trump") Suit trump,
-                @BsonProperty("step") GameStep step) {
+                @BsonProperty("step") GameStep step,
+                @BsonProperty("teams") List<Team> teams) {
         this.gameId = uuid;
         this.type = type;
         this.players = players;
         this.turns = turns;
         this.trump = trump;
         this.step = step;
+        this.teams = teams;
     }
 
     public List<JassPlayer> getPlayers() {
@@ -91,5 +95,9 @@ public class Game {
 
     public GameStep getStep() {
         return step;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
     }
 }

@@ -23,7 +23,7 @@ public class ChooseTrumpAction implements Action {
 
     @Override
     public ActionResult act(Game game, JassPlayer player, JassRequest message) {
-        if (message.getChosenTrump() != null) {
+        if (message.getEvent().equals(EventType.CHOOSE_TRUMP) && message.getChosenTrump() != null) {
             repository.setTrump(game.getGameId(), message.getChosenTrump());
             return new ActionResult(GameStep.PRE_TURN, new JassResponses().addResponse("",
                     aJassResponse().withEvent(EventType.TRUMP_CHOSEN)
