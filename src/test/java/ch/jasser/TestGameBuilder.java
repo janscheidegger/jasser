@@ -7,6 +7,7 @@ import ch.jasser.entity.GameType;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Suit;
+import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class TestGameBuilder {
 
     private List<JassPlayer> players = new ArrayList<>();
     private final List<Turn> turns = new ArrayList<>();
+    private final List<Team> teams = new ArrayList<>();
     private GameStep step = GameStep.MOVE;
     private Suit trump = null;
 
@@ -46,7 +48,8 @@ public class TestGameBuilder {
                 players,
                 turns,
                 trump,
-                step
+                step,
+                teams
                 );
     }
 

@@ -30,7 +30,8 @@ class HandOutCardsActionTest {
                 ),
                 List.of(),
                 null,
-                GameStep.HAND_OUT
+                GameStep.HAND_OUT,
+                List.of()
         );
 
         ActionResult act = cut.act(game, new JassPlayer("1"), null);

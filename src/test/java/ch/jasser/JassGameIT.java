@@ -10,6 +10,7 @@ import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.Rank;
 import ch.jasser.entity.Suit;
+import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,60 @@ public class JassGameIT {
                 () -> assertEquals(GameStep.PRE_TURN, result.getNextStep())
         );
 
+    }
+
+    @Test
+    void shouldSetPartnerIfChosen() {
+        String gameId = UUID.randomUUID().toString();
+        Game game = new TestGameBuilder().withPlayers(
+                new TestGameBuilder.JassPlayerBuilder("1").build(),
+                new TestGameBuilder.JassPlayerBuilder("2").build(),
+                new TestGameBuilder.JassPlayerBuilder("3").build(),
+                new TestGameBuilder.JassPlayerBuilder("4").build()
+        ).withNextStep(GameStep.CHOOSE_PARTNER).build(gameId);
+
+        repository.createGame(game);
+
+        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+                .withUsername("1")
+                .withEvent(EventType.CHOOSE_PARTNER)
+                .withTeam(Team.of("Team1", "1", "3"))
+                .withTeam(Team.of("Team2", "2", "4"))
+                .build()
+        );
+
+        Game gameFromRepository = repository.findById(gameId);
+
+        assertAll(
+                () -> assertEquals(2, gameFromRepository.getTeams().size()),
+                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
+        );
+    }
+
+    @Test
+    void shouldSetRandomPartnerIfNotChosen() {
+        String gameId = UUID.randomUUID().toString();
+        Game game = new TestGameBuilder().withPlayers(
+                new TestGameBuilder.JassPlayerBuilder("1").build(),
+                new TestGameBuilder.JassPlayerBuilder("2").build(),
+                new TestGameBuilder.JassPlayerBuilder("3").build(),
+                new TestGameBuilder.JassPlayerBuilder("4").build()
+        ).withNextStep(GameStep.CHOOSE_PARTNER).build(gameId);
+
+        repository.createGame(game);
+
+        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+                .withUsername("1")
+                .withEvent(EventType.CHOOSE_PARTNER)
+                .build()
+        );
+
+        Game gameFromRepository = repository.findById(gameId);
+
+        assertAll(
+                () -> assertEquals(2, gameFromRepository.getTeams().size()),
+                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
+        );
     }
 
     @Test

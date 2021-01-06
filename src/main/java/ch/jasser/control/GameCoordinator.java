@@ -55,6 +55,9 @@ public class GameCoordinator {
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
 
         Action action = schieber.getAllowedActionsForGameStep(game.getStep());
+        if(action == null) {
+            throw new RuntimeException("No Action defined for "+game.getStep());
+        }
         if (action.getEventType().equals(message.getEvent())) {
             return action.act(game, jassPlayer, message);
         }

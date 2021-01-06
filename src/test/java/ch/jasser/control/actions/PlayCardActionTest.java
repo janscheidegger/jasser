@@ -47,7 +47,8 @@ class PlayCardActionTest {
                 ),
                 List.of(new Turn()),
                 Suit.CLUBS,
-                GameStep.PRE_MOVE
+                GameStep.PRE_MOVE,
+                List.of()
         );
         JassRequest message = new JassRequest();
         message.setEvent(EventType.PLAY_CARD);
@@ -80,7 +81,8 @@ class PlayCardActionTest {
                 ),
                 List.of(turn),
                 Suit.CLUBS,
-                GameStep.MOVE
+                GameStep.MOVE,
+                List.of()
         );
         JassRequest message = new JassRequest();
         message.setEvent(EventType.PLAY_CARD);

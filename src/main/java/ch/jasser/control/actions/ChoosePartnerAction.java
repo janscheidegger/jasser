@@ -66,13 +66,11 @@ public class ChoosePartnerAction implements Action {
         Collections.shuffle(players);
         List<Team> teams = new ArrayList<>();
         for (int i = 1; i <= teamsize; i++) {
-            Team team = new Team();
-            team.setName("team1");
-            teams.add(team);
+            teams.add(Team.of("team"+i));
         }
 
         for (int i = 0; i < players.size(); i++) {
-            teams.get(i % teamsize).addPlayer(players.get(i).getName());
+            teams.set(i % teamsize, teams.get(i % teamsize).addPlayer(players.get(i).getName()));
         }
         return teams;
     }

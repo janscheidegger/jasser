@@ -45,7 +45,8 @@ public class ChooseTrumpActionTest {
                 ),
                 List.of(),
                 null,
-                GameStep.CHOOSE_TRUMP
+                GameStep.CHOOSE_TRUMP,
+                List.of()
         );
 
         ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
@@ -71,7 +72,8 @@ public class ChooseTrumpActionTest {
                 ),
                 List.of(),
                 null,
-                GameStep.CHOOSE_TRUMP
+                GameStep.CHOOSE_TRUMP,
+                List.of()
         );
 
         ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
