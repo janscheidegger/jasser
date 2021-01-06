@@ -41,6 +41,11 @@ public class TestGameBuilder {
         return this;
     }
 
+    TestGameBuilder withTeams(Team... teams) {
+        this.teams.addAll(List.of(teams));
+        return this;
+    }
+
 
     Game build(String uuid) {
         return new Game(uuid,

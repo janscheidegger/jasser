@@ -58,6 +58,7 @@ public class GameCoordinator {
         if(action == null) {
             throw new RuntimeException("No Action defined for "+game.getStep());
         }
+
         if (action.getEventType().equals(message.getEvent())) {
             return action.act(game, jassPlayer, message);
         }

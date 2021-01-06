@@ -35,21 +35,24 @@ public class JassGameIT {
 
     @Test
     void firstPlayerShouldChooseTrump() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
         Game game = new TestGameBuilder().withPlayers(
                 new TestGameBuilder.JassPlayerBuilder("1").build(),
                 new TestGameBuilder.JassPlayerBuilder("2").build(),
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
-        ).withNextStep(GameStep.CHOOSE_TRUMP).build(gameId);
+        )
+                                         .withNextStep(GameStep.CHOOSE_TRUMP)
+                                         .build(gameId);
 
         repository.createGame(game);
 
         ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
-                .withUsername("1")
-                .withEvent(EventType.CHOOSE_TRUMP)
-                .withChosenTrump(Suit.CLUBS)
-                .build()
+                                                                                         .withUsername("1")
+                                                                                         .withEvent(EventType.CHOOSE_TRUMP)
+                                                                                         .withChosenTrump(Suit.CLUBS)
+                                                                                         .build()
         );
 
         Game gameFromRepository = repository.findById(gameId);
@@ -63,61 +66,70 @@ public class JassGameIT {
 
     @Test
     void shouldSetPartnerIfChosen() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
         Game game = new TestGameBuilder().withPlayers(
                 new TestGameBuilder.JassPlayerBuilder("1").build(),
                 new TestGameBuilder.JassPlayerBuilder("2").build(),
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
-        ).withNextStep(GameStep.CHOOSE_PARTNER).build(gameId);
+        )
+                                         .withNextStep(GameStep.CHOOSE_PARTNER)
+                                         .build(gameId);
 
         repository.createGame(game);
 
         ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
-                .withUsername("1")
-                .withEvent(EventType.CHOOSE_PARTNER)
-                .withTeam(Team.of("Team1", "1", "3"))
-                .withTeam(Team.of("Team2", "2", "4"))
-                .build()
+                                                                                         .withUsername("1")
+                                                                                         .withEvent(EventType.CHOOSE_PARTNER)
+                                                                                         .withTeam(Team.of("Team1", "1", "3"))
+                                                                                         .withTeam(Team.of("Team2", "2", "4"))
+                                                                                         .build()
         );
 
         Game gameFromRepository = repository.findById(gameId);
 
         assertAll(
-                () -> assertEquals(2, gameFromRepository.getTeams().size()),
+                () -> assertEquals(2, gameFromRepository.getTeams()
+                                                        .size()),
                 () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
         );
     }
 
     @Test
     void shouldSetRandomPartnerIfNotChosen() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
         Game game = new TestGameBuilder().withPlayers(
                 new TestGameBuilder.JassPlayerBuilder("1").build(),
                 new TestGameBuilder.JassPlayerBuilder("2").build(),
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
-        ).withNextStep(GameStep.CHOOSE_PARTNER).build(gameId);
+        )
+                                         .withNextStep(GameStep.CHOOSE_PARTNER)
+                                         .build(gameId);
 
         repository.createGame(game);
 
         ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
-                .withUsername("1")
-                .withEvent(EventType.CHOOSE_PARTNER)
-                .build()
+                                                                                         .withUsername("1")
+                                                                                         .withEvent(EventType.CHOOSE_PARTNER)
+                                                                                         .build()
         );
 
         Game gameFromRepository = repository.findById(gameId);
 
         assertAll(
-                () -> assertEquals(2, gameFromRepository.getTeams().size()),
+                () -> assertEquals(2, gameFromRepository.getTeams()
+                                                        .size()),
                 () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
         );
     }
 
     @Test
     void everyPlayerShouldPlayLastCardAndRoundShouldEnd() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
 
         Game game = new TestGameBuilder()
                 .withTrump(Suit.CLUBS)
@@ -136,6 +148,7 @@ public class JassGameIT {
                                 .build()
                 )
                 .withTurns(new Turn())
+                .withTeams(Team.of("team1", "1", "3"), Team.of("Team2", "2", "4"))
                 .build(gameId);
 
         repository.createGame(game);
@@ -146,13 +159,18 @@ public class JassGameIT {
 
         assertAll(
                 () -> assertEquals(GameStep.HAND_OUT, actionResult.getNextStep()),
-                () -> assertEquals(4, repository.findById(gameId).getPlayerByName("4").orElseThrow().getCardsWon().size())
+                () -> assertEquals(4, repository.findById(gameId)
+                                                .getPlayerByName("4")
+                                                .orElseThrow()
+                                                .getCardsWon()
+                                                .size())
         );
     }
 
     @Test
     void everyPlayerShouldPlayCardAndTurnShouldEnd() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
 
         Game game = new TestGameBuilder()
                 .withTrump(Suit.CLUBS)
@@ -181,15 +199,25 @@ public class JassGameIT {
 
         assertAll(
                 () -> assertEquals(GameStep.PRE_TURN, actionResult.getNextStep()),
-                () -> assertEquals(1, actionResult.getResponse().getMoveAllowed().size()),
-                () -> assertEquals("4", actionResult.getResponse().getMoveAllowed().get(0).getName()),
-                () -> assertEquals(4, repository.findById(gameId).getPlayerByName("4").orElseThrow().getCardsWon().size())
+                () -> assertEquals(1, actionResult.getResponse()
+                                                  .getMoveAllowed()
+                                                  .size()),
+                () -> assertEquals("4", actionResult.getResponse()
+                                                    .getMoveAllowed()
+                                                    .get(0)
+                                                    .getName()),
+                () -> assertEquals(4, repository.findById(gameId)
+                                                .getPlayerByName("4")
+                                                .orElseThrow()
+                                                .getCardsWon()
+                                                .size())
         );
     }
 
     @Test
     void shouldHandOutCards() {
-        String gameId = UUID.randomUUID().toString();
+        String gameId = UUID.randomUUID()
+                            .toString();
 
         Game game = new TestGameBuilder()
 
@@ -215,8 +243,15 @@ public class JassGameIT {
         );
 
         assertAll(
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("1").getHand().size()),
-                () -> assertEquals(EventType.RECEIVE_CARD, act.getResponse().getResponsesPerUser().get("1").getEvent()),
+                () -> assertEquals(9, act.getResponse()
+                                         .getResponsesPerUser()
+                                         .get("1")
+                                         .getHand()
+                                         .size()),
+                () -> assertEquals(EventType.RECEIVE_CARD, act.getResponse()
+                                                              .getResponsesPerUser()
+                                                              .get("1")
+                                                              .getEvent()),
                 () -> assertEquals(GameStep.PRE_MOVE, act.getNextStep())
 
         );
@@ -228,7 +263,8 @@ public class JassGameIT {
         return coordinator.act(gameId, username, aJassRequest()
                 .withCards(List.of(card))
                 .withEvent(EventType.PLAY_CARD)
-                .withUsername(null).build()
+                .withUsername(null)
+                .build()
         );
     }
 

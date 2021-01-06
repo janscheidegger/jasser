@@ -30,20 +30,6 @@ public class Schieber implements Rules {
         return cards;
     }
 
-    private List<Card> getCardsAllowedToPlay() {
-        return List.of();
-    }
-
-
-
-    public Map<JassPlayer, List<Card>> handOutCards(List<Card> initialDeck, List<JassPlayer> players) {
-        Map<JassPlayer, List<Card>> cardsPerPlayer = new HashMap<>();
-        for (int i = 0; i < initialDeck.size(); i++) {
-            cardsPerPlayer.computeIfAbsent(players.get(i % players.size()), k -> new ArrayList<>()).add(initialDeck.get(i));
-        }
-        return cardsPerPlayer;
-    }
-
     @Override
     public PlayedCard getWinningCard(List<PlayedCard> cards, Suit currentSuit, Suit trump) {
         cards.sort(Comparator.comparingInt(o -> cardRater.getValue(currentSuit, trump, o.getCard())));
@@ -53,5 +39,10 @@ public class Schieber implements Rules {
     @Override
     public Action getAllowedActionsForGameStep(GameStep step) {
         return actionMap.get(step);
+    }
+
+    @Override
+    public int getPointsForCard(Card card, Suit trump) {
+        return card.getRank().getPoints(card.getSuit().equals(trump));
     }
 }
