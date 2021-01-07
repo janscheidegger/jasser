@@ -48,6 +48,22 @@ public class PlayCardAction implements Action {
                     nextPlayer = game.getPlayerByName(winningCard.getPlayer())
                                      .orElseThrow(RuntimeException::new);
                     repository.turnToWinningPlayer(game.getGameId(), nextPlayer.getName());
+
+                    for (Team team : game.getTeams()) {
+                        int teamPoints = team.getPlayers()
+                                             .stream()
+                                             .map(game::getPlayerByName)
+                                             .flatMap(Optional::stream)
+                                             .map(JassPlayer::getCardsWon)
+                                             .map(cards -> rules.countPoints(cards, game.getTrump()))
+                                             .mapToInt(Integer::valueOf)
+                                             .sum();
+                        team.addPoints(teamPoints, game.getTurns()
+                                                       .size() - 1);
+                        repository.addPointsToTeam(game.getGameId(), team, teamPoints);
+                    }
+
+
                     break;
                 }
                 case HAND_OUT: {
@@ -66,7 +82,9 @@ public class PlayCardAction implements Action {
                                              .map(cards -> rules.countPoints(cards, game.getTrump()))
                                              .mapToInt(Integer::valueOf)
                                              .sum();
-                        System.out.println(teamPoints);
+                        team.addPoints(teamPoints, game.getTurns()
+                                                       .size() - 1);
+                        repository.addPointsToTeam(game.getGameId(), team, teamPoints);
                     }
 
                     /* POST ACTION??? */

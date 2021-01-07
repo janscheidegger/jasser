@@ -38,12 +38,16 @@ public class GamesRepositoryMock extends GamesRepository {
 
     @Override
     void addPlayer(String gameId, JassPlayer player) {
-        games.get(gameId).getPlayers().add(player);
+        games.get(gameId)
+             .getPlayers()
+             .add(player);
     }
 
     @Override
     void addTurn(String gameId, Turn turn) {
-        games.get(gameId).getTurns().add(turn);
+        games.get(gameId)
+             .getTurns()
+             .add(turn);
     }
 
     @Override
@@ -52,8 +56,14 @@ public class GamesRepositoryMock extends GamesRepository {
         return new Game(
                 game.getGameId(),
                 game.getType(),
-                game.getPlayers().stream().map(p -> new JassPlayer(p.getName(), p.getHand(), p.getCardsWon())).collect(Collectors.toList()),
-                game.getTurns().stream().map(t -> new Turn(t.getCardsOnTable())).collect(Collectors.toList()),
+                game.getPlayers()
+                    .stream()
+                    .map(p -> new JassPlayer(p.getName(), p.getHand(), p.getCardsWon()))
+                    .collect(Collectors.toList()),
+                game.getTurns()
+                    .stream()
+                    .map(t -> new Turn(t.getCardsOnTable()))
+                    .collect(Collectors.toList()),
                 game.getTrump(),
                 game.getStep(),
                 game.getTeams()
@@ -62,25 +72,39 @@ public class GamesRepositoryMock extends GamesRepository {
 
     @Override
     public void handOutCard(String gameId, String name, Card card) {
-        games.get(gameId).getPlayerByName(name).ifPresent(p -> p.receiveCard(card));
+        games.get(gameId)
+             .getPlayerByName(name)
+             .ifPresent(p -> p.receiveCard(card));
     }
 
     @Override
     public void removeCardFromPlayer(String gameId, String jassPlayer, Card card) {
-        games.get(gameId).getPlayerByName(jassPlayer).ifPresent(p -> p.playCard(card));
+        games.get(gameId)
+             .getPlayerByName(jassPlayer)
+             .ifPresent(p -> p.playCard(card));
     }
 
     @Override
     public void addCardToTurn(String gameId, String jassPlayer, Card card, int turn) {
-        games.get(gameId).getCurrentTurn().getCardsOnTable().add(new PlayedCard(card, jassPlayer));
+        games.get(gameId)
+             .getCurrentTurn()
+             .getCardsOnTable()
+             .add(new PlayedCard(card, jassPlayer));
     }
 
     @Override
     public void turnToWinningPlayer(String gameId, String winningPlayer) {
-        List<Card> cardsOnTable = games.get(gameId).getCurrentTurn()
-                .getCardsOnTable().stream().map(PlayedCard::getCard).collect(Collectors.toList());
+        List<Card> cardsOnTable = games.get(gameId)
+                                       .getCurrentTurn()
+                                       .getCardsOnTable()
+                                       .stream()
+                                       .map(PlayedCard::getCard)
+                                       .collect(Collectors.toList());
 
-        games.get(gameId).getPlayerByName(winningPlayer).ifPresent(p -> p.getCardsWon().addAll(cardsOnTable));
+        games.get(gameId)
+             .getPlayerByName(winningPlayer)
+             .ifPresent(p -> p.getCardsWon()
+                              .addAll(cardsOnTable));
     }
 
     @Override
@@ -110,5 +134,37 @@ public class GamesRepositoryMock extends GamesRepository {
                 game.getStep(),
                 teams
         ));
+    }
+
+    @Override
+    public void addPointsToTeam(String gameId, Team team, int teamPoints) {
+        Game game = games.get(gameId);
+        List<Team> teams = game.getTeams()
+                               .stream()
+                               .map(t -> addToTeam(t, team, teamPoints, game.getTurns()
+                                                                            .size() - 1))
+                               .collect(Collectors.toList());
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers(),
+                game.getTurns(),
+                game.getTrump(),
+                game.getStep(),
+                teams)
+        );
+
+    }
+
+    private Team addToTeam(Team current, Team expected, int teamPoints, int currentTurn) {
+        if (current.equals(expected)) {
+            return current.addPoints(teamPoints, currentTurn);
+        }
+        return current;
+    }
+
+    @Override
+    public void adjustSittingOrder(String gameId, Game game) {
+        games.put(gameId, game);
     }
 }

@@ -27,26 +27,34 @@ public class ChoosePartnerAction implements Action {
     @Override
     public ActionResult act(Game game, JassPlayer username, JassRequest message) {
         List<Team> teams;
-        if (message.getTeams() == null || message.getTeams().isEmpty() && playerNumberIsDividableBy2(game)) {
+        if (message.getTeams() == null || message.getTeams()
+                                                 .isEmpty() && playerNumberIsDividableBy2(game)) {
             teams = createRandomTeams(game.getPlayers(), 2);
         } else {
             if (areTwoTeamsOfTwo(message.getTeams())) {
                 teams = message.getTeams();
             } else {
                 return new ActionResult(GameStep.CHOOSE_PARTNER, new JassResponses()
-                        .addResponse(username.getName(), JassResponse.JassResponseBuilder.aJassResponse().withEvent(EventType.ERROR).build())
+                        .addResponse(username.getName(), JassResponse.JassResponseBuilder.aJassResponse()
+                                                                                         .withEvent(EventType.ERROR)
+                                                                                         .build())
                 );
             }
         }
         repository.setTeams(game.getGameId(), teams);
+        Game adjustedSittingOder = game.adjustSittingOrder(teams);
+        repository.adjustSittingOrder(game.getGameId(), adjustedSittingOder);
+
 
         return new ActionResult(GameStep.HAND_OUT, new JassResponses()
-                .addResponse("", JassResponse.JassResponseBuilder.aJassResponse().build()));
+                .addResponse("", JassResponse.JassResponseBuilder.aJassResponse()
+                                                                 .build()));
     }
 
     private boolean areTwoTeamsOfTwo(List<Team> teams) {
-        for(Team team : teams) {
-            if(team.getPlayers().size() != 2) {
+        for (Team team : teams) {
+            if (team.getPlayers()
+                    .size() != 2) {
                 return false;
             }
         }
@@ -54,7 +62,8 @@ public class ChoosePartnerAction implements Action {
     }
 
     private boolean playerNumberIsDividableBy2(Game game) {
-        return game.getPlayers().size() % 2 == 0;
+        return game.getPlayers()
+                   .size() % 2 == 0;
     }
 
     @Override
@@ -66,11 +75,13 @@ public class ChoosePartnerAction implements Action {
         Collections.shuffle(players);
         List<Team> teams = new ArrayList<>();
         for (int i = 1; i <= teamsize; i++) {
-            teams.add(Team.of("team"+i));
+            teams.add(Team.of("team" + i));
         }
 
         for (int i = 0; i < players.size(); i++) {
-            teams.set(i % teamsize, teams.get(i % teamsize).addPlayer(players.get(i).getName()));
+            teams.set(i % teamsize, teams.get(i % teamsize)
+                                         .addPlayer(players.get(i)
+                                                           .getName()));
         }
         return teams;
     }

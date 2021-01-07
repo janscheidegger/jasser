@@ -14,7 +14,6 @@ import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,7 +101,7 @@ public class GamesRepository {
                 Updates.addEachToSet("players.$.cardsWon", cards));
     }
 
-    public void setTrump (String gameId, Suit trump) {
+    public void setTrump(String gameId, Suit trump) {
         throw new RuntimeException("Not implemented yet");
     }
 
@@ -110,4 +109,11 @@ public class GamesRepository {
         throw new RuntimeException("Not implemented yet");
     }
 
+    public void addPointsToTeam(String gameId, Team team, int teamPoints) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    public void adjustSittingOrder(String gameId, Game game) {
+        throw new RuntimeException("Not yet implemented");
+    }
 }

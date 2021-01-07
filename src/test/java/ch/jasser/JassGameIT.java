@@ -97,7 +97,7 @@ public class JassGameIT {
     }
 
     @Test
-    void shouldSetRandomPartnerIfNotChosen() {
+    void shouldSetRandomPartnerIfNotChosenAndAdjustSittingOrder() {
         String gameId = UUID.randomUUID()
                             .toString();
         Game game = new TestGameBuilder().withPlayers(
@@ -122,7 +122,15 @@ public class JassGameIT {
         assertAll(
                 () -> assertEquals(2, gameFromRepository.getTeams()
                                                         .size()),
-                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
+                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep()),
+                () -> assertEquals(gameFromRepository.getPlayerByName(gameFromRepository.getTeams()
+                                                                                        .get(0)
+                                                                                        .getPlayers()
+                                                                                        .get(0))
+                                                     .get(),
+                        gameFromRepository.getPlayers()
+                                          .get(0)
+                )
         );
     }
 
@@ -148,7 +156,7 @@ public class JassGameIT {
                                 .build()
                 )
                 .withTurns(new Turn())
-                .withTeams(Team.of("team1", "1", "3"), Team.of("Team2", "2", "4"))
+                .withTeams(Team.of("Team1", "1", "3"), Team.of("Team2", "2", "4"))
                 .build(gameId);
 
         repository.createGame(game);
@@ -157,13 +165,25 @@ public class JassGameIT {
         playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS));
         ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
+        Game gameFromRepository = repository.findById(gameId);
+
         assertAll(
                 () -> assertEquals(GameStep.HAND_OUT, actionResult.getNextStep()),
                 () -> assertEquals(4, repository.findById(gameId)
                                                 .getPlayerByName("4")
                                                 .orElseThrow()
                                                 .getCardsWon()
-                                                .size())
+                                                .size()),
+                () -> assertEquals(0, gameFromRepository.getTeam("Team1")
+                                                        .getPoints()),
+                () -> assertEquals(38, gameFromRepository.getTeam("Team2")
+                                                         .getPoints()),
+                () -> assertEquals(1, gameFromRepository.getTeam("Team1")
+                                                        .getPointsPerRound()
+                                                        .size()),
+                () -> assertEquals(1, gameFromRepository.getTeam("Team2")
+                                                        .getPointsPerRound()
+                                                        .size())
         );
     }
 

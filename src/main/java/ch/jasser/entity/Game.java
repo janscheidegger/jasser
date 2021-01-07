@@ -20,12 +20,13 @@ public class Game {
     private final GameType type;
     private final List<JassPlayer> players;
     private final List<Turn> turns;
-    private Suit trump;
-    private GameStep step;
-    private List<Team> teams;
+    private final Suit trump;
+    private final GameStep step;
+    private final List<Team> teams;
 
     public Game() {
-        this.gameId = UUID.randomUUID().toString();
+        this.gameId = UUID.randomUUID()
+                          .toString();
         this.type = GameType.SCHIEBER;
         this.players = new ArrayList<>();
         this.turns = new LinkedList<>();
@@ -67,9 +68,13 @@ public class Game {
         return turn;
     }
 
+    @JsonbTransient
+    @BsonIgnore
     public Optional<JassPlayer> getPlayerByName(String name) {
-        return players.stream().filter(p -> p.getName().equals(name))
-                .findFirst();
+        return players.stream()
+                      .filter(p -> p.getName()
+                                    .equals(name))
+                      .findFirst();
     }
 
     @JsonbTransient
@@ -79,6 +84,16 @@ public class Game {
             return this.turns.get(turns.size() - 1);
         }
         return null;
+    }
+
+    @JsonbTransient
+    @BsonIgnore
+    public Team getTeam(String teamName) {
+        return teams.stream()
+                    .filter(t -> t.getName()
+                                  .equals(teamName))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(String.format("Team with name %s not existing", teamName)));
     }
 
     public GameType getType() {
@@ -99,5 +114,27 @@ public class Game {
 
     public List<Team> getTeams() {
         return teams;
+    }
+
+    public Game adjustSittingOrder(List<Team> teams) {
+        List<JassPlayer> jassPlayers = new ArrayList<>();
+        for (int i = 0; i < teams.get(0)
+                                 .getPlayers()
+                                 .size(); i++) {
+            for (Team team : teams) {
+                jassPlayers.add(getPlayerByName(team.getPlayers()
+                                                    .get(i)).orElseThrow(() -> new RuntimeException(
+                        "Invalid Player")));
+            }
+        }
+        return new Game(
+                getGameId(),
+                getType(),
+                jassPlayers,
+                getTurns(),
+                getTrump(),
+                getStep(),
+                teams
+        );
     }
 }
