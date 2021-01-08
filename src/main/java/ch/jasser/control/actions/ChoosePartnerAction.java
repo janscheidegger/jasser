@@ -48,6 +48,8 @@ public class ChoosePartnerAction implements Action {
 
         return new ActionResult(GameStep.HAND_OUT, new JassResponses()
                 .addResponse("", JassResponse.JassResponseBuilder.aJassResponse()
+                                                                 .withEvent(EventType.PARTNER_CHOSEN)
+                                                                 .withTeams(teams)
                                                                  .build()));
     }
 

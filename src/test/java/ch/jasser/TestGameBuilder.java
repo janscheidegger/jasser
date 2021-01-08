@@ -20,9 +20,15 @@ public class TestGameBuilder {
     private final List<Team> teams = new ArrayList<>();
     private GameStep step = GameStep.MOVE;
     private Suit trump = null;
+    private String trumpPlayer;
 
     TestGameBuilder withPlayers(JassPlayer... jassPlayers) {
         players = List.of(jassPlayers);
+        return this;
+    }
+
+    TestGameBuilder withTrumpPlayer(String trumpPlayer) {
+        this.trumpPlayer = trumpPlayer;
         return this;
     }
 
@@ -53,6 +59,7 @@ public class TestGameBuilder {
                 players,
                 turns,
                 trump,
+                trumpPlayer,
                 step,
                 teams
                 );

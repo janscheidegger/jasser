@@ -272,7 +272,7 @@ public class JassGameIT {
                                                               .getResponsesPerUser()
                                                               .get("1")
                                                               .getEvent()),
-                () -> assertEquals(GameStep.PRE_MOVE, act.getNextStep())
+                () -> assertEquals(GameStep.CHOOSE_TRUMP, act.getNextStep())
 
         );
 

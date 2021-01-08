@@ -3,6 +3,7 @@ package ch.jasser.boundry;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Suit;
+import ch.jasser.entity.Team;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class JassResponse {
     private EventType event;
     private String username;
     private List<Card> hand;
+    private List<Team> teams;
     private String message;
     private Suit chosenTrump;
 
@@ -53,6 +55,14 @@ public class JassResponse {
         this.chosenTrump = chosenTrump;
     }
 
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
     @Override
     public String toString() {
         return "JassResponse{" +
@@ -77,6 +87,11 @@ public class JassResponse {
 
         public JassResponseBuilder withEvent(EventType event) {
             jassResponse.setEvent(event);
+            return this;
+        }
+
+        public JassResponseBuilder withTeams(List<Team> teams) {
+            jassResponse.setTeams(teams);
             return this;
         }
 

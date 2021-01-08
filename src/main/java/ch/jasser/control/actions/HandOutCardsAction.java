@@ -23,22 +23,42 @@ public class HandOutCardsAction implements Action {
         List<Card> initialDeck = Schieber.getInitialDeck();
         List<JassPlayer> players = game.getPlayers();
         for (int i = 0; i < initialDeck.size(); i++) {
-            players.get(i % players.size()).receiveCard(initialDeck.get(i));
+            players.get(i % players.size())
+                   .receiveCard(initialDeck.get(i));
         }
+        JassPlayer trumpPlayer =
+                game.getPlayerByName(game.getTrumpPlayer())
+                    .orElseThrow(() -> new RuntimeException("player not in Game?")) == null ?
+                        players.get(0) :
+                        players.get((getTrumpPlayerIndex(players, game.getTrumpPlayer()) + 1) % players.size());
 
         JassResponses responses = new JassResponses();
+        responses.nextPlayer(trumpPlayer);
         for (JassPlayer currentPlayer : players) {
             JassResponse response = aJassResponse().withUsername(currentPlayer.getName())
-                    .withEvent(EventType.RECEIVE_CARD)
-                    .withHand(currentPlayer.getHand())
-                    .build();
+                                                   .withEvent(EventType.RECEIVE_CARD)
+                                                   .withHand(currentPlayer.getHand())
+                                                   .build();
             responses.addResponse(currentPlayer.getName(), response);
         }
-        return new ActionResult(GameStep.PRE_MOVE, responses);
+        return new ActionResult(GameStep.CHOOSE_TRUMP, responses);
+    }
+
+    private int getTrumpPlayerIndex(List<JassPlayer> players, String trumpPlayer) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i)
+                       .getName()
+                       .equals(trumpPlayer)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public EventType getEventType() {
         return EventType.HAND_OUT_CARDS;
     }
+
+
 }

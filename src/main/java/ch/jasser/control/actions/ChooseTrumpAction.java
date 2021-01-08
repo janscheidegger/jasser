@@ -23,16 +23,20 @@ public class ChooseTrumpAction implements Action {
 
     @Override
     public ActionResult act(Game game, JassPlayer player, JassRequest message) {
-        if (message.getEvent().equals(EventType.CHOOSE_TRUMP) && message.getChosenTrump() != null) {
+        if (message.getEvent()
+                   .equals(EventType.CHOOSE_TRUMP) && message.getChosenTrump() != null) {
             repository.setTrump(game.getGameId(), message.getChosenTrump());
             return new ActionResult(GameStep.PRE_TURN, new JassResponses().addResponse("",
                     aJassResponse().withEvent(EventType.TRUMP_CHOSEN)
-                            .withChosenTrump(message.getChosenTrump())
-                            .withUsername(player.getName()).build())
+                                   .withChosenTrump(message.getChosenTrump())
+                                   .withUsername(player.getName())
+                                   .build())
             );
         } else {
             return new ActionResult(GameStep.CHOOSE_TRUMP, new JassResponses().addResponse("",
-                    aJassResponse().withEvent(EventType.SCHIEBEN).withUsername(message.getUsername()).build())
+                    aJassResponse().withEvent(EventType.SCHIEBEN)
+                                   .withUsername(message.getUsername())
+                                   .build())
             );
         }
     }

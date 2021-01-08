@@ -2,6 +2,7 @@ package ch.jasser.boundry;
 
 import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.actions.ActionResult;
+import ch.jasser.entity.JassPlayer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.bind.Jsonb;
@@ -64,15 +65,25 @@ public class JassSocket {
         ActionResult act = coordinator.act(gameId, username, jassRequest);
         JassResponses response = act.getResponse();
 
-        for (Map.Entry<String, JassResponse> messageEntry : response.getResponsesPerUser().entrySet()) {
+        for (Map.Entry<String, JassResponse> messageEntry : response.getResponsesPerUser()
+                                                                    .entrySet()) {
             sendToUser(messageEntry.getKey(), messageEntry.getValue());
+        }
+
+        if (response.getResponsesPerUser()
+                    .containsKey("")) {
+            for (JassPlayer player : coordinator.getGameState(gameId)
+                                                .getPlayers()) {
+                sendToUser(player.getName(), response.getResponsesPerUser()
+                                                     .get(""));
+            }
         }
     }
 
 
     public void sendToUser(String user, Object message) {
         String messageString = this.jsonb.toJson(message);
-        sendToUser(messageString, user);
+        sendToUser(user, messageString);
     }
 
     public void sendToUsers(List<String> players, Object message) {
@@ -84,11 +95,13 @@ public class JassSocket {
 
     private void sendToUser(String player, String messageString) {
         if (sessions.containsKey(player)) {
-            sessions.get(player).getAsyncRemote().sendObject(messageString, result -> {
-                if (result.getException() != null) {
-                    System.out.println("Unable to send message: " + result.getException());
-                }
-            });
+            sessions.get(player)
+                    .getAsyncRemote()
+                    .sendObject(messageString, result -> {
+                        if (result.getException() != null) {
+                            System.out.println("Unable to send message: " + result.getException());
+                        }
+                    });
         } else {
             System.out.println(String.format("Player %s has no active session", player));
         }
@@ -96,12 +109,14 @@ public class JassSocket {
 
     private void broadcast(List<String> users, Object message) {
         String messageString = this.jsonb.toJson(message);
-        sessions.values().forEach(s -> {
-            s.getAsyncRemote().sendObject(messageString, result -> {
-                if (result.getException() != null) {
-                    System.out.println("Unable to send message: " + result.getException());
-                }
-            });
-        });
+        sessions.values()
+                .forEach(s -> {
+                    s.getAsyncRemote()
+                     .sendObject(messageString, result -> {
+                         if (result.getException() != null) {
+                             System.out.println("Unable to send message: " + result.getException());
+                         }
+                     });
+                });
     }
 }

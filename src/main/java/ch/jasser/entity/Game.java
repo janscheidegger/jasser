@@ -21,6 +21,7 @@ public class Game {
     private final List<JassPlayer> players;
     private final List<Turn> turns;
     private final Suit trump;
+    private final String trumpPlayer;
     private final GameStep step;
     private final List<Team> teams;
 
@@ -33,6 +34,7 @@ public class Game {
         this.trump = null;
         this.step = null;
         this.teams = new ArrayList<>();
+        this.trumpPlayer = null;
 
     }
 
@@ -42,13 +44,16 @@ public class Game {
                 @BsonProperty("players") List<JassPlayer> players,
                 @BsonProperty("turns") List<Turn> turns,
                 @BsonProperty("trump") Suit trump,
+                @BsonProperty("trumpPlayer") String trumpPlayer,
                 @BsonProperty("step") GameStep step,
                 @BsonProperty("teams") List<Team> teams) {
+
         this.gameId = uuid;
         this.type = type;
         this.players = players;
         this.turns = turns;
         this.trump = trump;
+        this.trumpPlayer = trumpPlayer;
         this.step = step;
         this.teams = teams;
     }
@@ -61,6 +66,9 @@ public class Game {
         return trump;
     }
 
+    public String getTrumpPlayer() {
+        return trumpPlayer;
+    }
 
     public Turn nextTurn() {
         Turn turn = new Turn();
@@ -128,12 +136,13 @@ public class Game {
             }
         }
         return new Game(
-                getGameId(),
-                getType(),
+                gameId,
+                type,
                 jassPlayers,
-                getTurns(),
-                getTrump(),
-                getStep(),
+                turns,
+                trump,
+                trumpPlayer,
+                step,
                 teams
         );
     }

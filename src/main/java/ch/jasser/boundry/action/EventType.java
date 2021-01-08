@@ -12,5 +12,6 @@ public enum EventType {
     SCHIEBEN,
     TRUMP_CHOSEN,
     CHOOSE_TRUMP,
-    CHOOSE_PARTNER
+    CHOOSE_PARTNER,
+    PARTNER_CHOSEN
 }
