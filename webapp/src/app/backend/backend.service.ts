@@ -1,11 +1,10 @@
-import { Injectable } from '@angular/core';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { Game } from './game';
-import { Card } from './card';
-import { JsonPipe } from '@angular/common';
-import { EventHandlerService } from './event-handler.service';
+import {Injectable} from '@angular/core';
+import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable, of} from 'rxjs';
+import {Game} from './game';
+import {Card} from './card';
+import {EventHandlerService} from './event-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,10 +21,32 @@ export class BackendService {
   constructor(
     private http: HttpClient,
     private eventHandler: EventHandlerService
-  ) {}
+  ) {
+  }
 
   listOpenGames(): Observable<Game[]> {
-    return this.http.get<Game[]>(`http://localhost:8080/jass/games`);
+
+    return of([
+      {
+        gameId: '1234',
+        players: [
+          {
+            name: 'Jan', hand: []
+          },
+          {
+            name: 'Sonja', hand: []
+          },
+          {
+            name: 'Peter', hand: []
+          },
+          {
+            name: 'Roland', hand: []
+          }
+        ],
+        type: 'Schieber'
+      }]);
+
+    // return this.http.get<Game[]>(`http://localhost:8080/jass/games`);
   }
 
   createGame() {
@@ -39,16 +60,16 @@ export class BackendService {
   playCard(card: Card) {
     return this.currentGameConnection.next({
       event: 'PLAY_CARD',
-      payloadString: JSON.stringify({ card }),
+      payloadString: JSON.stringify({card}),
     });
   }
 
   initialLoad() {
-    this.currentGameConnection.next({ event: 'INITIAL_LOAD' });
+    this.currentGameConnection.next({event: 'INITIAL_LOAD'});
   }
 
   handOutCards() {
-    this.currentGameConnection.next({ event: 'HAND_OUT_CARDS' });
+    this.currentGameConnection.next({event: 'HAND_OUT_CARDS'});
   }
 
   joinGame(username: string, gameId: string): void {

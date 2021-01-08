@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { JassState } from '../jass.state';
 import {
   initialLoad,
-  receiveCard,
+  cardReceived,
   errorReceived,
   cardPlayed,
 } from '../jass.actions';
@@ -23,7 +23,7 @@ export class EventHandlerService {
         break;
       case 'RECEIVE_CARD':
         console.log(response);
-        this.store.dispatch(receiveCard({ card: response }));
+        this.store.dispatch(cardReceived({ card: response }));
         break;
       case 'ERROR':
         this.store.dispatch(errorReceived(response));

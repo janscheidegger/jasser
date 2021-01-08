@@ -1,3 +1,12 @@
-.open-game {
-  max-width: 400px;
+.open-game {
+  display: grid;
+  width: 8em;
+  height: 14em;
+}
+
+:host {
+  margin-top: 2em;
+  display: grid;
+  justify-content: center;
+  align-content: center;
 }

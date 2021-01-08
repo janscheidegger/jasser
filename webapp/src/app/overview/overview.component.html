@@ -1,20 +1,28 @@
-<form class="">
-  <mat-form-field class="">
-    <mat-label>Name</mat-label>
-    <input matInput placeholder="Jass Player" value="" #user />
-  </mat-form-field>
-</form>
-<mat-card  [style.max-width]="'420px'" class="open-game" *ngFor="let openGame of openGames$ | async">
+<mat-card class="open-game" *ngFor="let openGame of openGames$ | async">
   <mat-card-header>
-    {{ openGame.gameId }} ({{openGame.type}})
+    <mat-card-title>
+      {{ openGame.gameId }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{openGame.type}}
+    </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <span *ngFor="let player of openGame.players"> {{ player.name }}</span>
+    <ul>
+      <li *ngFor="let player of openGame.players"> {{ player.name }}</li>
+    </ul>
   </mat-card-content>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="startGame(openGame.gameId, user.value)">Join Game</button>
   </mat-card-actions>
 </mat-card>
 
-<button (click)="createGame()">Create Game</button>
+<form class="">
+  <mat-form-field class="">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="Jass Player" value="" #user/>
+  </mat-form-field>
+</form>
+
+<button (click)="createGame()" mat-raised-button color="primary">Create Game</button>
 
