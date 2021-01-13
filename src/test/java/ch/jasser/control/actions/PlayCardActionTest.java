@@ -47,6 +47,7 @@ class PlayCardActionTest {
                 ),
                 List.of(new Turn()),
                 Suit.CLUBS,
+                "player1",
                 GameStep.PRE_MOVE,
                 List.of()
         );
@@ -81,6 +82,7 @@ class PlayCardActionTest {
                 ),
                 List.of(turn),
                 Suit.CLUBS,
+                "player1",
                 GameStep.MOVE,
                 List.of()
         );

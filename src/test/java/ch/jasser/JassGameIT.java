@@ -251,6 +251,7 @@ public class JassGameIT {
                         new TestGameBuilder.JassPlayerBuilder("4")
                                 .build()
                 )
+                .withTrumpPlayer("1")
                 .withNextStep(GameStep.HAND_OUT)
                 .build(gameId);
 

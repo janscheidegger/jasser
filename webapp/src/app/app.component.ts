@@ -4,10 +4,16 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Game } from './backend/game';
 import { switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import {Store} from "@ngrx/store";
+import {JassState} from "./jass.state";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private store: Store<{jass: JassState}>) {
+  }
+
+}

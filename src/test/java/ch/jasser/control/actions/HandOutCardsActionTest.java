@@ -30,6 +30,7 @@ class HandOutCardsActionTest {
                 ),
                 List.of(),
                 null,
+                "player1",
                 GameStep.HAND_OUT,
                 List.of()
         );

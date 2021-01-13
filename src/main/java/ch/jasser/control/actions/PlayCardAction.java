@@ -89,8 +89,7 @@ public class PlayCardAction implements Action {
 
                     /* POST ACTION??? */
 
-                    nextPlayer = game.getPlayers()
-                                     .get(0);// TODO: next player to make trump and the first turn
+                    nextPlayer = null; // Everyone is allowed to trigger hand out of cards
                     break;
                 }
                 case PRE_MOVE:
@@ -100,11 +99,17 @@ public class PlayCardAction implements Action {
                     throw new RuntimeException("Not yet implemented");
             }
 
-            JassResponse response = aJassResponse().withEvent(EventType.CARD_PLAYED)
-                                                   .withHand(player.getHand())
-                                                   .build();
+            JassResponse responseForPlayer = aJassResponse().withEvent(EventType.CARD_PLAYED)
+                                                            .withHand(player.getHand())
+                                                            .withCards(List.of(card))
+                                                            .build();
+            JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
+                                                         .withCards(List.of(card))
+                                                         .build();
+
             JassResponses jassResponses = new JassResponses()
-                    .addResponse(player.getName(), response)
+                    .addResponse(player.getName(), responseForPlayer)
+                    .addResponse("", responseForAll)
                     .nextPlayer(nextPlayer);
             return new ActionResult(nextStep, jassResponses);
         } else {

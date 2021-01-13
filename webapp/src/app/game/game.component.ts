@@ -3,6 +3,9 @@ import { BackendService } from '../backend/backend.service';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
+import {Store} from "@ngrx/store";
+import {JassState} from "../jass.state";
+import {initialLoad} from "../jass.actions";
 
 @Component({
   selector: 'app-game',
@@ -12,7 +15,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 export class GameComponent implements OnInit, OnDestroy {
   destroy$: Subject<any> = new Subject();
 
-  constructor(private service: BackendService, private route: ActivatedRoute) {
+  constructor(private store: Store<{jass: JassState}>, private service: BackendService, private route: ActivatedRoute) {
     this.route.params.pipe(
       switchMap(p => of(this.service.joinGame(p.username, p.gameId))),
       takeUntil(this.destroy$)
@@ -29,10 +32,12 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.route.params.pipe(
+
+    );
   }
 
   initialLoad() {
-    this.service.initialLoad();
   }
 
   handOutCards() {

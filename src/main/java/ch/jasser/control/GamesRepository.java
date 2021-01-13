@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-@ApplicationScoped
+//@ApplicationScoped
 public class GamesRepository {
 
     private final MongoClient mongoClient;

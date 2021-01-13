@@ -45,6 +45,7 @@ public class ChooseTrumpActionTest {
                 ),
                 List.of(),
                 null,
+                "",
                 GameStep.CHOOSE_TRUMP,
                 List.of()
         );
@@ -72,6 +73,7 @@ public class ChooseTrumpActionTest {
                 ),
                 List.of(),
                 null,
+                "",
                 GameStep.CHOOSE_TRUMP,
                 List.of()
         );

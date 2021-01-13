@@ -1,5 +1,6 @@
 package ch.jasser.boundry;
 
+import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.actions.ActionResult;
 import ch.jasser.entity.JassPlayer;
@@ -17,13 +18,12 @@ import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
 public class JassSocket {
 
-    private static final Logger LOG = Logger.getLogger(JassSocket.class.getSimpleName());
 
     private final Jsonb jsonb = JsonbBuilder.create();
 
@@ -40,6 +40,18 @@ public class JassSocket {
 
         sessions.put(username, session);
         coordinator.joinGame(gameId, username);
+        List<String> jassPlayers = coordinator.getPlayers(gameId)
+                                              .stream()
+                                              .filter(
+                                                      n -> !n.getName()
+                                                             .equals(username)
+                                              )
+                                              .map(JassPlayer::getName)
+                                              .collect(Collectors.toList());
+        sendToUsers(jassPlayers, JassResponse.JassResponseBuilder.aJassResponse()
+                                                                 .withEvent(EventType.PLAYER_JOINED)
+                                                                 .withUsername(username)
+        .build());
         System.out.println(String.format("%s connected to Game with Id %s", username, gameId));
     }
 
@@ -81,12 +93,12 @@ public class JassSocket {
     }
 
 
-    public void sendToUser(String user, Object message) {
+    public void sendToUser(String user, JassResponse message) {
         String messageString = this.jsonb.toJson(message);
         sendToUser(user, messageString);
     }
 
-    public void sendToUsers(List<String> players, Object message) {
+    public void sendToUsers(List<String> players, JassResponse message) {
         String messageString = this.jsonb.toJson(message);
         for (String player : players) {
             sendToUser(player, messageString);

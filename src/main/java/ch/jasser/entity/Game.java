@@ -32,10 +32,9 @@ public class Game {
         this.players = new ArrayList<>();
         this.turns = new LinkedList<>();
         this.trump = null;
-        this.step = null;
+        this.step = GameStep.CHOOSE_PARTNER;
         this.teams = new ArrayList<>();
         this.trumpPlayer = null;
-
     }
 
     @BsonCreator

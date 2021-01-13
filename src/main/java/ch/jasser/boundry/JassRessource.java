@@ -29,6 +29,18 @@ public class JassRessource {
         return Response.ok(jsonb.toJson(game)).build();
     }
 
+    @Path("{gameId}")
+    @GET
+    public Response loadGame(@PathParam("gameId")String gameId) {
+        Game game = openGames.getGame(gameId);
+        if(game == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .build();
+        }
+        return Response.ok(game)
+                       .build();
+    }
+
     @GET
     public Response listGames() {
         return Response.ok(jsonb.toJson(openGames.getOpenGames()))

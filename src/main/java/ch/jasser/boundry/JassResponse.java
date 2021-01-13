@@ -11,6 +11,7 @@ public class JassResponse {
     private EventType event;
     private String username;
     private List<Card> hand;
+    private List<Card> cards;
     private List<Team> teams;
     private String message;
     private Suit chosenTrump;
@@ -53,6 +54,14 @@ public class JassResponse {
 
     public void setChosenTrump(Suit chosenTrump) {
         this.chosenTrump = chosenTrump;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 
     public List<Team> getTeams() {
@@ -112,6 +121,11 @@ public class JassResponse {
 
         public JassResponseBuilder withChosenTrump(Suit trump) {
             jassResponse.setChosenTrump(trump);
+            return this;
+        }
+
+        public JassResponseBuilder withCards(List<Card> cards) {
+            jassResponse.setCards(cards);
             return this;
         }
 

@@ -26,27 +26,7 @@ export class BackendService {
 
   listOpenGames(): Observable<Game[]> {
 
-    return of([
-      {
-        gameId: '1234',
-        players: [
-          {
-            name: 'Jan', hand: []
-          },
-          {
-            name: 'Sonja', hand: []
-          },
-          {
-            name: 'Peter', hand: []
-          },
-          {
-            name: 'Roland', hand: []
-          }
-        ],
-        type: 'Schieber'
-      }]);
-
-    // return this.http.get<Game[]>(`http://localhost:8080/jass/games`);
+    return this.http.get<Game[]>(`http://localhost:8080/jass/games`);
   }
 
   createGame() {
@@ -64,8 +44,8 @@ export class BackendService {
     });
   }
 
-  initialLoad() {
-    this.currentGameConnection.next({event: 'INITIAL_LOAD'});
+  initialLoad(gameId: string): Observable<Game> {
+    return this.http.get<Game>(`http://localhost:8080/jass/games/${gameId}`);
   }
 
   handOutCards() {
