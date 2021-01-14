@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { JassState } from '../jass.state';
+import { State } from '../jass.state';
 import { Store, select } from '@ngrx/store';
 
 @Component({
@@ -12,7 +12,7 @@ export class TableComponent {
 
   cardsOnTable$: Observable<any[]>;
 
-  constructor(private store: Store<{jass: JassState}>) {
+  constructor(private store: Store<{jass: State}>) {
 
     this.cardsOnTable$ = store.pipe(select(state => state.jass.table));
   }

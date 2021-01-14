@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Subject, of } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
-import {Store} from "@ngrx/store";
-import {JassState} from "../jass.state";
+import {combineLatest, Subject, of, Observable} from 'rxjs';
+import {takeUntil, switchMap, tap} from 'rxjs/operators';
+import {select, Store} from "@ngrx/store";
 import {initialLoad} from "../jass.actions";
+import {Player} from "../backend/player";
+import {getPlayers} from "../jass.selectors";
+import {State} from "../state";
 
 @Component({
   selector: 'app-game',
@@ -14,8 +16,14 @@ import {initialLoad} from "../jass.actions";
 })
 export class GameComponent implements OnInit, OnDestroy {
   destroy$: Subject<any> = new Subject();
+  players$: Observable<string[]> = this.store.pipe(
+    tap(console.log),
+    select(getPlayers),
+    tap(console.log)
+  )
 
-  constructor(private store: Store<{jass: JassState}>, private service: BackendService, private route: ActivatedRoute) {
+
+  constructor(private store: Store<State>, private service: BackendService, private route: ActivatedRoute) {
     this.route.params.pipe(
       switchMap(p => of(this.service.joinGame(p.username, p.gameId))),
       takeUntil(this.destroy$)
@@ -44,4 +52,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.service.handOutCards();
   }
 
+  reload() {
+    // this.service.initialLoad(this.)
+  }
 }

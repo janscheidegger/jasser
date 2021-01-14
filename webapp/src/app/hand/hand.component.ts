@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { JassState } from '../jass.state';
+import { State } from '../jass.state';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { BackendService } from '../backend/backend.service';
 export class HandComponent implements OnInit {
   hand$: Observable<any[]>;
 
-  constructor(private store: Store<{jass: JassState}>, private service: BackendService) {
+  constructor(private store: Store<{jass: State}>, private service: BackendService) {
   }
 
   ngOnInit(): void {

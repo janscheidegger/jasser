@@ -1,15 +1,17 @@
-import { createReducer, on, Action } from '@ngrx/store';
-import { JassState } from './jass.state';
-import {playCard, initialLoad, cardReceived, errorReceived, cardPlayed, playerJoined} from './jass.actions';
+import {Action, createReducer, on} from '@ngrx/store';
+import {cardPlayed, cardReceived, errorReceived, playerJoined} from './jass.actions';
+import {Card} from "./backend/card";
 
-export const initialState: JassState = {
+export interface State {
+  players: string[];
+  hand: Card[];
+  table: Card[];
+  errors: string[];
+}
+
+export const initialState: State = {
   hand: [],
-  players: [
-    {
-      hand: [],
-      name: 'jan',
-    },
-  ],
+  players: [],
   table: [],
   errors: []
 };
@@ -38,6 +40,6 @@ const reducer = createReducer(
   ))
 );
 
-export function jassReducer(state: JassState | undefined, action: Action) {
+export function jassReducer(state: State | undefined, action: Action) {
   return reducer(state, action);
 }

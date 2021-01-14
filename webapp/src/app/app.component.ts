@@ -5,7 +5,7 @@ import { Game } from './backend/game';
 import { switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {Store} from "@ngrx/store";
-import {JassState} from "./jass.state";
+import {State} from "./jass.state";
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import {JassState} from "./jass.state";
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(private store: Store<{jass: JassState}>) {
+  constructor(private store: Store<{jass: State}>) {
   }
 
 }

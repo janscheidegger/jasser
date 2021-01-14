@@ -1,5 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { JassState } from './jass.state';
+import { State } from './jass.state';
+import {Player} from "./backend/player";
 
 
-export const selectHand = (state: JassState) => state.hand;
+
