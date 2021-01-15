@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { JassMessage } from './jass-message';
 import { Store } from '@ngrx/store';
-import { State } from '../jass.state';
 import {
   initialLoad,
   cardReceived,
   errorReceived,
   cardPlayed, playerJoined,
 } from '../jass.actions';
+import {State} from "../jass.reducer";
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventHandlerService {
-  constructor(private store: Store<{ jass: State }>) {}
+  constructor(private store: Store<State>) {}
 
   public handleEvent(ev: JassMessage) {
     console.log(`received message`,  ev);

@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { BackendService } from '../backend/backend.service';
-import { ActivatedRoute } from '@angular/router';
-import {combineLatest, Subject, of, Observable} from 'rxjs';
-import {takeUntil, switchMap, tap} from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {BackendService} from '../backend/backend.service';
+import {ActivatedRoute} from '@angular/router';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {map, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {select, Store} from "@ngrx/store";
-import {initialLoad} from "../jass.actions";
-import {Player} from "../backend/player";
 import {getPlayers} from "../jass.selectors";
 import {State} from "../state";
+import {initialLoad} from "../jass.actions";
 
 @Component({
   selector: 'app-game',
@@ -16,8 +15,11 @@ import {State} from "../state";
 })
 export class GameComponent implements OnInit, OnDestroy {
   destroy$: Subject<any> = new Subject();
+  reload$: Subject<any> = new Subject<any>()
+  gameId$: Observable<string> = this.route.paramMap.pipe(
+    map(params => params.get('gameId'))
+  );
   players$: Observable<string[]> = this.store.pipe(
-    tap(console.log),
     select(getPlayers),
     tap(console.log)
   )
@@ -33,16 +35,16 @@ export class GameComponent implements OnInit, OnDestroy {
       () => console.log('completed')
     );
   }
+
   ngOnDestroy(): void {
     this.destroy$.next();
   }
 
 
-
   ngOnInit(): void {
-    this.route.params.pipe(
-
-    );
+    combineLatest([this.gameId$, this.reload$.pipe(startWith(''))]).subscribe(([gameId, _]) =>
+      this.store.dispatch(initialLoad({gameId}))
+    )
   }
 
   initialLoad() {
@@ -53,6 +55,6 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   reload() {
-    // this.service.initialLoad(this.)
+    this.reload$.next();
   }
 }

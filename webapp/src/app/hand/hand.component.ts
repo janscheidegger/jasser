@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { State } from '../jass.state';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { playCard } from '../jass.actions';
 import { BackendService } from '../backend/backend.service';
+import {State} from "../jass.reducer";
+import {getHand} from "../jass.selectors";
 
 @Component({
   selector: 'app-hand',
@@ -15,13 +16,13 @@ import { BackendService } from '../backend/backend.service';
 export class HandComponent implements OnInit {
   hand$: Observable<any[]>;
 
-  constructor(private store: Store<{jass: State}>, private service: BackendService) {
+  constructor(private store: Store<State>, private service: BackendService) {
   }
 
   ngOnInit(): void {
     console.log(this.store);
     this.hand$ = this.store.pipe(
-      select(state => state.jass.hand),
+      select(getHand),
       tap(s => console.log(s))
     );
   }

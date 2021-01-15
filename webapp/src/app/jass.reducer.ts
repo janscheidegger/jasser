@@ -1,5 +1,5 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {cardPlayed, cardReceived, errorReceived, playerJoined} from './jass.actions';
+import {cardPlayed, cardReceived, errorReceived, gameLoaded, playerJoined} from './jass.actions';
 import {Card} from "./backend/card";
 
 export interface State {
@@ -37,7 +37,11 @@ const reducer = createReducer(
       ...state,
       errors: [...state.errors, errorMessage]
     }
-  ))
+  )),
+  on(gameLoaded, (state, {game}) => ({
+    ...state,
+    players: game.players.map(p => p.name)
+  }))
 );
 
 export function jassReducer(state: State | undefined, action: Action) {

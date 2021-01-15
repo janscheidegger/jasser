@@ -7,4 +7,9 @@ export const selectHand = (state: State) => state.hand;
 export const getPlayers = createSelector(
   getJassState,
   (state: State) => state.players
-)
+);
+
+export const getHand = createSelector(
+  getJassState,
+  (state: State) => state.hand
+);
