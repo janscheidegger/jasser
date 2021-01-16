@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Choose Teams</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Teamname</mat-label>
+    <input #teamName matInput placeholder="Teamname" (keyup.enter)="addTeam(teamName.value)">
+  </mat-form-field>
+  <button mat-button (click)="addTeam(teamName.value)">Add</button>
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<div *ngFor="let player of (players$ | async)" class="player-row">
+  <span class="player-item">{{player}}</span>
+  <mat-form-field class="player-item">
+    <mat-label>Team</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let team of teams" (onSelectionChange)="onSelectionChange($event, player)"
+                  [value]="team">{{team.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button color="primary" [mat-dialog-close]="teams">OK</button>
+</mat-dialog-actions>

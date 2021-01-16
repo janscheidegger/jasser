@@ -19,6 +19,10 @@ import { jassReducer } from './jass.reducer';
 import { CardComponent } from './card/card.component';
 import { JassEffects } from './jass.effects';
 import { OverviewComponent } from './overview/overview.component';
+import { CreateTeamComponent } from './create-team/create-team.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatSelectModule} from "@angular/material/select";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -28,6 +32,7 @@ import { OverviewComponent } from './overview/overview.component';
     TableComponent,
     CardComponent,
     OverviewComponent,
+    CreateTeamComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,11 +43,14 @@ import { OverviewComponent } from './overview/overview.component';
     MatCardModule,
     MatButtonModule,
     MatSnackBarModule,
-    StoreModule.forRoot({ jass: jassReducer }),
+    StoreModule.forRoot({jass: jassReducer}),
     EffectsModule.forRoot([JassEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 10,
     }),
+    MatDialogModule,
+    MatSelectModule,
+    MatDividerModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

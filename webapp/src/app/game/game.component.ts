@@ -6,7 +6,9 @@ import {map, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {select, Store} from "@ngrx/store";
 import {getPlayers} from "../jass.selectors";
 import {State} from "../state";
-import {initialLoad} from "../jass.actions";
+import {initialLoad, teamsChosen} from "../jass.actions";
+import {MatDialog} from "@angular/material/dialog";
+import {CreateTeamComponent} from "../create-team/create-team.component";
 
 @Component({
   selector: 'app-game',
@@ -25,7 +27,7 @@ export class GameComponent implements OnInit, OnDestroy {
   )
 
 
-  constructor(private store: Store<State>, private service: BackendService, private route: ActivatedRoute) {
+  constructor(private store: Store<State>, private service: BackendService, private route: ActivatedRoute, private dialog: MatDialog) {
     this.route.params.pipe(
       switchMap(p => of(this.service.joinGame(p.username, p.gameId))),
       takeUntil(this.destroy$)
@@ -42,12 +44,16 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    combineLatest([this.gameId$, this.reload$.pipe(startWith(''))]).subscribe(([gameId, _]) =>
+    combineLatest([this.gameId$, this.reload$.pipe(startWith(''))]).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(([gameId, _]) =>
       this.store.dispatch(initialLoad({gameId}))
-    )
+    );
   }
 
-  initialLoad() {
+  chooseTeams() {
+    const dialogRef = this.dialog.open(CreateTeamComponent);
+    dialogRef.afterClosed().subscribe(result => this.store.dispatch(teamsChosen({teams: result})))
   }
 
   handOutCards() {
