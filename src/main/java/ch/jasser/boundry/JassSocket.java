@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
+
 @ServerEndpoint("/jass/{username}/{gameId}")
 @ApplicationScoped
 public class JassSocket {
@@ -40,24 +42,32 @@ public class JassSocket {
 
         sessions.put(username, session);
         coordinator.joinGame(gameId, username);
-        List<String> jassPlayers = coordinator.getPlayers(gameId)
-                                              .stream()
-                                              .filter(
-                                                      n -> !n.getName()
-                                                             .equals(username)
-                                              )
-                                              .map(JassPlayer::getName)
-                                              .collect(Collectors.toList());
-        sendToUsers(jassPlayers, JassResponse.JassResponseBuilder.aJassResponse()
-                                                                 .withEvent(EventType.PLAYER_JOINED)
-                                                                 .withUsername(username)
-        .build());
-        System.out.println(String.format("%s connected to Game with Id %s", username, gameId));
+        List<String> jassPlayers = getOtherPlayers(username, gameId);
+        sendToUsers(jassPlayers, aJassResponse()
+                .withEvent(EventType.PLAYER_JOINED)
+                .withUsername(username)
+                .build());
+        System.out.printf("%s connected to Game with Id %s%n", username, gameId);
+    }
+
+    private List<String> getOtherPlayers(String username, String gameId) {
+        return coordinator.getPlayers(gameId)
+                          .stream()
+                          .filter(
+                                  n -> !n.getName()
+                                         .equals(username)
+                          )
+                          .map(JassPlayer::getName)
+                          .collect(Collectors.toList());
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("username") String username, @PathParam("gameId") String gameId) {
         sessions.remove(username);
+        sendToUsers(getOtherPlayers(username, gameId),
+                aJassResponse().withEvent(EventType.PLAYER_LEFT)
+                               .withUsername(username)
+                               .build());
         System.out.println("Session closed");
     }
 
