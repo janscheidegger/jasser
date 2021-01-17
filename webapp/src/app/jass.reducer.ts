@@ -1,5 +1,5 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {cardPlayed, cardReceived, errorReceived, gameLoaded, playerJoined, playerLeft} from './jass.actions';
+import {cardPlayed, cardsReceived, errorReceived, gameLoaded, playerJoined, playerLeft} from './jass.actions';
 import {Card} from "./backend/card";
 
 export interface State {
@@ -31,10 +31,10 @@ const reducer = createReducer(
     table: [...state.table, card],
     hand: state.hand.filter((c) => c.rank !== card.rank || c.suit !== card.suit)
   })),
-  on(cardReceived, (state, {card}) => (
+  on(cardsReceived, (state, {cards}) => (
     {
       ...state,
-      hand: [...state.hand, card]
+      hand: [...state.hand, ...cards]
     })),
   on(errorReceived, (state, {errorMessage}) => (
     {

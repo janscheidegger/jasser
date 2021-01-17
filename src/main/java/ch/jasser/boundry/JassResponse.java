@@ -10,7 +10,6 @@ import java.util.List;
 public class JassResponse {
     private EventType event;
     private String username;
-    private List<Card> hand;
     private List<Card> cards;
     private List<Team> teams;
     private String message;
@@ -30,14 +29,6 @@ public class JassResponse {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public List<Card> getHand() {
-        return hand;
-    }
-
-    public void setHand(List<Card> hand) {
-        this.hand = hand;
     }
 
     public String getMessage() {
@@ -77,7 +68,6 @@ public class JassResponse {
         return "JassResponse{" +
                 "event=" + event +
                 ", username='" + username + '\'' +
-                ", hand=" + hand +
                 ", message='" + message + '\'' +
                 '}';
     }
@@ -111,11 +101,6 @@ public class JassResponse {
 
         public JassResponseBuilder withUsername(String username) {
             jassResponse.setUsername(username);
-            return this;
-        }
-
-        public JassResponseBuilder withHand(List<Card> hand) {
-            jassResponse.setHand(hand);
             return this;
         }
 

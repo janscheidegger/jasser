@@ -34,7 +34,7 @@ public class RuleFactory {
         rules.registerAction(GameStep.MOVE, playCardAction);
         rules.registerAction(GameStep.HAND_OUT, handOutCardsAction);
         rules.registerAction(GameStep.CHOOSE_TRUMP, chooseTrumpAction);
-        rules.registerAction(GameStep.CHOOSE_PARTNER, choosePartnerAction);
+        rules.registerAction(GameStep.CHOOSE_TEAMS, choosePartnerAction);
         return rules;
     }
 

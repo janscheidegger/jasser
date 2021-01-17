@@ -27,8 +27,7 @@ public class HandOutCardsAction implements Action {
                    .receiveCard(initialDeck.get(i));
         }
         JassPlayer trumpPlayer =
-                game.getPlayerByName(game.getTrumpPlayer())
-                    .orElseThrow(() -> new RuntimeException("player not in Game?")) == null ?
+                game.getPlayerByName(game.getTrumpPlayer()).isPresent() ?
                         players.get(0) :
                         players.get((getTrumpPlayerIndex(players, game.getTrumpPlayer()) + 1) % players.size());
 
@@ -37,7 +36,7 @@ public class HandOutCardsAction implements Action {
         for (JassPlayer currentPlayer : players) {
             JassResponse response = aJassResponse().withUsername(currentPlayer.getName())
                                                    .withEvent(EventType.RECEIVE_CARD)
-                                                   .withHand(currentPlayer.getHand())
+                                                   .withCards(currentPlayer.getHand())
                                                    .build();
             responses.addResponse(currentPlayer.getName(), response);
         }

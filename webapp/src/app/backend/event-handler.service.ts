@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {JassMessage} from './jass-message';
 import {Store} from '@ngrx/store';
-import {cardPlayed, cardReceived, errorReceived, playerJoined, playerLeft,} from '../jass.actions';
+import {cardPlayed, cardsReceived, errorReceived, playerJoined, playerLeft,} from '../jass.actions';
 import {State} from "../jass.reducer";
 
 @Injectable({
@@ -16,7 +16,7 @@ export class EventHandlerService {
     switch (ev.event) {
       case 'RECEIVE_CARD':
         console.log(ev);
-        this.store.dispatch(cardReceived({card: ev.cards[0]}));
+        this.store.dispatch(cardsReceived({cards: ev.cards}));
         break;
       case 'PLAYER_JOINED':
         this.store.dispatch(playerJoined({player: ev.username}))

@@ -32,7 +32,7 @@ public class Game {
         this.players = new ArrayList<>();
         this.turns = new LinkedList<>();
         this.trump = null;
-        this.step = GameStep.CHOOSE_PARTNER;
+        this.step = GameStep.CHOOSE_TEAMS;
         this.teams = new ArrayList<>();
         this.trumpPlayer = null;
     }
@@ -141,7 +141,7 @@ public class Game {
                 turns,
                 trump,
                 trumpPlayer,
-                step,
+                GameStep.HAND_OUT,
                 teams
         );
     }

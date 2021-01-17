@@ -74,14 +74,14 @@ public class JassGameIT {
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
         )
-                                         .withNextStep(GameStep.CHOOSE_PARTNER)
+                                         .withNextStep(GameStep.CHOOSE_TEAMS)
                                          .build(gameId);
 
         repository.createGame(game);
 
         ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
                                                                                          .withUsername("1")
-                                                                                         .withEvent(EventType.CHOOSE_PARTNER)
+                                                                                         .withEvent(EventType.CHOOSE_TEAMS)
                                                                                          .withTeam(Team.of("Team1", "1", "3"))
                                                                                          .withTeam(Team.of("Team2", "2", "4"))
                                                                                          .build()
@@ -106,14 +106,14 @@ public class JassGameIT {
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
         )
-                                         .withNextStep(GameStep.CHOOSE_PARTNER)
+                                         .withNextStep(GameStep.CHOOSE_TEAMS)
                                          .build(gameId);
 
         repository.createGame(game);
 
         ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
                                                                                          .withUsername("1")
-                                                                                         .withEvent(EventType.CHOOSE_PARTNER)
+                                                                                         .withEvent(EventType.CHOOSE_TEAMS)
                                                                                          .build()
         );
 
@@ -267,7 +267,7 @@ public class JassGameIT {
                 () -> assertEquals(9, act.getResponse()
                                          .getResponsesPerUser()
                                          .get("1")
-                                         .getHand()
+                                         .getCards()
                                          .size()),
                 () -> assertEquals(EventType.RECEIVE_CARD, act.getResponse()
                                                               .getResponsesPerUser()

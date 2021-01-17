@@ -34,7 +34,7 @@ public class ChoosePartnerAction implements Action {
             if (areTwoTeamsOfTwo(message.getTeams())) {
                 teams = message.getTeams();
             } else {
-                return new ActionResult(GameStep.CHOOSE_PARTNER, new JassResponses()
+                return new ActionResult(GameStep.CHOOSE_TEAMS, new JassResponses()
                         .addResponse(username.getName(), JassResponse.JassResponseBuilder.aJassResponse()
                                                                                          .withEvent(EventType.ERROR)
                                                                                          .build())
@@ -48,7 +48,7 @@ public class ChoosePartnerAction implements Action {
 
         return new ActionResult(GameStep.HAND_OUT, new JassResponses()
                 .addResponse("", JassResponse.JassResponseBuilder.aJassResponse()
-                                                                 .withEvent(EventType.PARTNER_CHOSEN)
+                                                                 .withEvent(EventType.TEAMS_CHOSEN)
                                                                  .withTeams(teams)
                                                                  .build()));
     }
@@ -70,7 +70,7 @@ public class ChoosePartnerAction implements Action {
 
     @Override
     public EventType getEventType() {
-        return EventType.CHOOSE_PARTNER;
+        return EventType.CHOOSE_TEAMS;
     }
 
     private List<Team> createRandomTeams(List<JassPlayer> players, int teamsize) {

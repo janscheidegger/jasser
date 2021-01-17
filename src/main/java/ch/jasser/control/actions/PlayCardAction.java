@@ -99,16 +99,12 @@ public class PlayCardAction implements Action {
                     throw new RuntimeException("Not yet implemented");
             }
 
-            JassResponse responseForPlayer = aJassResponse().withEvent(EventType.CARD_PLAYED)
-                                                            .withHand(player.getHand())
-                                                            .withCards(List.of(card))
-                                                            .build();
             JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
+                                                         .withUsername(player.getName())
                                                          .withCards(List.of(card))
                                                          .build();
 
             JassResponses jassResponses = new JassResponses()
-                    .addResponse(player.getName(), responseForPlayer)
                     .addResponse("", responseForAll)
                     .nextPlayer(nextPlayer);
             return new ActionResult(nextStep, jassResponses);

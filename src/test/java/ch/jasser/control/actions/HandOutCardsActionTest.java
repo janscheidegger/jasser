@@ -38,10 +38,10 @@ class HandOutCardsActionTest {
         ActionResult act = cut.act(game, new JassPlayer("1"), null);
 
         assertAll(
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player1").getHand().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player2").getHand().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player3").getHand().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player4").getHand().size())
+                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player1").getCards().size()),
+                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player2").getCards().size()),
+                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player3").getCards().size()),
+                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player4").getCards().size())
         );
 
     }

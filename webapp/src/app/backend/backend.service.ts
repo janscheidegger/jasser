@@ -5,6 +5,7 @@ import {Observable, of} from 'rxjs';
 import {Game} from './game';
 import {Card} from './card';
 import {EventHandlerService} from './event-handler.service';
+import {Team} from "../team";
 
 @Injectable({
   providedIn: 'root',
@@ -66,5 +67,12 @@ export class BackendService {
 
   getUsername(): string {
     return this.username;
+  }
+
+  chooseTeams(teams: Team[]) {
+    return this.currentGameConnection.next({
+      event: 'CHOOSE_TEAMS',
+      payloadString: JSON.stringify({teams}),
+    });
   }
 }
