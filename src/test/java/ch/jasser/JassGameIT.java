@@ -43,6 +43,7 @@ public class JassGameIT {
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
         )
+                                         .withMoveAllowed("1")
                                          .withNextStep(GameStep.CHOOSE_TRUMP)
                                          .build(gameId);
 
@@ -74,6 +75,7 @@ public class JassGameIT {
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
         )
+                                         .withMoveAllowed("1")
                                          .withNextStep(GameStep.CHOOSE_TEAMS)
                                          .build(gameId);
 
@@ -106,6 +108,7 @@ public class JassGameIT {
                 new TestGameBuilder.JassPlayerBuilder("3").build(),
                 new TestGameBuilder.JassPlayerBuilder("4").build()
         )
+                                         .withMoveAllowed("1")
                                          .withNextStep(GameStep.CHOOSE_TEAMS)
                                          .build(gameId);
 
@@ -157,6 +160,7 @@ public class JassGameIT {
                 )
                 .withTurns(new Turn())
                 .withTeams(Team.of("Team1", "1", "3"), Team.of("Team2", "2", "4"))
+                .withMoveAllowed("1")
                 .build(gameId);
 
         repository.createGame(game);
@@ -209,6 +213,7 @@ public class JassGameIT {
                                 .build()
                 )
                 .withTurns(new Turn())
+                .withMoveAllowed("1")
                 .build(gameId);
 
         repository.createGame(game);
@@ -253,6 +258,7 @@ public class JassGameIT {
                 )
                 .withTrumpPlayer("1")
                 .withNextStep(GameStep.HAND_OUT)
+                .withMoveAllowed("1", "2", "3", "4")
                 .build(gameId);
 
         repository.createGame(game);

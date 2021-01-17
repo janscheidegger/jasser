@@ -18,6 +18,7 @@ public class TestGameBuilder {
     private List<JassPlayer> players = new ArrayList<>();
     private final List<Turn> turns = new ArrayList<>();
     private final List<Team> teams = new ArrayList<>();
+    private final List<String> moveAllowed = new ArrayList<>();
     private GameStep step = GameStep.MOVE;
     private Suit trump = null;
     private String trumpPlayer;
@@ -52,6 +53,11 @@ public class TestGameBuilder {
         return this;
     }
 
+    TestGameBuilder withMoveAllowed(String... players) {
+        this.moveAllowed.addAll(List.of(players));
+        return this;
+    }
+
 
     Game build(String uuid) {
         return new Game(uuid,
@@ -61,7 +67,8 @@ public class TestGameBuilder {
                 trump,
                 trumpPlayer,
                 step,
-                teams
+                teams,
+                moveAllowed
                 );
     }
 

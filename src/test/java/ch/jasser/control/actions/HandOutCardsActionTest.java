@@ -32,10 +32,11 @@ class HandOutCardsActionTest {
                 null,
                 "player1",
                 GameStep.HAND_OUT,
-                List.of()
+                List.of(),
+                List.of("player1")
         );
 
-        ActionResult act = cut.act(game, new JassPlayer("1"), null);
+        ActionResult act = cut.act(game, new JassPlayer("player1"), null);
 
         assertAll(
                 () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player1").getCards().size()),

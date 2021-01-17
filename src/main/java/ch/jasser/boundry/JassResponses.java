@@ -17,8 +17,8 @@ public class  JassResponses {
         return this;
     }
 
-    public JassResponses nextPlayer(JassPlayer jassPlayer) {
-        this.moveAllowed.add(jassPlayer);
+    public JassResponses nextPlayer(List<JassPlayer> jassPlayer) {
+        this.moveAllowed.addAll(jassPlayer);
         return this;
     }
 

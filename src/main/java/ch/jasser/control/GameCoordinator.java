@@ -1,12 +1,12 @@
 package ch.jasser.control;
 
 import ch.jasser.boundry.JassRequest;
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.actions.Action;
 import ch.jasser.control.actions.ActionResult;
 import ch.jasser.control.gamerules.Rules;
-import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 
@@ -15,6 +15,8 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import java.util.List;
 import java.util.Optional;
+
+import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 
 @Dependent
 public class GameCoordinator {
@@ -38,7 +40,8 @@ public class GameCoordinator {
 
     public void joinGame(String gameId, String player) {
         Game gameState = getGameState(gameId);
-        if (!gameState.getPlayers().contains(new JassPlayer(player))) {
+        if (!gameState.getPlayers()
+                      .contains(new JassPlayer(player))) {
             gamesRepository.addPlayer(gameId, new JassPlayer(player));
         }
     }
@@ -49,17 +52,31 @@ public class GameCoordinator {
 
     public ActionResult act(String gameId, String username, JassRequest message) {
         Game game = openGames.getGame(gameId);
-        Optional<JassPlayer> player = game.getPlayers().stream()
-                .filter(p -> p.getName().equals(username))
-                .findFirst();
+        Optional<JassPlayer> player = game.getPlayers()
+                                          .stream()
+                                          .filter(p -> p.getName()
+                                                        .equals(username))
+                                          .findFirst();
         JassPlayer jassPlayer = player.orElseThrow(() -> new RuntimeException("Player not in Game"));
 
-        Action action = schieber.getAllowedActionsForGameStep(game.getStep());
-        if(action == null) {
-            throw new RuntimeException("No Action defined for "+game.getStep());
+        if (!game.getMoveAllowed()
+                 .contains(username)) {
+            return new ActionResult(game.getStep(),
+                    new JassResponses().addResponse(username,
+                            aJassResponse().withUsername(username)
+                                           .withEvent(EventType.ERROR)
+                                           .withMessage(String.format("%s not allowed for %s", message.getEvent(),
+                                                   username))
+                                           .build()));
         }
 
-        if (action.getEventType().equals(message.getEvent())) {
+        Action action = schieber.getAllowedActionsForGameStep(game.getStep());
+        if (action == null) {
+            throw new RuntimeException("No Action defined for " + game.getStep());
+        }
+
+        if (action.getEventType()
+                  .equals(message.getEvent())) {
             return action.act(game, jassPlayer, message);
         }
         throw new RuntimeException(String.format("Can not execute action [ActionEventType=%s, RequestEventType=%s, gameStep=%s]",
@@ -69,6 +86,7 @@ public class GameCoordinator {
 
 
     public List<JassPlayer> getPlayers(String gameId) {
-        return gamesRepository.findById(gameId).getPlayers();
+        return gamesRepository.findById(gameId)
+                              .getPlayers();
     }
 }

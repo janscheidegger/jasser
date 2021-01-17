@@ -38,16 +38,16 @@ public class PlayCardAction implements Action {
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
             GameStep nextStep = getNextStep(game);
-            JassPlayer nextPlayer;
+            List<JassPlayer> nextsPlayer;
 
             switch (nextStep) {
                 case PRE_TURN: {
                     PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn()
                                                                       .getCardsOnTable(), game.getCurrentTurn()
                                                                                               .getPlayedSuit(), game.getTrump());
-                    nextPlayer = game.getPlayerByName(winningCard.getPlayer())
-                                     .orElseThrow(RuntimeException::new);
-                    repository.turnToWinningPlayer(game.getGameId(), nextPlayer.getName());
+                    nextsPlayer = List.of(game.getPlayerByName(winningCard.getPlayer())
+                                     .orElseThrow(RuntimeException::new));
+                    repository.turnToWinningPlayer(game.getGameId(), nextsPlayer.get(0).getName());
 
                     for (Team team : game.getTeams()) {
                         int teamPoints = team.getPlayers()
@@ -89,15 +89,17 @@ public class PlayCardAction implements Action {
 
                     /* POST ACTION??? */
 
-                    nextPlayer = null; // Everyone is allowed to trigger hand out of cards
+                    nextsPlayer = game.getPlayers(); // Everyone is allowed to trigger hand out of cards
                     break;
                 }
                 case PRE_MOVE:
-                    nextPlayer = getNextPlayer(player, game.getPlayers());
+                    nextsPlayer = List.of(getNextPlayer(player, game.getPlayers()));
                     break;
                 default:
                     throw new RuntimeException("Not yet implemented");
             }
+
+            repository.nextPlayer(game.getGameId(), nextsPlayer);
 
             JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
                                                          .withUsername(player.getName())
@@ -106,7 +108,7 @@ public class PlayCardAction implements Action {
 
             JassResponses jassResponses = new JassResponses()
                     .addResponse("", responseForAll)
-                    .nextPlayer(nextPlayer);
+                    .nextPlayer(nextsPlayer);
             return new ActionResult(nextStep, jassResponses);
         } else {
             JassResponse response = aJassResponse().withEvent(EventType.ERROR)

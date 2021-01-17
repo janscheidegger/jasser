@@ -7,8 +7,8 @@ import ch.jasser.entity.PlayedCard;
 import ch.jasser.entity.Suit;
 import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
-import io.quarkus.test.Mock;
 
+import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Mock
+//@Mock
+@Priority(1)
 @ApplicationScoped
 public class GamesRepositoryMock extends GamesRepository {
 
@@ -67,7 +68,8 @@ public class GamesRepositoryMock extends GamesRepository {
                 game.getTrump(),
                 game.getTrumpPlayer(),
                 game.getStep(),
-                game.getTeams()
+                game.getTeams(),
+                game.getMoveAllowed()
         );
     }
 
@@ -119,7 +121,8 @@ public class GamesRepositoryMock extends GamesRepository {
                 trump,
                 game.getTrumpPlayer(),
                 game.getStep(),
-                game.getTeams()
+                game.getTeams(),
+                game.getMoveAllowed()
         ));
 
     }
@@ -135,7 +138,8 @@ public class GamesRepositoryMock extends GamesRepository {
                 game.getTrump(),
                 game.getTrumpPlayer(),
                 game.getStep(),
-                teams
+                teams,
+                game.getMoveAllowed()
         ));
     }
 
@@ -155,7 +159,8 @@ public class GamesRepositoryMock extends GamesRepository {
                 game.getTrump(),
                 game.getTrumpPlayer(),
                 game.getStep(),
-                teams)
+                teams,
+                game.getMoveAllowed())
         );
 
     }
@@ -170,5 +175,23 @@ public class GamesRepositoryMock extends GamesRepository {
     @Override
     public void adjustSittingOrder(String gameId, Game game) {
         games.put(gameId, game);
+    }
+
+    @Override
+    public void nextPlayer(String gameId, List<JassPlayer> nextPlayer) {
+        Game game = games.get(gameId);
+
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers(),
+                game.getTurns(),
+                game.getTrump(),
+                game.getTrumpPlayer(),
+                game.getStep(),
+                game.getTeams(),
+                nextPlayer.stream()
+                          .map(JassPlayer::getName)
+                          .collect(Collectors.toList())));
     }
 }

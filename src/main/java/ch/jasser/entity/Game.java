@@ -24,6 +24,7 @@ public class Game {
     private final String trumpPlayer;
     private final GameStep step;
     private final List<Team> teams;
+    private final List<String> moveAllowed;
 
     public Game() {
         this.gameId = UUID.randomUUID()
@@ -35,6 +36,7 @@ public class Game {
         this.step = GameStep.CHOOSE_TEAMS;
         this.teams = new ArrayList<>();
         this.trumpPlayer = null;
+        this.moveAllowed = new ArrayList<>();
     }
 
     @BsonCreator
@@ -45,7 +47,8 @@ public class Game {
                 @BsonProperty("trump") Suit trump,
                 @BsonProperty("trumpPlayer") String trumpPlayer,
                 @BsonProperty("step") GameStep step,
-                @BsonProperty("teams") List<Team> teams) {
+                @BsonProperty("teams") List<Team> teams,
+                @BsonProperty("moveAllowed") List<String> moveAllowed) {
 
         this.gameId = uuid;
         this.type = type;
@@ -55,6 +58,7 @@ public class Game {
         this.trumpPlayer = trumpPlayer;
         this.step = step;
         this.teams = teams;
+        this.moveAllowed = moveAllowed;
     }
 
     public List<JassPlayer> getPlayers() {
@@ -123,6 +127,10 @@ public class Game {
         return teams;
     }
 
+    public List<String> getMoveAllowed() {
+        return moveAllowed;
+    }
+
     public Game adjustSittingOrder(List<Team> teams) {
         List<JassPlayer> jassPlayers = new ArrayList<>();
         for (int i = 0; i < teams.get(0)
@@ -142,7 +150,8 @@ public class Game {
                 trump,
                 trumpPlayer,
                 GameStep.HAND_OUT,
-                teams
+                teams,
+                moveAllowed
         );
     }
 }

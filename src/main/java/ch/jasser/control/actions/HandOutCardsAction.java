@@ -18,6 +18,7 @@ import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 @Dependent
 public class HandOutCardsAction implements Action {
 
+
     @Override
     public ActionResult act(Game game, JassPlayer player, JassRequest message) {
         List<Card> initialDeck = Schieber.getInitialDeck();
@@ -32,7 +33,7 @@ public class HandOutCardsAction implements Action {
                         players.get((getTrumpPlayerIndex(players, game.getTrumpPlayer()) + 1) % players.size());
 
         JassResponses responses = new JassResponses();
-        responses.nextPlayer(trumpPlayer);
+        responses.nextPlayer(List.of(trumpPlayer));
         for (JassPlayer currentPlayer : players) {
             JassResponse response = aJassResponse().withUsername(currentPlayer.getName())
                                                    .withEvent(EventType.RECEIVE_CARD)

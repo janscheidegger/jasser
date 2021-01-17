@@ -116,4 +116,8 @@ public class GamesRepository {
     public void adjustSittingOrder(String gameId, Game game) {
         throw new RuntimeException("Not yet implemented");
     }
+
+    public void nextPlayer(String gameId, List<JassPlayer> nextPlayer) {
+        throw new RuntimeException("Not yet implemented");
+    }
 }
