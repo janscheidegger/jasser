@@ -1,9 +1,12 @@
 package ch.jasser.control;
 
+import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
+import ch.jasser.entity.GameType;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Rank;
 import ch.jasser.entity.Suit;
 import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
@@ -25,6 +28,30 @@ public class GamesRepositoryMock extends GamesRepository {
 
     public GamesRepositoryMock() {
         super(null);
+        createDummyGame();
+    }
+
+    private void createDummyGame() {
+        JassPlayer jan = new JassPlayer("Jan");
+        jan.receiveCard(new Card(Rank.JACK, Suit.HEARTS));
+        JassPlayer jana = new JassPlayer("Jana");
+        jana.receiveCard(new Card(Rank.ACE, Suit.CLUBS));
+        games.put("JanNotAllowedToPlay", new Game(
+                "JanNotAllowedToPlay",
+                GameType.SCHIEBER,
+                List.of(
+                        jan,
+                        jana
+                ),
+                List.of(new Turn()),
+                Suit.HEARTS,
+                "Jan",
+                GameStep.MOVE,
+                List.of(Team.of("Team1", "Jan"),
+                        Team.of("Team2", "Jana")),
+                List.of("Jana")
+
+        ));
     }
 
     @Override

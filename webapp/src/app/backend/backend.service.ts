@@ -41,7 +41,7 @@ export class BackendService {
   playCard(card: Card) {
     return this.currentGameConnection.next({
       event: 'PLAY_CARD',
-      payloadString: JSON.stringify({card}),
+      cards: [card]
     });
   }
 

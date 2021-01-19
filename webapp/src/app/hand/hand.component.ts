@@ -5,8 +5,8 @@ import { tap } from 'rxjs/operators';
 
 import { playCard } from '../jass.actions';
 import { BackendService } from '../backend/backend.service';
-import {State} from "../jass.reducer";
 import {getHand} from "../jass.selectors";
+import {State} from "../state";
 
 @Component({
   selector: 'app-hand',

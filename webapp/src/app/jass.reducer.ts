@@ -1,8 +1,17 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {cardPlayed, cardsReceived, errorReceived, gameLoaded, playerJoined, playerLeft} from './jass.actions';
+import {
+  cardPlayed,
+  cardsReceived,
+  errorReceived,
+  gameLoaded,
+  initialLoad,
+  playerJoined,
+  playerLeft
+} from './jass.actions';
 import {Card} from "./backend/card";
 
 export interface State {
+  name: string;
   players: string[];
   hand: Card[];
   table: Card[];
@@ -10,6 +19,7 @@ export interface State {
 }
 
 export const initialState: State = {
+  name: '',
   hand: [],
   players: [],
   table: [],
@@ -18,6 +28,10 @@ export const initialState: State = {
 
 const reducer = createReducer(
   initialState,
+  on(initialLoad, (state, {gameId, name}) => ({
+    ...state,
+    name
+  })),
   on(playerJoined, (state, {player}) => ({
     ...state,
     players: [...state.players, player]
@@ -44,7 +58,9 @@ const reducer = createReducer(
   )),
   on(gameLoaded, (state, {game}) => ({
     ...state,
-    players: game.players.map(p => p.name)
+    players: game.players.map(p => p.name),
+    hand: game.players.find(n => n.name === state.name).hand,
+    table: game.turns[game.turns.length-1].cardsOnTable.map(c => c.card)
   }))
 );
 

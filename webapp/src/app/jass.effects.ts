@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BackendService} from './backend/backend.service';
-import {Actions, createEffect, Effect, ofType} from '@ngrx/effects';
-import {errorReceived, gameLoaded, initialLoad, playCard, teamsChosen} from './jass.actions';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {cardPlayed, errorReceived, gameLoaded, initialLoad, playCard, teamsChosen} from './jass.actions';
 import {of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -11,13 +11,14 @@ import {Game} from "./backend/game";
 export class JassEffects {
 
   playCard$ = createEffect(() => this.actions$.pipe(
-    ofType(teamsChosen),
-    switchMap((action) => of(this.service.chooseTeams(action.teams)))
+    ofType(playCard),
+    switchMap((action) => of(this.service.playCard(action.card)))
   ), {dispatch: false});
 
   createTeams$ = createEffect(() => this.actions$.pipe(
-    ofType()
-  ))
+    ofType(teamsChosen),
+    switchMap((action) => of(this.service.chooseTeams(action.teams)))
+  ), {dispatch: false});
 
   reloadGame$ = createEffect(() => this.actions$.pipe(
     ofType(initialLoad),

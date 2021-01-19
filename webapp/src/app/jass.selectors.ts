@@ -13,3 +13,8 @@ export const getHand = createSelector(
   getJassState,
   (state: State) => state.hand
 );
+
+export const getCardsOnTable = createSelector(
+  getJassState,
+  (state: State) => state.table
+)

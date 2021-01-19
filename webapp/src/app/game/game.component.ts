@@ -21,9 +21,11 @@ export class GameComponent implements OnInit, OnDestroy {
   gameId$: Observable<string> = this.route.paramMap.pipe(
     map(params => params.get('gameId'))
   );
+  name$: Observable<string> = this.route.paramMap.pipe(
+    map(params => params.get('username'))
+  );
   players$: Observable<string[]> = this.store.pipe(
     select(getPlayers),
-    tap(console.log)
   )
 
 
@@ -44,10 +46,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    combineLatest([this.gameId$, this.reload$.pipe(startWith(''))]).pipe(
+    combineLatest([this.gameId$, this.name$, this.reload$.pipe(startWith(''))]).pipe(
       takeUntil(this.destroy$)
-    ).subscribe(([gameId, _]) =>
-      this.store.dispatch(initialLoad({gameId}))
+    ).subscribe(([gameId, name, _]) =>
+      this.store.dispatch(initialLoad({gameId, name}))
     );
   }
 
