@@ -1,11 +1,22 @@
 import {Injectable} from '@angular/core';
 import {BackendService} from './backend/backend.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {cardPlayed, errorReceived, gameLoaded, initialLoad, playCard, teamsChosen} from './jass.actions';
+import {
+  chooseTrump,
+  errorReceived,
+  gameLoaded,
+  handOutCards,
+  initialLoad,
+  playCard,
+  teamsChosen,
+  trumpChosen
+} from './jass.actions';
 import {of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {exhaustMap, map, startWith, switchMap} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Game} from "./backend/game";
+import {MatDialog} from "@angular/material/dialog";
+import {CreateTeamComponent} from "./create-team/create-team.component";
 
 @Injectable()
 export class JassEffects {
@@ -28,6 +39,20 @@ export class JassEffects {
     )
   ));
 
+  chooseTrump$ = createEffect(() => this.actions$.pipe(
+    ofType(chooseTrump),
+    exhaustMap(_ => {
+      let dialogRef = this.dialog.open(CreateTeamComponent);
+      return dialogRef.afterClosed();
+    }),
+    map(result => console.log(result))
+  ), {dispatch: false});
+
+  trumpChosen$ = createEffect(() => this.actions$.pipe(
+    ofType(trumpChosen),
+    switchMap(action => of(this.service.chooseTrump(action.suit)))
+  ), {dispatch: false})
+
   showError$ = createEffect(() => this.actions$.pipe(
     ofType(errorReceived),
     map((action) =>
@@ -37,10 +62,16 @@ export class JassEffects {
     )
   ), {dispatch: false});
 
+  handOutCards$ = createEffect(() => this.actions$.pipe(
+    ofType(handOutCards),
+    switchMap(() => of(this.service.handOutCards()))
+  ), {dispatch: false})
+
   constructor(
     private actions$: Actions,
     private service: BackendService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
   }
 }

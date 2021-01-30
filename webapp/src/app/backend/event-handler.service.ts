@@ -1,7 +1,15 @@
 import {Injectable} from '@angular/core';
 import {JassMessage} from './jass-message';
 import {Store} from '@ngrx/store';
-import {cardPlayed, cardsReceived, errorReceived, playerJoined, playerLeft,} from '../jass.actions';
+import {
+  cardPlayed,
+  cardsReceived,
+  chooseTrump,
+  errorReceived,
+  playerJoined,
+  playerLeft,
+  trumpChosen, trumpSelectionReceived,
+} from '../jass.actions';
 import {State} from "../jass.reducer";
 
 @Injectable({
@@ -27,10 +35,18 @@ export class EventHandlerService {
       case 'ERROR':
         this.store.dispatch(errorReceived({errorMessage: ev.message}));
         break;
+      case 'CHOOSE_TRUMP':
+        this.store.dispatch(chooseTrump());
+        break;
       case 'CARD_PLAYED':
         this.store.dispatch(
           cardPlayed({player: ev.username, card: ev.cards[0]})
         );
+        break;
+      case 'TRUMP_CHOSEN':
+        this.store.dispatch(
+          trumpSelectionReceived({suit: ev.chosenTrump})
+        )
         break;
       default:
         console.log(`Unhandled Action ${ev.event}`);

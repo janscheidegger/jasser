@@ -75,4 +75,11 @@ export class BackendService {
       payloadString: JSON.stringify({teams}),
     });
   }
+
+  chooseTrump(suit: any) {
+    return this.currentGameConnection.next({
+      event: 'CHOOSE_TRUMP',
+       chosenTrump: suit
+    });
+  }
 }

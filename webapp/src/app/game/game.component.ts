@@ -4,11 +4,12 @@ import {ActivatedRoute} from '@angular/router';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {map, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {select, Store} from "@ngrx/store";
-import {getPlayers} from "../jass.selectors";
+import {canSelectTrump, getPlayers} from "../jass.selectors";
 import {State} from "../state";
-import {initialLoad, teamsChosen} from "../jass.actions";
+import {initialLoad, teamsChosen, handOutCards, trumpChosen, schieben} from "../jass.actions";
 import {MatDialog} from "@angular/material/dialog";
 import {CreateTeamComponent} from "../create-team/create-team.component";
+import {ChooseTrumpComponent} from "../choose-trump/choose-trump.component";
 
 @Component({
   selector: 'app-game',
@@ -27,6 +28,10 @@ export class GameComponent implements OnInit, OnDestroy {
   players$: Observable<string[]> = this.store.pipe(
     select(getPlayers),
   )
+
+  canSelectTrump$: Observable<boolean> = this.store.pipe(
+    select(canSelectTrump)
+  );
 
 
   constructor(private store: Store<State>, private service: BackendService, private route: ActivatedRoute, private dialog: MatDialog) {
@@ -58,8 +63,21 @@ export class GameComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => this.store.dispatch(teamsChosen({teams: result})))
   }
 
-  handOutCards() {
-    this.service.handOutCards();
+  chooseTrump() {
+    const dialogRef = this.dialog.open(ChooseTrumpComponent);
+    dialogRef.afterClosed().subscribe(result =>  {
+      if(result === 'SCHIEBEN') {
+        this.store.dispatch(schieben());
+      }
+      else if (['HEARTS', 'SPADES', 'DIAMONDS', 'CLUBS'].includes(result)) {
+        this.store.dispatch(trumpChosen({suit: result}))
+      }
+    })
+  }
+
+  handOutCardsToAll() {
+    console.debug("Hand out Cards");
+    this.store.dispatch(handOutCards());
   }
 
   reload() {

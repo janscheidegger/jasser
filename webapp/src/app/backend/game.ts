@@ -10,4 +10,6 @@ export interface Game {
   players: Player[];
   turns: Turn[];
   type: string;
+  moveAllowed: string[];
+  step: string;
 }

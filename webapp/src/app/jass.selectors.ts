@@ -18,3 +18,8 @@ export const getCardsOnTable = createSelector(
   getJassState,
   (state: State) => state.table
 )
+
+export const canSelectTrump = createSelector(
+  getJassState,
+  (state) => state.moveAllowed.includes(state.name) && state.step === 'CHOOSE_TRUMP'
+)

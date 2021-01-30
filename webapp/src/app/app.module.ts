@@ -23,6 +23,7 @@ import { CreateTeamComponent } from './create-team/create-team.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSelectModule} from "@angular/material/select";
 import {MatDividerModule} from "@angular/material/divider";
+import { ChooseTrumpComponent } from './choose-trump/choose-trump.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import {MatDividerModule} from "@angular/material/divider";
     CardComponent,
     OverviewComponent,
     CreateTeamComponent,
+    ChooseTrumpComponent,
   ],
   imports: [
     BrowserModule,
