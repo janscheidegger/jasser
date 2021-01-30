@@ -32,6 +32,7 @@ public class RuleFactory {
     Rules createRules() {
         Rules rules = new Schieber();
         rules.registerAction(GameStep.MOVE, playCardAction);
+        rules.registerAction(GameStep.PRE_TURN, playCardAction);
         rules.registerAction(GameStep.HAND_OUT, handOutCardsAction);
         rules.registerAction(GameStep.CHOOSE_TRUMP, chooseTrumpAction);
         rules.registerAction(GameStep.CHOOSE_TEAMS, choosePartnerAction);

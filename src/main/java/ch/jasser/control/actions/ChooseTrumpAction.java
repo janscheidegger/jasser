@@ -26,7 +26,8 @@ public class ChooseTrumpAction implements Action {
         if (message.getEvent()
                    .equals(EventType.CHOOSE_TRUMP) && message.getChosenTrump() != null) {
             repository.setTrump(game.getGameId(), message.getChosenTrump());
-            return new ActionResult(GameStep.PRE_TURN, new JassResponses().addResponse("",
+            repository.nextStep(game.getGameId(), GameStep.MOVE);
+            return new ActionResult(GameStep.MOVE, new JassResponses().addResponse("",
                     aJassResponse().withEvent(EventType.TRUMP_CHOSEN)
                                    .withChosenTrump(message.getChosenTrump())
                                    .withUsername(player.getName())

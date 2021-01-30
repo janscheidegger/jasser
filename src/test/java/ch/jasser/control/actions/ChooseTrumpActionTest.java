@@ -57,7 +57,7 @@ public class ChooseTrumpActionTest {
                 .build());
 
         assertAll(
-                () -> assertEquals(PRE_TURN, result.getNextStep())
+                () -> assertEquals(GameStep.MOVE, result.getNextStep())
         );
     }
 

@@ -44,7 +44,7 @@ public class GamesRepositoryMock extends GamesRepository {
                         jan,
                         jana
                 ),
-                Collections.emptyList(),
+                List.of(new Turn()),
                 null,
                 null,
                 GameStep.HAND_OUT,

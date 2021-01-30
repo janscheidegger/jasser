@@ -60,7 +60,7 @@ public class JassGameIT {
 
         assertAll(
                 () -> assertEquals(Suit.CLUBS, gameFromRepository.getTrump()),
-                () -> assertEquals(GameStep.PRE_TURN, result.getNextStep())
+                () -> assertEquals(GameStep.MOVE, result.getNextStep())
         );
 
     }

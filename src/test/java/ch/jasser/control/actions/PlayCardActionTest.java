@@ -59,7 +59,7 @@ class PlayCardActionTest {
 
         assertEquals(1, act.getResponse().getMoveAllowed().size());
         assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());
-        assertEquals(GameStep.PRE_MOVE, act.getNextStep());
+        assertEquals(GameStep.MOVE, act.getNextStep());
     }
 
     @Test
@@ -95,6 +95,6 @@ class PlayCardActionTest {
 
         assertEquals(1, act.getResponse().getMoveAllowed().size());
         assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());
-        assertEquals(GameStep.PRE_MOVE, act.getNextStep());
+        assertEquals(GameStep.MOVE, act.getNextStep());
     }
 }
