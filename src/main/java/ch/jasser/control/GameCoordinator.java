@@ -84,7 +84,6 @@ public class GameCoordinator {
 
     }
 
-
     public List<JassPlayer> getPlayers(String gameId) {
         return gamesRepository.findById(gameId)
                               .getPlayers();

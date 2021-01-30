@@ -2,6 +2,7 @@ package ch.jasser.boundry;
 
 import ch.jasser.entity.JassPlayer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,11 @@ import java.util.Map;
 
 public class  JassResponses {
 
-    private final Map<String, JassResponse> responsesPerUser = new HashMap<>();
+    private final Map<String, List<JassResponse>> responsesPerUser = new HashMap<>();
     private final List<JassPlayer> moveAllowed = new ArrayList<>();
 
     public JassResponses addResponse(String username, JassResponse message) {
-        this.responsesPerUser.put(username, message);
+        this.responsesPerUser.computeIfAbsent(username, r -> new ArrayList<>()).add(message);
         return this;
     }
 
@@ -26,7 +27,7 @@ public class  JassResponses {
         return moveAllowed;
     }
 
-    public Map<String, JassResponse> getResponsesPerUser() {
+    public Map<String, List<JassResponse>> getResponsesPerUser() {
         return responsesPerUser;
     }
 

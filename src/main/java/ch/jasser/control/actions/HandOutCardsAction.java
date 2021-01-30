@@ -4,6 +4,7 @@ import ch.jasser.boundry.JassRequest;
 import ch.jasser.boundry.JassResponse;
 import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.action.EventType;
+import ch.jasser.control.GamesRepository;
 import ch.jasser.control.gamerules.schieber.Schieber;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
@@ -18,6 +19,11 @@ import static ch.jasser.boundry.JassResponse.JassResponseBuilder.aJassResponse;
 @Dependent
 public class HandOutCardsAction implements Action {
 
+    private final GamesRepository repository;
+
+    public HandOutCardsAction(GamesRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public ActionResult act(Game game, JassPlayer player, JassRequest message) {
@@ -28,11 +34,16 @@ public class HandOutCardsAction implements Action {
                    .receiveCard(initialDeck.get(i));
         }
         JassPlayer trumpPlayer =
-                game.getPlayerByName(game.getTrumpPlayer()).isPresent() ?
+                game.getPlayerByName(game.getTrumpPlayer())
+                    .isPresent() ?
                         players.get(0) :
                         players.get((getTrumpPlayerIndex(players, game.getTrumpPlayer()) + 1) % players.size());
 
         JassResponses responses = new JassResponses();
+        responses.addResponse(trumpPlayer.getName(),
+                aJassResponse().withMessage(trumpPlayer.getName())
+                               .withEvent(EventType.CHOOSE_TRUMP)
+                               .build());
         responses.nextPlayer(List.of(trumpPlayer));
         for (JassPlayer currentPlayer : players) {
             JassResponse response = aJassResponse().withUsername(currentPlayer.getName())
@@ -40,6 +51,9 @@ public class HandOutCardsAction implements Action {
                                                    .withCards(currentPlayer.getHand())
                                                    .build();
             responses.addResponse(currentPlayer.getName(), response);
+            repository.addCardsToPlayer(game.getGameId(), currentPlayer.getName(), currentPlayer.getHand());
+            repository.nextStep(game.getGameId(), GameStep.CHOOSE_TRUMP);
+            repository.nextPlayer(game.getGameId(), List.of(trumpPlayer));
         }
         return new ActionResult(GameStep.CHOOSE_TRUMP, responses);
     }

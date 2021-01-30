@@ -222,6 +222,7 @@ public class JassGameIT {
         playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS));
         ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
+
         assertAll(
                 () -> assertEquals(GameStep.PRE_TURN, actionResult.getNextStep()),
                 () -> assertEquals(1, actionResult.getResponse()
@@ -273,11 +274,13 @@ public class JassGameIT {
                 () -> assertEquals(9, act.getResponse()
                                          .getResponsesPerUser()
                                          .get("1")
+                                         .get(1)
                                          .getCards()
                                          .size()),
-                () -> assertEquals(EventType.RECEIVE_CARD, act.getResponse()
+                () -> assertEquals(EventType.CHOOSE_TRUMP, act.getResponse()
                                                               .getResponsesPerUser()
                                                               .get("1")
+                                                              .get(0)
                                                               .getEvent()),
                 () -> assertEquals(GameStep.CHOOSE_TRUMP, act.getNextStep())
 

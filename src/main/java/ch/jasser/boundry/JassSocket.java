@@ -87,8 +87,8 @@ public class JassSocket {
         ActionResult act = coordinator.act(gameId, username, jassRequest);
         JassResponses response = act.getResponse();
 
-        for (Map.Entry<String, JassResponse> messageEntry : response.getResponsesPerUser()
-                                                                    .entrySet()) {
+        for (Map.Entry<String, List<JassResponse>> messageEntry : response.getResponsesPerUser()
+                                                                          .entrySet()) {
             sendToUser(messageEntry.getKey(), messageEntry.getValue());
         }
 
@@ -103,9 +103,11 @@ public class JassSocket {
     }
 
 
-    public void sendToUser(String user, JassResponse message) {
-        String messageString = this.jsonb.toJson(message);
-        sendToUser(user, messageString);
+    public void sendToUser(String user, List<JassResponse> messages) {
+        for (JassResponse message : messages) {
+            String messageString = this.jsonb.toJson(message);
+            sendToUser(user, messageString);
+        }
     }
 
     public void sendToUsers(List<String> players, JassResponse message) {
@@ -127,18 +129,5 @@ public class JassSocket {
         } else {
             System.out.println(String.format("Player %s has no active session", player));
         }
-    }
-
-    private void broadcast(List<String> users, Object message) {
-        String messageString = this.jsonb.toJson(message);
-        sessions.values()
-                .forEach(s -> {
-                    s.getAsyncRemote()
-                     .sendObject(messageString, result -> {
-                         if (result.getException() != null) {
-                             System.out.println("Unable to send message: " + result.getException());
-                         }
-                     });
-                });
     }
 }

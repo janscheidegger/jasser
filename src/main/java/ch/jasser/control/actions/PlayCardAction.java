@@ -11,6 +11,7 @@ import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
 import ch.jasser.entity.PlayedCard;
+import ch.jasser.entity.Suit;
 import ch.jasser.entity.Team;
 import ch.jasser.entity.Turn;
 
@@ -50,12 +51,13 @@ public class PlayCardAction implements Action {
                     repository.turnToWinningPlayer(game.getGameId(), nextsPlayer.get(0).getName());
 
                     for (Team team : game.getTeams()) {
+                        Suit trump = game.getTrump();
                         int teamPoints = team.getPlayers()
                                              .stream()
                                              .map(game::getPlayerByName)
                                              .flatMap(Optional::stream)
                                              .map(JassPlayer::getCardsWon)
-                                             .map(cards -> rules.countPoints(cards, game.getTrump()))
+                                             .map(cards -> rules.countPoints(cards, trump))
                                              .mapToInt(Integer::valueOf)
                                              .sum();
                         team.addPoints(teamPoints, game.getTurns()
@@ -70,16 +72,17 @@ public class PlayCardAction implements Action {
                     PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn()
                                                                       .getCardsOnTable(), game.getCurrentTurn()
                                                                                               .getPlayedSuit(), game.getTrump());
-                    repository.turnToWinningPlayer(game.getGameId(), winningCard.getPlayer());
+                    game = repository.turnToWinningPlayer(game.getGameId(), winningCard.getPlayer());
 
                     /* POST ACTION??? */
                     for (Team team : game.getTeams()) {
+                        Suit trump = game.getTrump();
                         int teamPoints = team.getPlayers()
                                              .stream()
                                              .map(game::getPlayerByName)
                                              .flatMap(Optional::stream)
                                              .map(JassPlayer::getCardsWon)
-                                             .map(cards -> rules.countPoints(cards, game.getTrump()))
+                                             .map(cards -> rules.countPoints(cards, trump))
                                              .mapToInt(Integer::valueOf)
                                              .sum();
                         team.addPoints(teamPoints, game.getTurns()
@@ -92,7 +95,7 @@ public class PlayCardAction implements Action {
                     nextsPlayer = game.getPlayers(); // Everyone is allowed to trigger hand out of cards
                     break;
                 }
-                case PRE_MOVE:
+                case MOVE:
                     nextsPlayer = List.of(getNextPlayer(player, game.getPlayers()));
                     break;
                 default:
@@ -100,6 +103,7 @@ public class PlayCardAction implements Action {
             }
 
             repository.nextPlayer(game.getGameId(), nextsPlayer);
+            repository.nextStep(game.getGameId(), nextStep);
 
             JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
                                                          .withUsername(player.getName())
@@ -133,7 +137,7 @@ public class PlayCardAction implements Action {
                                .size()) {
             return GameStep.PRE_TURN;
         }
-        return GameStep.PRE_MOVE;
+        return GameStep.MOVE;
     }
 
     private boolean noMoreCardsOnHands(List<JassPlayer> players) {

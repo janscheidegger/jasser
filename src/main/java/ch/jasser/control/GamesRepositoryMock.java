@@ -14,13 +14,14 @@ import ch.jasser.entity.Turn;
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 //@Mock
-@Priority(1)
+@Priority(2)
 @ApplicationScoped
 public class GamesRepositoryMock extends GamesRepository {
 
@@ -28,10 +29,32 @@ public class GamesRepositoryMock extends GamesRepository {
 
     public GamesRepositoryMock() {
         super(null);
-        createDummyGame();
+        createJanNotAllowedToPlayGame();
+        createChooseTrumpGame();
     }
 
-    private void createDummyGame() {
+    private void createChooseTrumpGame() {
+        JassPlayer jan = new JassPlayer("Jan");
+        JassPlayer jana = new JassPlayer("Jana");
+
+        games.put("ChooseTrump", new Game(
+                "ChooseTrump",
+                GameType.SCHIEBER,
+                List.of(
+                        jan,
+                        jana
+                ),
+                Collections.emptyList(),
+                null,
+                null,
+                GameStep.HAND_OUT,
+                List.of(Team.of("Team1", "Jan"),
+                        Team.of("Team2", "Jana")),
+                List.of("Jana", "Jan")
+        ));
+    }
+
+    private void createJanNotAllowedToPlayGame() {
         JassPlayer jan = new JassPlayer("Jan");
         jan.receiveCard(new Card(Rank.JACK, Suit.HEARTS));
         JassPlayer jana = new JassPlayer("Jana");
@@ -50,7 +73,6 @@ public class GamesRepositoryMock extends GamesRepository {
                 List.of(Team.of("Team1", "Jan"),
                         Team.of("Team2", "Jana")),
                 List.of("Jana")
-
         ));
     }
 
@@ -123,7 +145,7 @@ public class GamesRepositoryMock extends GamesRepository {
     }
 
     @Override
-    public void turnToWinningPlayer(String gameId, String winningPlayer) {
+    public Game turnToWinningPlayer(String gameId, String winningPlayer) {
         List<Card> cardsOnTable = games.get(gameId)
                                        .getCurrentTurn()
                                        .getCardsOnTable()
@@ -133,8 +155,8 @@ public class GamesRepositoryMock extends GamesRepository {
 
         games.get(gameId)
              .getPlayerByName(winningPlayer)
-             .ifPresent(p -> p.getCardsWon()
-                              .addAll(cardsOnTable));
+             .ifPresent(p -> p.addCardsWon(cardsOnTable));
+        return findById(gameId);
     }
 
     @Override
@@ -220,5 +242,50 @@ public class GamesRepositoryMock extends GamesRepository {
                 nextPlayer.stream()
                           .map(JassPlayer::getName)
                           .collect(Collectors.toList())));
+    }
+
+    @Override
+    public void nextStep(String gameId, GameStep gameStep) {
+        Game game = games.get(gameId);
+
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers(),
+                game.getTurns(),
+                game.getTrump(),
+                game.getTrumpPlayer(),
+                gameStep,
+                game.getTeams(),
+                game.getMoveAllowed()));
+    }
+
+    @Override
+    public void addCardsToPlayer(String gameId, String playerName, List<Card> cards) {
+        Game game = games.get(gameId);
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers()
+                    .stream()
+                    .map(p -> addCardsToPayerWithName(playerName, cards, p))
+                    .collect(Collectors.toList()),
+                game.getTurns(),
+                game.getTrump(),
+                game.getTrumpPlayer(),
+                game.getStep(),
+                game.getTeams(),
+                game.getMoveAllowed())
+        );
+
+    }
+
+    private JassPlayer addCardsToPayerWithName(String playerName, List<Card> cards, JassPlayer p) {
+        if (p.getName()
+             .equals(playerName)) {
+            return new JassPlayer(p.getName(), cards, p.getCardsWon());
+        } else {
+            return p;
+        }
     }
 }

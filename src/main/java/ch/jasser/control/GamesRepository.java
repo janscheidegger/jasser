@@ -1,5 +1,6 @@
 package ch.jasser.control;
 
+import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
@@ -13,7 +14,6 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,8 @@ public class GamesRepository {
 
     List<Game> getAll() {
         List<Game> games = new ArrayList<>();
-        try (MongoCursor<Game> iterator = getCollection().find(Game.class).iterator()) {
+        try (MongoCursor<Game> iterator = getCollection().find(Game.class)
+                                                         .iterator()) {
             while (iterator.hasNext()) {
                 Game game = iterator.next();
 
@@ -64,11 +65,13 @@ public class GamesRepository {
     }
 
     private MongoCollection<Document> getCollection() {
-        return this.mongoClient.getDatabase("jasser").getCollection("games");
+        return this.mongoClient.getDatabase("jasser")
+                               .getCollection("games");
     }
 
     public Game findById(String uuid) {
-        return getCollection().find(eq("gameId", uuid), Game.class).first();
+        return getCollection().find(eq("gameId", uuid), Game.class)
+                              .first();
     }
 
     public void handOutCard(String gameId, String name, Card card) {
@@ -93,12 +96,16 @@ public class GamesRepository {
         );
     }
 
-    public void turnToWinningPlayer(String gameId, String winningPlayer) {
-        List<PlayedCard> cardsOnTable = findById(gameId).getCurrentTurn().getCardsOnTable();
-        List<Card> cards = cardsOnTable.stream().map(PlayedCard::getCard).collect(Collectors.toList());
+    public Game turnToWinningPlayer(String gameId, String winningPlayer) {
+        List<PlayedCard> cardsOnTable = findById(gameId).getCurrentTurn()
+                                                        .getCardsOnTable();
+        List<Card> cards = cardsOnTable.stream()
+                                       .map(PlayedCard::getCard)
+                                       .collect(Collectors.toList());
         getCollection().updateOne(and(eq("gameId", gameId),
                 eq("players.name", winningPlayer)),
                 Updates.addEachToSet("players.$.cardsWon", cards));
+        return findById(gameId);
     }
 
     public void setTrump(String gameId, Suit trump) {
@@ -118,6 +125,14 @@ public class GamesRepository {
     }
 
     public void nextPlayer(String gameId, List<JassPlayer> nextPlayer) {
+        throw new RuntimeException("Not yet implemented");
+    }
+
+    public void nextStep(String gameId, GameStep gameStep) {
+        throw new RuntimeException("Not yet implemented");
+    }
+
+    public void addCardsToPlayer(String gameId, String playerName, List<Card> cards) {
         throw new RuntimeException("Not yet implemented");
     }
 }

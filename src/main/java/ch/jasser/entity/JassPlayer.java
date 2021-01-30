@@ -2,12 +2,14 @@ package ch.jasser.entity;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.eclipse.microprofile.reactive.streams.operators.spi.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JassPlayer {
 
@@ -35,15 +37,19 @@ public class JassPlayer {
 
 
     public void receiveCard(Card card) {
-        hand.add(card);
+        hand = Stream.concat(Stream.of(card), hand.stream()).collect(Collectors.toList());
     }
 
     public List<Card> getHand() {
-        return hand;
+        return Collections.unmodifiableList(hand);
     }
 
     public List<Card> getCardsWon() {
-        return cardsWon;
+        return Collections.unmodifiableList(cardsWon);
+    }
+
+    public void addCardsWon(List<Card> cards) {
+        cardsWon = Stream.concat(cardsWon.stream(), cards.stream()).collect(Collectors.toList());
     }
 
     public boolean playCard(Card card) {
