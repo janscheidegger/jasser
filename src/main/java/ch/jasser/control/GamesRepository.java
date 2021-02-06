@@ -135,4 +135,8 @@ public class GamesRepository {
     public void addCardsToPlayer(String gameId, String playerName, List<Card> cards) {
         throw new RuntimeException("Not yet implemented");
     }
+
+    public void nextTurn(String gameId) {
+        throw new RuntimeException("Not yet implemented");
+    }
 }

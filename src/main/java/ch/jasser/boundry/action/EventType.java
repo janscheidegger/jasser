@@ -15,5 +15,6 @@ public enum EventType {
     CHOOSE_TEAMS,
     PLAYER_JOINED,
     PLAYER_LEFT,
-    TEAMS_CHOSEN
+    TEAMS_CHOSEN,
+    TURN_WON
 }

@@ -223,7 +223,9 @@ public class JassGameIT {
         ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
 
+        Game gameFromRepository = repository.findById(gameId);
         assertAll(
+                () -> assertEquals(0, gameFromRepository.getCurrentTurn().getCardsOnTable().size()),
                 () -> assertEquals(GameStep.PRE_TURN, actionResult.getNextStep()),
                 () -> assertEquals(1, actionResult.getResponse()
                                                   .getMoveAllowed()
@@ -232,11 +234,11 @@ public class JassGameIT {
                                                     .getMoveAllowed()
                                                     .get(0)
                                                     .getName()),
-                () -> assertEquals(4, repository.findById(gameId)
-                                                .getPlayerByName("4")
-                                                .orElseThrow()
-                                                .getCardsWon()
-                                                .size())
+                () -> assertEquals(4, gameFromRepository
+                                                    .getPlayerByName("4")
+                                                    .orElseThrow()
+                                                    .getCardsWon()
+                                                    .size())
         );
     }
 

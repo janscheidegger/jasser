@@ -14,11 +14,11 @@ import ch.jasser.entity.Turn;
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //@Mock
 @Priority(2)
@@ -278,6 +278,24 @@ public class GamesRepositoryMock extends GamesRepository {
                 game.getMoveAllowed())
         );
 
+    }
+
+    @Override
+    public void nextTurn(String gameId) {
+        Game game = games.get(gameId);
+        games.put(gameId, new Game(
+                game.getGameId(),
+                game.getType(),
+                game.getPlayers(),
+                Stream.concat(game.getTurns()
+                                  .stream(), Stream.of(new Turn()))
+                      .collect(Collectors.toUnmodifiableList()),
+                game.getTrump(),
+                game.getTrumpPlayer(),
+                game.getStep(),
+                game.getTeams(),
+                game.getMoveAllowed())
+        );
     }
 
     private JassPlayer addCardsToPayerWithName(String playerName, List<Card> cards, JassPlayer p) {

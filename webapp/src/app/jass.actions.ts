@@ -17,3 +17,4 @@ export const chooseTrump = createAction('[Jass Game] Choose Trump');
 export const trumpChosen = createAction('[Jass Game] Trump chosen', props<{suit: any}>());
 export const trumpSelectionReceived = createAction('[Jass Game] Trump selection received', props<{suit: any}>());
 export const schieben = createAction('[Jass Game] Schieben');
+export const turnWon = createAction('[Jass Game] Turn Won', props<{player: string}>());

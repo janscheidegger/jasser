@@ -34,21 +34,33 @@ public class PlayCardAction implements Action {
 
     @Override
     public ActionResult act(Game game, JassPlayer player, JassRequest message) {
+        JassResponses jassResponses = new JassResponses();
         Card card = message.getCards()
                            .get(0);
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
             GameStep nextStep = getNextStep(game);
-            List<JassPlayer> nextsPlayer;
+
+            JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
+                                                         .withUsername(player.getName())
+                                                         .withCards(List.of(card))
+                                                         .build();
+
+            jassResponses
+                    .addResponse("", responseForAll);
+
+            List<JassPlayer> nextPlayers;
 
             switch (nextStep) {
                 case PRE_TURN: {
                     PlayedCard winningCard = rules.getWinningCard(game.getCurrentTurn()
                                                                       .getCardsOnTable(), game.getCurrentTurn()
                                                                                               .getPlayedSuit(), game.getTrump());
-                    nextsPlayer = List.of(game.getPlayerByName(winningCard.getPlayer())
-                                     .orElseThrow(RuntimeException::new));
-                    repository.turnToWinningPlayer(game.getGameId(), nextsPlayer.get(0).getName());
+                    nextPlayers = List.of(game.getPlayerByName(winningCard.getPlayer())
+                                              .orElseThrow(RuntimeException::new));
+                    repository.turnToWinningPlayer(game.getGameId(), nextPlayers.get(0)
+                                                                                .getName());
+                    repository.nextTurn(game.getGameId());
 
                     for (Team team : game.getTeams()) {
                         Suit trump = game.getTrump();
@@ -65,7 +77,12 @@ public class PlayCardAction implements Action {
                         repository.addPointsToTeam(game.getGameId(), team, teamPoints);
                     }
 
+                    JassResponse jassResponse = aJassResponse().withUsername(nextPlayers.get(0)
+                                                                                        .getName())
+                                                               .withEvent(EventType.TURN_WON)
+                                                               .build();
 
+                    jassResponses.addResponse("", jassResponse);
                     break;
                 }
                 case HAND_OUT: {
@@ -92,27 +109,20 @@ public class PlayCardAction implements Action {
 
                     /* POST ACTION??? */
 
-                    nextsPlayer = game.getPlayers(); // Everyone is allowed to trigger hand out of cards
+                    nextPlayers = game.getPlayers(); // Everyone is allowed to trigger hand out of cards
                     break;
                 }
                 case MOVE:
-                    nextsPlayer = List.of(getNextPlayer(player, game.getPlayers()));
+                    nextPlayers = List.of(getNextPlayer(player, game.getPlayers()));
                     break;
                 default:
                     throw new RuntimeException("Not yet implemented");
             }
 
-            repository.nextPlayer(game.getGameId(), nextsPlayer);
+            repository.nextPlayer(game.getGameId(), nextPlayers);
             repository.nextStep(game.getGameId(), nextStep);
+            jassResponses.nextPlayer(nextPlayers);
 
-            JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
-                                                         .withUsername(player.getName())
-                                                         .withCards(List.of(card))
-                                                         .build();
-
-            JassResponses jassResponses = new JassResponses()
-                    .addResponse("", responseForAll)
-                    .nextPlayer(nextsPlayer);
             return new ActionResult(nextStep, jassResponses);
         } else {
             JassResponse response = aJassResponse().withEvent(EventType.ERROR)
@@ -174,7 +184,17 @@ public class PlayCardAction implements Action {
                           .size() == 0
                 || currentTurn.getPlayedSuit()
                               .equals(card.getSuit())
+                || hasNoCardInMatchingSuit(jassPlayer.getHand(), currentTurn.getPlayedSuit(), game.getTrump())
                 || (card.getSuit()
                         .equals(game.getTrump()));
     }
+
+    private boolean hasNoCardInMatchingSuit(List<Card> hand, Suit playedSuit, Suit trump) {
+        return hand.stream()
+                   .noneMatch(c -> c.getSuit()
+                                    .equals(playedSuit) || c.getSuit()
+                                                            .equals(trump));
+    }
+
+
 }

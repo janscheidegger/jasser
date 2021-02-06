@@ -6,7 +6,7 @@ import {
   gameLoaded,
   initialLoad,
   playerJoined,
-  playerLeft, trumpChosen, trumpSelectionReceived
+  playerLeft, trumpChosen, trumpSelectionReceived, turnWon
 } from './jass.actions';
 import {Card} from "./backend/card";
 
@@ -73,6 +73,10 @@ const reducer = createReducer(
   on(trumpSelectionReceived, (state, {suit}) => ({
     ...state,
     trump: suit
+  })),
+  on(turnWon, (state, {player}) => ({
+    ...state,
+    table: []
   }))
 );
 

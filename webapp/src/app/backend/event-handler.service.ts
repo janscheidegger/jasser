@@ -8,7 +8,7 @@ import {
   errorReceived,
   playerJoined,
   playerLeft,
-  trumpChosen, trumpSelectionReceived,
+  trumpChosen, trumpSelectionReceived, turnWon,
 } from '../jass.actions';
 import {State} from "../jass.reducer";
 
@@ -42,6 +42,10 @@ export class EventHandlerService {
         this.store.dispatch(
           cardPlayed({player: ev.username, card: ev.cards[0]})
         );
+        break;
+      case 'TURN_WON':
+        console.log('TURN WON BY ', ev.username);
+        this.store.dispatch(turnWon({player: ev.username}));
         break;
       case 'TRUMP_CHOSEN':
         this.store.dispatch(

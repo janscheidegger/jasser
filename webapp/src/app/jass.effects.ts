@@ -2,21 +2,20 @@ import {Injectable} from '@angular/core';
 import {BackendService} from './backend/backend.service';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {
-  chooseTrump,
   errorReceived,
   gameLoaded,
   handOutCards,
   initialLoad,
   playCard,
   teamsChosen,
-  trumpChosen
+  trumpChosen,
+  turnWon
 } from './jass.actions';
 import {of} from 'rxjs';
-import {exhaustMap, map, startWith, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Game} from "./backend/game";
 import {MatDialog} from "@angular/material/dialog";
-import {CreateTeamComponent} from "./create-team/create-team.component";
 
 @Injectable()
 export class JassEffects {
@@ -39,15 +38,6 @@ export class JassEffects {
     )
   ));
 
-  chooseTrump$ = createEffect(() => this.actions$.pipe(
-    ofType(chooseTrump),
-    exhaustMap(_ => {
-      let dialogRef = this.dialog.open(CreateTeamComponent);
-      return dialogRef.afterClosed();
-    }),
-    map(result => console.log(result))
-  ), {dispatch: false});
-
   trumpChosen$ = createEffect(() => this.actions$.pipe(
     ofType(trumpChosen),
     switchMap(action => of(this.service.chooseTrump(action.suit)))
@@ -57,6 +47,15 @@ export class JassEffects {
     ofType(errorReceived),
     map((action) =>
       this.snackBar.open(action.errorMessage, 'Error', {
+        duration: 2500,
+      })
+    )
+  ), {dispatch: false});
+
+  turnWinner$ = createEffect(() => this.actions$.pipe(
+    ofType(turnWon),
+    map((action) =>
+      this.snackBar.open(`${action.player} has won this turn`, 'MESSAGE', {
         duration: 2500,
       })
     )
