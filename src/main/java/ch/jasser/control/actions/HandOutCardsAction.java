@@ -26,7 +26,7 @@ public class HandOutCardsAction implements Action {
     }
 
     @Override
-    public ActionResult act(Game game, JassPlayer player, JassRequest message) {
+    public JassResponses act(Game game, JassPlayer player, JassRequest message) {
         List<Card> initialDeck = Schieber.getInitialDeck();
         List<JassPlayer> players = game.getPlayers();
         for (int i = 0; i < initialDeck.size(); i++) {
@@ -39,7 +39,7 @@ public class HandOutCardsAction implements Action {
                         players.get(0) :
                         players.get((getTrumpPlayerIndex(players, game.getTrumpPlayer()) + 1) % players.size());
 
-        JassResponses responses = new JassResponses();
+        JassResponses responses = new JassResponses(GameStep.CHOOSE_TRUMP);
         responses.addResponse(trumpPlayer.getName(),
                 aJassResponse().withMessage(trumpPlayer.getName())
                                .withEvent(EventType.CHOOSE_TRUMP)
@@ -55,7 +55,7 @@ public class HandOutCardsAction implements Action {
             repository.nextStep(game.getGameId(), GameStep.CHOOSE_TRUMP);
             repository.nextPlayer(game.getGameId(), List.of(trumpPlayer));
         }
-        return new ActionResult(GameStep.CHOOSE_TRUMP, responses);
+        return responses;
     }
 
     private int getTrumpPlayerIndex(List<JassPlayer> players, String trumpPlayer) {

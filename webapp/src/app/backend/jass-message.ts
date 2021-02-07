@@ -2,7 +2,8 @@ import {Card} from "./card";
 import {Team} from "../team";
 
 export interface JassMessage {
-  event: string;
+  nextStep: string; // TODO: ENUM!
+  event: string; // TODO: ENUM!
   username: string;
   hand: Card[];
   cards: Card[];

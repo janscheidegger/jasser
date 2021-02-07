@@ -23,3 +23,8 @@ export const canSelectTrump = createSelector(
   getJassState,
   (state) => state.moveAllowed.includes(state.name) && state.step === 'CHOOSE_TRUMP'
 )
+
+export const currentState = createSelector(
+  getJassState,
+    state => state.step
+)

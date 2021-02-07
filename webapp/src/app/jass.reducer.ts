@@ -6,7 +6,7 @@ import {
   gameLoaded,
   initialLoad,
   playerJoined,
-  playerLeft, trumpChosen, trumpSelectionReceived, turnWon
+  playerLeft, trumpSelectionReceived, turnWon
 } from './jass.actions';
 import {Card} from "./backend/card";
 
@@ -38,27 +38,31 @@ const reducer = createReducer(
     ...state,
     name
   })),
-  on(playerJoined, (state, {player}) => ({
+  on(playerJoined, (state, {nextStep,player}) => ({
     ...state,
+    step: nextStep,
     players: [...state.players, player]
   })),
-  on(playerLeft, (state, {player}) => ({
+  on(playerLeft, (state, {nextStep, player}) => ({
     ...state,
+    step: nextStep,
     players: state.players.filter(p => p !== player)
   })),
-  on(cardPlayed, (state, {player, card}) => ({
+  on(cardPlayed, (state, {nextStep,player, card}) => ({
     ...state,
+    step: nextStep,
     table: [...state.table, card],
     hand: state.hand.filter((c) => c.rank !== card.rank || c.suit !== card.suit)
   })),
-  on(cardsReceived, (state, {cards}) => (
-    {
+  on(cardsReceived, (state, {nextStep, cards}) => ({
       ...state,
-      hand: [...state.hand, ...cards]
+    step: nextStep,
+    hand: [...state.hand, ...cards]
     })),
-  on(errorReceived, (state, {errorMessage}) => (
+  on(errorReceived, (state, {nextStep, errorMessage}) => (
     {
       ...state,
+      step: nextStep,
       errors: [...state.errors, errorMessage]
     }
   )),
@@ -70,12 +74,14 @@ const reducer = createReducer(
     moveAllowed: game.moveAllowed,
     step: game.step
   })),
-  on(trumpSelectionReceived, (state, {suit}) => ({
+  on(trumpSelectionReceived, (state, {nextStep, suit}) => ({
     ...state,
+    step: nextStep,
     trump: suit
   })),
-  on(turnWon, (state, {player}) => ({
+  on(turnWon, (state, {nextStep, player}) => ({
     ...state,
+    step: nextStep,
     table: []
   }))
 );

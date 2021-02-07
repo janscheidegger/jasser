@@ -1,6 +1,7 @@
 package ch.jasser.control.actions;
 
 import ch.jasser.boundry.JassRequest;
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
 import ch.jasser.control.gamerules.Rules;
@@ -55,11 +56,11 @@ class PlayCardActionTest {
         JassRequest message = new JassRequest();
         message.setEvent(EventType.PLAY_CARD);
         message.setCards(List.of(new Card(Rank.ACE, Suit.CLUBS)));
-        ActionResult act = cut.act(game, player1, message);
+        JassResponses act = cut.act(game, player1, message);
 
-        assertEquals(1, act.getResponse().getMoveAllowed().size());
-        assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());
-        assertEquals(GameStep.MOVE, act.getNextStep());
+        assertEquals(1, act.getMoveAllowed().size());
+        assertEquals("player2", act.getMoveAllowed().get(0).getName());
+        assertEquals(GameStep.MOVE, act.getResponsesPerUser().get("player1").get(0).getNextStep());
     }
 
     @Test
@@ -91,10 +92,10 @@ class PlayCardActionTest {
         JassRequest message = new JassRequest();
         message.setEvent(EventType.PLAY_CARD);
         message.setCards(List.of(new Card(Rank.ACE, Suit.CLUBS)));
-        ActionResult act = cut.act(game, player1, message);
+        JassResponses act = cut.act(game, player1, message);
 
-        assertEquals(1, act.getResponse().getMoveAllowed().size());
-        assertEquals("player2", act.getResponse().getMoveAllowed().get(0).getName());
-        assertEquals(GameStep.MOVE, act.getNextStep());
+        assertEquals(1, act.getMoveAllowed().size());
+        assertEquals("player2", act.getMoveAllowed().get(0).getName());
+        assertEquals(GameStep.MOVE, act.getResponsesPerUser().get("player1").get(0).getNextStep());
     }
 }

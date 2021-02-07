@@ -1,6 +1,7 @@
 package ch.jasser.control.actions;
 
 import ch.jasser.boundry.JassRequest;
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GamesRepository;
 import ch.jasser.control.steps.GameStep;
@@ -51,13 +52,13 @@ public class ChooseTrumpActionTest {
                 List.of("player1")
         );
 
-        ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
+        JassResponses result = cut.act(game, new JassPlayer("player1"), aJassRequest()
                 .withEvent(EventType.CHOOSE_TRUMP)
                 .withChosenTrump(Suit.HEARTS)
                 .build());
 
         assertAll(
-                () -> assertEquals(GameStep.MOVE, result.getNextStep())
+                () -> assertEquals(GameStep.MOVE, result.getResponsesPerUser().get("player1").get(0).getNextStep())
         );
     }
 
@@ -80,11 +81,11 @@ public class ChooseTrumpActionTest {
                 List.of("player1")
         );
 
-        ActionResult result = cut.act(game, new JassPlayer("player1"), aJassRequest()
+        JassResponses result = cut.act(game, new JassPlayer("player1"), aJassRequest()
                 .withEvent(EventType.SCHIEBEN)
                 .build());
 
-        assertEquals(CHOOSE_TRUMP, result.getNextStep());
+        assertEquals(CHOOSE_TRUMP, result.getResponsesPerUser().get("player1").get(0).getNextStep());
     }
 
 }

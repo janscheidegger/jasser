@@ -1,5 +1,6 @@
 package ch.jasser.control.actions;
 
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.control.GamesRepository;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Game;
@@ -40,13 +41,13 @@ class HandOutCardsActionTest {
                 List.of("player1")
         );
 
-        ActionResult act = cut.act(game, new JassPlayer("player1"), null);
+        JassResponses act = cut.act(game, new JassPlayer("player1"), null);
 
         assertAll(
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player1").get(1).getCards().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player2").get(0).getCards().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player3").get(0).getCards().size()),
-                () -> assertEquals(9, act.getResponse().getResponsesPerUser().get("player4").get(0).getCards().size())
+                () -> assertEquals(9, act.getResponsesPerUser().get("player1").get(1).getCards().size()),
+                () -> assertEquals(9, act.getResponsesPerUser().get("player2").get(0).getCards().size()),
+                () -> assertEquals(9, act.getResponsesPerUser().get("player3").get(0).getCards().size()),
+                () -> assertEquals(9, act.getResponsesPerUser().get("player4").get(0).getCards().size())
         );
 
     }

@@ -33,21 +33,21 @@ public class PlayCardAction implements Action {
     }
 
     @Override
-    public ActionResult act(Game game, JassPlayer player, JassRequest message) {
-        JassResponses jassResponses = new JassResponses();
+    public JassResponses act(Game game, JassPlayer player, JassRequest message) {
+
         Card card = message.getCards()
                            .get(0);
         if (isAllowedToPlayCard(game, player, card)) {
             playCard(game, player, card);
-            GameStep nextStep = getNextStep(game);
-
+            final GameStep nextStep = getNextStep(game);
+            JassResponses jassResponses = new JassResponses(nextStep);
             JassResponse responseForAll = aJassResponse().withEvent(EventType.CARD_PLAYED)
                                                          .withUsername(player.getName())
                                                          .withCards(List.of(card))
                                                          .build();
 
             jassResponses
-                    .addResponse("", responseForAll);
+                    .addResponse(game.getPlayerNames(), responseForAll);
 
             List<JassPlayer> nextPlayers;
 
@@ -82,7 +82,7 @@ public class PlayCardAction implements Action {
                                                                .withEvent(EventType.TURN_WON)
                                                                .build();
 
-                    jassResponses.addResponse("", jassResponse);
+                    jassResponses.addResponse(game.getPlayerNames(), jassResponse);
                     break;
                 }
                 case HAND_OUT: {
@@ -123,13 +123,13 @@ public class PlayCardAction implements Action {
             repository.nextStep(game.getGameId(), nextStep);
             jassResponses.nextPlayer(nextPlayers);
 
-            return new ActionResult(nextStep, jassResponses);
+            return jassResponses;
         } else {
             JassResponse response = aJassResponse().withEvent(EventType.ERROR)
                                                    .withMessage(String.format("Not allowed to play card: (%s)", card))
                                                    .withUsername(player.getName())
                                                    .build();
-            return new ActionResult(GameStep.MOVE, new JassResponses().addResponse(player.getName(), response));
+            return new JassResponses(GameStep.MOVE).addResponse(player.getName(), response);
         }
     }
 

@@ -11,5 +11,7 @@
   <button mat-raised-button (click)="handOutCardsToAll()">Hand out cards</button>
   <button mat-raised-button color="primary" (click)="reload()">Reload</button>
   <button mat-raised-button color="primary" (click)="chooseTrump()" *ngIf="canSelectTrump$ | async">Trumpf wählen</button>
+  <span>{{currentState$ | async}}</span>
+  
 </span>
 <span class="info">10:10</span>

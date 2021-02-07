@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @BsonDiscriminator
 public class Game {
@@ -77,6 +78,14 @@ public class Game {
         Turn turn = new Turn();
         this.turns.add(turn);
         return turn;
+    }
+
+    @JsonbTransient
+    @BsonIgnore
+    public List<String> getPlayerNames() {
+        return players.stream()
+                      .map(JassPlayer::getName)
+                      .collect(Collectors.toList());
     }
 
     @JsonbTransient

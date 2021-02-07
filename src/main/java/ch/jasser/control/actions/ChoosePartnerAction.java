@@ -14,6 +14,7 @@ import javax.enterprise.context.Dependent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Dependent
 public class ChoosePartnerAction implements Action {
@@ -25,7 +26,7 @@ public class ChoosePartnerAction implements Action {
     }
 
     @Override
-    public ActionResult act(Game game, JassPlayer username, JassRequest message) {
+    public JassResponses act(Game game, JassPlayer username, JassRequest message) {
         List<Team> teams;
         if (message.getTeams() == null || message.getTeams()
                                                  .isEmpty() && playerNumberIsDividableBy2(game)) {
@@ -34,11 +35,11 @@ public class ChoosePartnerAction implements Action {
             if (areTwoTeamsOfTwo(message.getTeams())) {
                 teams = message.getTeams();
             } else {
-                return new ActionResult(GameStep.CHOOSE_TEAMS, new JassResponses()
+                return new JassResponses(GameStep.CHOOSE_TEAMS)
                         .addResponse(username.getName(), JassResponse.JassResponseBuilder.aJassResponse()
                                                                                          .withEvent(EventType.ERROR)
-                                                                                         .build())
-                );
+                                                                                         .build()
+                        );
             }
         }
         repository.setTeams(game.getGameId(), teams);
@@ -46,11 +47,15 @@ public class ChoosePartnerAction implements Action {
         repository.adjustSittingOrder(game.getGameId(), adjustedSittingOder);
 
 
-        return new ActionResult(GameStep.HAND_OUT, new JassResponses()
-                .addResponse("", JassResponse.JassResponseBuilder.aJassResponse()
-                                                                 .withEvent(EventType.TEAMS_CHOSEN)
-                                                                 .withTeams(teams)
-                                                                 .build()));
+        return new JassResponses(GameStep.HAND_OUT)
+                .addResponse(game.getPlayers()
+                                        .stream()
+                                        .map(JassPlayer::getName)
+                                        .collect(Collectors.toList()),
+                        JassResponse.JassResponseBuilder.aJassResponse()
+                                                        .withEvent(EventType.TEAMS_CHOSEN)
+                                                        .withTeams(teams)
+                                                        .build());
     }
 
     private boolean areTwoTeamsOfTwo(List<Team> teams) {

@@ -1,10 +1,10 @@
 package ch.jasser;
 
 import ch.jasser.boundry.JassRequest;
+import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GameCoordinator;
 import ch.jasser.control.GamesRepository;
-import ch.jasser.control.actions.ActionResult;
 import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Game;
@@ -49,18 +49,18 @@ public class JassGameIT {
 
         repository.createGame(game);
 
-        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
-                                                                                         .withUsername("1")
-                                                                                         .withEvent(EventType.CHOOSE_TRUMP)
-                                                                                         .withChosenTrump(Suit.CLUBS)
-                                                                                         .build()
+        JassResponses result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+                                                                                          .withUsername("1")
+                                                                                          .withEvent(EventType.CHOOSE_TRUMP)
+                                                                                          .withChosenTrump(Suit.CLUBS)
+                                                                                          .build()
         );
 
         Game gameFromRepository = repository.findById(gameId);
 
         assertAll(
                 () -> assertEquals(Suit.CLUBS, gameFromRepository.getTrump()),
-                () -> assertEquals(GameStep.MOVE, result.getNextStep())
+                () -> assertEquals(GameStep.MOVE, result.getResponsesPerUser().get("1").get(0).getNextStep())
         );
 
     }
@@ -81,7 +81,7 @@ public class JassGameIT {
 
         repository.createGame(game);
 
-        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+        JassResponses result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
                                                                                          .withUsername("1")
                                                                                          .withEvent(EventType.CHOOSE_TEAMS)
                                                                                          .withTeam(Team.of("Team1", "1", "3"))
@@ -94,7 +94,7 @@ public class JassGameIT {
         assertAll(
                 () -> assertEquals(2, gameFromRepository.getTeams()
                                                         .size()),
-                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep())
+                () -> assertEquals(GameStep.HAND_OUT, result.getResponsesPerUser().get("1").get(0).getNextStep())
         );
     }
 
@@ -114,7 +114,7 @@ public class JassGameIT {
 
         repository.createGame(game);
 
-        ActionResult result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
+        JassResponses result = coordinator.act(gameId, "1", JassRequest.JassRequestBuilder.aJassRequest()
                                                                                          .withUsername("1")
                                                                                          .withEvent(EventType.CHOOSE_TEAMS)
                                                                                          .build()
@@ -125,7 +125,7 @@ public class JassGameIT {
         assertAll(
                 () -> assertEquals(2, gameFromRepository.getTeams()
                                                         .size()),
-                () -> assertEquals(GameStep.HAND_OUT, result.getNextStep()),
+                () -> assertEquals(GameStep.HAND_OUT, result.getResponsesPerUser().get("1").get(0).getNextStep()),
                 () -> assertEquals(gameFromRepository.getPlayerByName(gameFromRepository.getTeams()
                                                                                         .get(0)
                                                                                         .getPlayers()
@@ -167,12 +167,12 @@ public class JassGameIT {
         playCard(gameId, "1", new Card(Rank.JACK, Suit.CLUBS));
         playCard(gameId, "2", new Card(Rank.QUEEN, Suit.CLUBS));
         playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS));
-        ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
+        JassResponses JassResponses = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
         Game gameFromRepository = repository.findById(gameId);
 
         assertAll(
-                () -> assertEquals(GameStep.HAND_OUT, actionResult.getNextStep()),
+                () -> assertEquals(GameStep.HAND_OUT, JassResponses.getResponsesPerUser().get("1").get(0).getNextStep()),
                 () -> assertEquals(4, repository.findById(gameId)
                                                 .getPlayerByName("4")
                                                 .orElseThrow()
@@ -220,18 +220,17 @@ public class JassGameIT {
         playCard(gameId, "1", new Card(Rank.JACK, Suit.CLUBS));
         playCard(gameId, "2", new Card(Rank.QUEEN, Suit.CLUBS));
         playCard(gameId, "3", new Card(Rank.KING, Suit.CLUBS));
-        ActionResult actionResult = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
+        JassResponses JassResponses = playCard(gameId, "4", new Card(Rank.ACE, Suit.CLUBS));
 
 
         Game gameFromRepository = repository.findById(gameId);
         assertAll(
                 () -> assertEquals(0, gameFromRepository.getCurrentTurn().getCardsOnTable().size()),
-                () -> assertEquals(GameStep.PRE_TURN, actionResult.getNextStep()),
-                () -> assertEquals(1, actionResult.getResponse()
-                                                  .getMoveAllowed()
+                () -> assertEquals(GameStep.PRE_TURN,
+                        JassResponses.getResponsesPerUser().get("1").get(0).getNextStep()),
+                () -> assertEquals(1, JassResponses.getMoveAllowed()
                                                   .size()),
-                () -> assertEquals("4", actionResult.getResponse()
-                                                    .getMoveAllowed()
+                () -> assertEquals("4", JassResponses.getMoveAllowed()
                                                     .get(0)
                                                     .getName()),
                 () -> assertEquals(4, gameFromRepository
@@ -266,32 +265,32 @@ public class JassGameIT {
 
         repository.createGame(game);
 
-        ActionResult act = coordinator.act(gameId, "1", aJassRequest()
+        JassResponses act = coordinator.act(gameId, "1", aJassRequest()
                 .withEvent(EventType.HAND_OUT_CARDS)
                 .withUsername("1")
                 .build()
         );
 
         assertAll(
-                () -> assertEquals(9, act.getResponse()
-                                         .getResponsesPerUser()
+                () -> assertEquals(9, act.getResponsesPerUser()
                                          .get("1")
                                          .get(1)
                                          .getCards()
                                          .size()),
-                () -> assertEquals(EventType.CHOOSE_TRUMP, act.getResponse()
-                                                              .getResponsesPerUser()
+                () -> assertEquals(EventType.CHOOSE_TRUMP, act.getResponsesPerUser()
                                                               .get("1")
                                                               .get(0)
                                                               .getEvent()),
-                () -> assertEquals(GameStep.CHOOSE_TRUMP, act.getNextStep())
+                () -> assertEquals(GameStep.CHOOSE_TRUMP, act.getResponsesPerUser()
+                                                             .get("1")
+                                                             .get(0).getNextStep())
 
         );
 
 
     }
 
-    private ActionResult playCard(String gameId, String username, Card card) {
+    private JassResponses playCard(String gameId, String username, Card card) {
         return coordinator.act(gameId, username, aJassRequest()
                 .withCards(List.of(card))
                 .withEvent(EventType.PLAY_CARD)

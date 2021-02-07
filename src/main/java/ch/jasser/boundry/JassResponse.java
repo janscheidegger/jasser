@@ -1,6 +1,7 @@
 package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.EventType;
+import ch.jasser.control.steps.GameStep;
 import ch.jasser.entity.Card;
 import ch.jasser.entity.Suit;
 import ch.jasser.entity.Team;
@@ -8,6 +9,7 @@ import ch.jasser.entity.Team;
 import java.util.List;
 
 public class JassResponse {
+    private GameStep nextStep;
     private EventType event;
     private String username;
     private List<Card> cards;
@@ -61,6 +63,14 @@ public class JassResponse {
 
     public void setTeams(List<Team> teams) {
         this.teams = teams;
+    }
+
+    public GameStep getNextStep() {
+        return nextStep;
+    }
+
+    public void setNextStep(GameStep nextStep) {
+        this.nextStep = nextStep;
     }
 
     @Override

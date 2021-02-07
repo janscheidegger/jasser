@@ -2,7 +2,6 @@ package ch.jasser.boundry;
 
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.GameCoordinator;
-import ch.jasser.control.actions.ActionResult;
 import ch.jasser.entity.JassPlayer;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -84,8 +83,7 @@ public class JassSocket {
         Jsonb jsonb = JsonbBuilder.create();
         JassRequest jassRequest = jsonb.fromJson(message, JassRequest.class);
 
-        ActionResult act = coordinator.act(gameId, username, jassRequest);
-        JassResponses response = act.getResponse();
+        JassResponses response = coordinator.act(gameId, username, jassRequest);
 
         for (Map.Entry<String, List<JassResponse>> messageEntry : response.getResponsesPerUser()
                                                                           .entrySet()) {

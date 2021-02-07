@@ -4,7 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {map, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {select, Store} from "@ngrx/store";
-import {canSelectTrump, getPlayers} from "../jass.selectors";
+import {canSelectTrump, currentState, getPlayers} from "../jass.selectors";
 import {State} from "../state";
 import {initialLoad, teamsChosen, handOutCards, trumpChosen, schieben} from "../jass.actions";
 import {MatDialog} from "@angular/material/dialog";
@@ -33,6 +33,9 @@ export class GameComponent implements OnInit, OnDestroy {
     select(canSelectTrump)
   );
 
+  currentState$ = this.store.pipe(
+    select(currentState)
+  );
 
   constructor(private store: Store<State>, private service: BackendService, private route: ActivatedRoute, private dialog: MatDialog) {
     this.route.params.pipe(
@@ -66,7 +69,9 @@ export class GameComponent implements OnInit, OnDestroy {
   chooseTrump() {
     const dialogRef = this.dialog.open(ChooseTrumpComponent);
     dialogRef.afterClosed().subscribe(result =>  {
+      console.log(result);
       if(result === 'SCHIEBEN') {
+        console.log("SCHIEIIIIEBEN");
         this.store.dispatch(schieben());
       }
       else if (['HEARTS', 'SPADES', 'DIAMONDS', 'CLUBS'].includes(result)) {

@@ -24,32 +24,31 @@ export class EventHandlerService {
     switch (ev.event) {
       case 'RECEIVE_CARD':
         console.log(ev);
-        this.store.dispatch(cardsReceived({cards: ev.cards}));
+        this.store.dispatch(cardsReceived({nextStep: ev.nextStep, cards: ev.cards}));
         break;
       case 'PLAYER_JOINED':
-        this.store.dispatch(playerJoined({player: ev.username}))
+        this.store.dispatch(playerJoined({nextStep: ev.nextStep, player: ev.username}))
         break;
       case 'PLAYER_LEFT':
-        this.store.dispatch(playerLeft({player: ev.username}))
+        this.store.dispatch(playerLeft({nextStep: ev.nextStep, player: ev.username}))
         break;
       case 'ERROR':
-        this.store.dispatch(errorReceived({errorMessage: ev.message}));
+        this.store.dispatch(errorReceived({nextStep: ev.nextStep, errorMessage: ev.message}));
         break;
       case 'CHOOSE_TRUMP':
-        this.store.dispatch(chooseTrump());
+        this.store.dispatch(chooseTrump({nextStep: ev.nextStep}));
         break;
       case 'CARD_PLAYED':
         this.store.dispatch(
-          cardPlayed({player: ev.username, card: ev.cards[0]})
+          cardPlayed({nextStep: ev.nextStep, player: ev.username, card: ev.cards[0]})
         );
         break;
       case 'TURN_WON':
-        console.log('TURN WON BY ', ev.username);
-        this.store.dispatch(turnWon({player: ev.username}));
+        this.store.dispatch(turnWon({nextStep: ev.nextStep, player: ev.username}));
         break;
       case 'TRUMP_CHOSEN':
         this.store.dispatch(
-          trumpSelectionReceived({suit: ev.chosenTrump})
+          trumpSelectionReceived({nextStep: ev.nextStep, suit: ev.chosenTrump})
         )
         break;
       default:

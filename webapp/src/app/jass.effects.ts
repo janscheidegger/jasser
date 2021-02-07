@@ -12,7 +12,7 @@ import {
   turnWon
 } from './jass.actions';
 import {of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Game} from "./backend/game";
 import {MatDialog} from "@angular/material/dialog";
@@ -40,6 +40,7 @@ export class JassEffects {
 
   trumpChosen$ = createEffect(() => this.actions$.pipe(
     ofType(trumpChosen),
+    tap(console.log),
     switchMap(action => of(this.service.chooseTrump(action.suit)))
   ), {dispatch: false})
 

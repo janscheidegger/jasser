@@ -5,7 +5,6 @@ import ch.jasser.boundry.JassResponses;
 import ch.jasser.boundry.JassSocket;
 import ch.jasser.boundry.action.EventType;
 import ch.jasser.control.actions.Action;
-import ch.jasser.control.actions.ActionResult;
 import ch.jasser.control.gamerules.Rules;
 import ch.jasser.entity.Game;
 import ch.jasser.entity.JassPlayer;
@@ -50,7 +49,7 @@ public class GameCoordinator {
         return gamesRepository.findById(gameId);
     }
 
-    public ActionResult act(String gameId, String username, JassRequest message) {
+    public JassResponses act(String gameId, String username, JassRequest message) {
         Game game = openGames.getGame(gameId);
         Optional<JassPlayer> player = game.getPlayers()
                                           .stream()
@@ -61,13 +60,12 @@ public class GameCoordinator {
 
         if (!game.getMoveAllowed()
                  .contains(username)) {
-            return new ActionResult(game.getStep(),
-                    new JassResponses().addResponse(username,
+                    return new JassResponses(game.getStep()).addResponse(username,
                             aJassResponse().withUsername(username)
                                            .withEvent(EventType.ERROR)
                                            .withMessage(String.format("%s not allowed for %s", message.getEvent(),
                                                    username))
-                                           .build()));
+                                           .build());
         }
 
         Action action = schieber.getAllowedActionsForGameStep(game.getStep());
