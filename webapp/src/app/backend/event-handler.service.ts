@@ -7,7 +7,7 @@ import {
   chooseTrump,
   errorReceived,
   playerJoined,
-  playerLeft,
+  playerLeft, roundOver,
   trumpChosen, trumpSelectionReceived, turnWon,
 } from '../jass.actions';
 import {State} from "../jass.reducer";
@@ -50,6 +50,9 @@ export class EventHandlerService {
         this.store.dispatch(
           trumpSelectionReceived({nextStep: ev.nextStep, suit: ev.chosenTrump})
         )
+        break;
+      case 'ROUND_OVER':
+        this.store.dispatch(roundOver({nextStep: ev.nextStep, teams: ev.teams}));
         break;
       default:
         console.log(`Unhandled Action ${ev.event}`);

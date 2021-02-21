@@ -16,5 +16,6 @@ public enum EventType {
     PLAYER_JOINED,
     PLAYER_LEFT,
     TEAMS_CHOSEN,
-    TURN_WON
+    TURN_WON,
+    ROUND_OVER;
 }

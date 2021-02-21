@@ -4,7 +4,7 @@
 </app-table>
 <mat-card *ngFor="let p of (players$ | async)">{{p}}</mat-card>
 <app-hand class="hand"></app-hand>
-<span class="pts">Here may be pts</span>
+<app-points class="pts"></app-points>
 <span class="chat">bla bla</span>
 <span class="aa">
   <button mat-raised-button (click)="chooseTeams()">Teams wählen</button>
@@ -12,6 +12,6 @@
   <button mat-raised-button color="primary" (click)="reload()">Reload</button>
   <button mat-raised-button color="primary" (click)="chooseTrump()" *ngIf="canSelectTrump$ | async">Trumpf wählen</button>
   <span>{{currentState$ | async}}</span>
-  
+
 </span>
 <span class="info">10:10</span>

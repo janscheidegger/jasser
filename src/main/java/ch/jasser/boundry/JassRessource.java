@@ -29,6 +29,7 @@ public class JassRessource {
         return Response.ok(jsonb.toJson(game)).build();
     }
 
+
     @Path("{gameId}")
     @GET
     public Response loadGame(@PathParam("gameId")String gameId) {

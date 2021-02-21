@@ -105,8 +105,17 @@ public class PlayCardAction implements Action {
                         team.addPoints(teamPoints, game.getTurns()
                                                        .size() - 1);
                         repository.addPointsToTeam(game.getGameId(), team, teamPoints);
-                    }
 
+                        // TODO: Remove refetching!
+
+                        repository.addPointsToTeam(game.getGameId(), team, teamPoints);
+                    }
+                    game = repository.findById(game.getGameId());
+                    JassResponse jassResponse = aJassResponse()
+                            .withEvent(EventType.ROUND_OVER)
+                            .withTeams(game.getTeams())
+                            .build();
+                    jassResponses.addResponse(game.getPlayerNames(), jassResponse);
                     /* POST ACTION??? */
 
                     nextPlayers = game.getPlayers(); // Everyone is allowed to trigger hand out of cards

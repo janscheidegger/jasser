@@ -6,9 +6,10 @@ import {
   gameLoaded,
   initialLoad,
   playerJoined,
-  playerLeft, trumpSelectionReceived, turnWon
+  playerLeft, roundOver, trumpSelectionReceived, turnWon
 } from './jass.actions';
 import {Card} from "./backend/card";
+import {Team} from "./team";
 
 export interface State {
   name: string;
@@ -18,6 +19,7 @@ export interface State {
   errors: string[];
   step: string;
   moveAllowed: string[],
+  teams: Team[];
   trump: 'HEARTS' | 'SPADES' | 'DIAMONDS' | 'CLUBS'
 }
 
@@ -29,6 +31,7 @@ export const initialState: State = {
   errors: [],
   step: '',
   moveAllowed: [],
+  teams: [],
   trump: undefined
 };
 
@@ -72,7 +75,8 @@ const reducer = createReducer(
     hand: game.players.find(n => n.name === state.name).hand,
     table: game.turns.length > 0 ? game.turns[game.turns.length-1].cardsOnTable.map(c => c.card) : [],
     moveAllowed: game.moveAllowed,
-    step: game.step
+    step: game.step,
+    teams: game.teams
   })),
   on(trumpSelectionReceived, (state, {nextStep, suit}) => ({
     ...state,
@@ -83,6 +87,11 @@ const reducer = createReducer(
     ...state,
     step: nextStep,
     table: []
+  })),
+  on(roundOver, (state, {nextStep, teams}) => ({
+    ...state,
+    step: nextStep,
+    teams: teams
   }))
 );
 

@@ -28,3 +28,8 @@ export const currentState = createSelector(
   getJassState,
     state => state.step
 )
+
+export const pointsPerTeam = createSelector(
+  getJassState,
+  state => state.teams.map(t => ({name: t.name, points: t.points}))
+)

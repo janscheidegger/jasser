@@ -24,6 +24,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatSelectModule} from "@angular/material/select";
 import {MatDividerModule} from "@angular/material/divider";
 import { ChooseTrumpComponent } from './choose-trump/choose-trump.component';
+import { PointsComponent } from './points/points.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { ChooseTrumpComponent } from './choose-trump/choose-trump.component';
     OverviewComponent,
     CreateTeamComponent,
     ChooseTrumpComponent,
+    PointsComponent,
   ],
   imports: [
     BrowserModule,

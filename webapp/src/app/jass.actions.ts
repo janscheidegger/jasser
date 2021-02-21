@@ -5,7 +5,7 @@ import {Team} from "./team";
 
 export const playerJoined = createAction('[Jass Game] Player Joined', props<{ nextStep: string, player: string }>());
 export const playerLeft = createAction('[Jass Game] Player Left', props<{ nextStep: string, player: string }>());
-export const playCard = createAction('[Hand Component] Play Card', props<{ nextStep: string, player: string, card: Card }>());
+export const playCard = createAction('[Hand Component] Play Card', props<{ player: string, card: Card }>());
 export const handOutCards = createAction('[Jass Game] Hand out Cards');
 export const cardsReceived = createAction('[Hand Component] Card Received', props<{ nextStep: string, cards: Card[] }>());
 export const initialLoad = createAction('[Hand Component] Initial load', props<{gameId: string, name: string }>());
@@ -18,3 +18,4 @@ export const trumpChosen = createAction('[Jass Game] Trump chosen', props<{ suit
 export const trumpSelectionReceived = createAction('[Jass Game] Trump selection received', props<{ nextStep: string, suit: any }>());
 export const schieben = createAction('[Jass Game] Schieben');
 export const turnWon = createAction('[Jass Game] Turn Won', props<{ nextStep: string, player: string }>());
+export const roundOver = createAction('[Jass Game] Round Over', props<{nextStep: string, teams: Team[]}>());
